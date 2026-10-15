@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Record the deterministic XCTest demo journey, then convert its video to a GIF.
 Usage: python3 scripts/record_demo.py SIMULATOR_UUID [--full-suite]
-Requires Xcode and two non-personal Photos fixtures (scripts/seed_test_photos.py).
+Requires Xcode and at least two approved demo photos in the selected simulator.
+Use scripts/seed_test_photos.py for synthetic fixtures, or simctl addmedia for
+photos you have permission to include in the recorded GIF.
 Raw recording, test logs and xcresult stay in ignored .validation/.
 """
 import pathlib, signal, subprocess, sys, time

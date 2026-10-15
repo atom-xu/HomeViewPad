@@ -1,5 +1,15 @@
 # Validation
 
+## Real-photo demo refresh — 2026-10-14, 22:09 EDT
+
+Re-recorded the README demo using only the owner's three supplied photos in a new, dedicated iPad Pro 11-inch (M5) simulator, iPadOS 27.0 (24A434), with Xcode 27.0. The original JPEGs are not distributed. App production code was not changed.
+
+- The recording UI test passed: **1 selected test, zero failures and zero skips**; see the [sanitized summary](evidence/photo-demo-summary.json). The prior full 30-test result below remains the latest full-suite run.
+- The capture now waits for two actual PhotoKit album advances. Exported screenshots and GIF frames were inspected and show the city park, museum display, and fish photos in turn, with the digital clock and DEMO label.
+- Portrait photographs use the existing centered fill crop in a landscape photo wall; the museum photograph is visibly cropped at the top and bottom. No photo-layout behavior was changed for the recording.
+- GIF: 1119 frames, 880 × 606 px, 12.5 fps, 89.52 seconds, 9,005,627 bytes. No slideshow speed-up or synthesized frames.
+- No new physical HomeKit, HomePod or real-iPad verification is claimed. Raw video, results, screenshots and the previous GIF remain in ignored `.validation/`.
+
 ## Publication preparation — 2026-10-14
 
 The display name and user-facing copy are now **HomeViewPad**. Internal Xcode project/scheme names remain HomePad. Shared signing settings use `Config/Signing.xcconfig`; the owner's existing installation identity is preserved only in ignored `Config/Local.xcconfig`.

@@ -58,6 +58,15 @@ final class HomePadUITests: XCTestCase {
         Thread.sleep(forTimeInterval: 2)
         app.swipeLeft()
         XCTAssertTrue(app.staticTexts["photoWallClock"].waitForExistence(timeout: 3))
+        let wall = app.descendants(matching: .any)["photoWall"]
+        shot("README photo wall 1")
+        // Capture two real 30-second album transitions without changing app timing.
+        for index in 2...3 {
+            let previousPhoto = wall.value as? String
+            expectation(for: NSPredicate { _, _ in wall.value as? String != previousPhoto }, evaluatedWith: nil)
+            waitForExpectations(timeout: 36)
+            shot("README photo wall \(index)")
+        }
         Thread.sleep(forTimeInterval: 3)
         app.swipeRight(); app.swipeRight()
         showNavigation(); Thread.sleep(forTimeInterval: 2)

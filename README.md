@@ -20,7 +20,7 @@ A HomePod mini can sit alongside it as your home's independent Siri speaker and 
 
 ![Actual simulator recording of HomeViewPad demo controls, widget stacks, clock, photo wall, and navigation](docs/media/demo.gif)
 
-*Recorded from the running app in an iPad simulator: deterministic demo accessories and original, non-personal gradient images in the simulator's Photos library. The GIF shows UI interaction, not physical HomeKit or HomePod verification. See [media provenance and reproduction](docs/MEDIA.md).*
+*Recorded from the running app in an iPad simulator: deterministic demo accessories and three owner-supplied photographs in a dedicated simulator's Photos library. The GIF shows UI interaction, not physical HomeKit or HomePod verification. See [media provenance and reproduction](docs/MEDIA.md).*
 
 ## What it does
 
@@ -91,7 +91,7 @@ sh scripts/test.sh SIMULATOR_UUID
 python3 scripts/record_demo.py SIMULATOR_UUID
 ```
 
-The demo recording script interacts only with the selected simulator. Use a dedicated test simulator containing no personal photos. Raw video, test results, and logs stay in the ignored `.validation/` directory.
+The demo recording script interacts only with the selected simulator. Use a dedicated test simulator containing only photos you have approved for the recording. The synthetic fixtures above remain available for routine tests. Raw video, test results, and logs stay in the ignored `.validation/` directory.
 
 The checked-in project can be regenerated with `python3 scripts/generate_project.py` after adding source files. This overwrites generated project settings but preserves the separate, ignored `Config/Local.xcconfig` file. Keep personal signing overrides there.
 
