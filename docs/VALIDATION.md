@@ -1,5 +1,11 @@
 # Validation
 
+## README identity and copy refresh — 2026-10-14
+
+Documentation and media only; app source and behavior were unchanged. Both READMEs now use the generated HomeViewPad logo, centered headers, feature tables, the existing actual demo GIF, and collapsible setup/development sections. The DIY HomeView comparison is limited to overlapping everyday uses; HomePod features and app features remain explicitly distinguished.
+
+Both language versions were checked with GitHub's GFM rendering API: seven images and three tables each, three English/two Chinese disclosure sections retained. Local links and heading targets resolve. The 1254 × 1254 RGBA logo was inspected and its transparent alpha verified. The exact generation prompt and provenance are in [MEDIA.md](MEDIA.md). No app tests were rerun for this documentation-only change; existing test evidence below remains applicable to its tested code.
+
 ## Real-photo demo refresh — 2026-10-14, 22:09 EDT
 
 Re-recorded the README demo using only the owner's three supplied photos in a new, dedicated iPad Pro 11-inch (M5) simulator, iPadOS 27.0 (24A434), with Xcode 27.0. The original JPEGs are not distributed. App production code was not changed.

@@ -1,108 +1,150 @@
-# HomeViewPad
+<p align="center">
+  <img src="docs/media/homeviewpad-logo.png" width="128" height="128" alt="HomeViewPad — a glass window into your home">
+</p>
+<h1 align="center">HomeViewPad</h1>
+<p align="center"><strong>We have HomeView at home.</strong><br>An iPad. A HomePod mini. A little rearranging.</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/iPadOS-17%2B-145C50?style=flat-square" alt="iPadOS 17 or later">
+  <img src="https://img.shields.io/badge/Built_with-SwiftUI-145C50?style=flat-square" alt="Built with SwiftUI">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-D6A64D?style=flat-square" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/Status-Early_preview-D6A64D?style=flat-square" alt="Early preview">
+</p>
+<p align="center">
+  <a href="docs/README.zh-CN.md">简体中文</a> · <a href="#the-demo">Watch the demo</a> · <a href="#get-started">Build it</a> · <a href="docs/ARCHITECTURE.md">Privacy</a>
+</p>
 
-**Your home, at a glance.**
+---
 
-A quiet, native iPad dashboard for Apple Home, personal photos, and time. Built with SwiftUI, with glass widgets, an immersive photo wall, and controls that stay out of the way until you need them.
+## Before you buy another screen, check the drawer.
 
-[简体中文](docs/README.zh-CN.md) · [Get started](#get-started) · [Privacy](docs/ARCHITECTURE.md) · [Validation](docs/VALIDATION.md) · [MIT license](LICENSE)
+[Apple HomeView](https://www.apple.com/apple-homeview/) brings a screen, speakers, and home controls together. We looked around the living room and thought: **hang on, we own most of those nouns.**
 
-![An iPad displaying HomeViewPad beside a HomePod mini on a living-room sideboard](docs/media/ipad-homepod-use-case.png)
+HomeViewPad gives a spare iPad a new job: a beautiful Apple Home dashboard, a clock you can read across the room, and a photo frame that finally does something with your albums. Put a HomePod mini beside it—or give them a shared stand—and you've got your own little smart-home corner.
 
-*AI-generated use-case illustration based on an actual app screenshot. The screen shows demo data. This is an independent project, not an Apple product or an endorsement by Apple.*
+**Some assembly required. Keynote sold separately.**
 
-## An iPad with a place in your home
+<p align="center">
+  <img src="docs/media/ipad-homepod-use-case.png" width="960" alt="An iPad running HomeViewPad next to a HomePod mini on a sideboard">
+  <br><sub>AI-generated setup illustration using an actual app screenshot. Demo data shown.</sub>
+</p>
 
-Put an iPad on a stand or a wall mount. See the room temperature, adjust a compatible thermostat, run a scene, or turn on a light. Swipe over to a clock or let your chosen album fill the screen.
+### The highly sophisticated bill of materials
 
-A HomePod mini can sit alongside it as your home's independent Siri speaker and home hub. **HomeViewPad runs on the iPad; HomePod mini is optional and is not directly paired with this app.** Audio routing uses the system AirPlay picker. Home hub requirements depend on your Apple Home setup.
+| The part | Its new job |
+| :--- | :--- |
+| **An iPad you already have** | The screen, the touch controls, and the photo frame. iPadOS 17+. |
+| **HomeViewPad** | Glass widgets, Apple Home controls, clocks, and your albums. Native SwiftUI, MIT licensed. |
+| **A HomePod mini, if you have one** | Siri, supported home-hub functions, and a speaker—through Apple's own features. |
+| **A stand and a power outlet** | The industrial design department. |
 
-## See it in action
+The iPad runs the app. HomePod mini works independently in your Apple Home setup; it isn't directly paired with HomeViewPad. This covers everyday dashboard jobs, **not every HomeView feature**: no built-in Siri AI, household recognition, integrated FaceTime, or Intercom. Those distinctions are real, even if the stand is homemade.
 
-![Actual simulator recording of HomeViewPad demo controls, widget stacks, clock, photo wall, and navigation](docs/media/demo.gif)
+## The demo
 
-*Recorded from the running app in an iPad simulator: deterministic demo accessories and three owner-supplied photographs in a dedicated simulator's Photos library. The GIF shows UI interaction, not physical HomeKit or HomePod verification. See [media provenance and reproduction](docs/MEDIA.md).*
+<p align="center">
+  <img src="docs/media/demo.gif" width="880" alt="HomeViewPad in action: thermostat arrows, lights, widget stacks, clock, and a three-photo slideshow">
+  <br><sub>Actual iPad simulator recording · Demo accessories · Owner-supplied photos · About 90 seconds</sub>
+</p>
 
-## What it does
+Temperature up. Lights off. A different widget. Then your photos get the whole screen.
 
-- **An immersive glass dashboard.** One large square climate widget and five smaller widgets; warm-gray and teal themes; no persistent header or navigation bar.
-- **Distinct widget stacks.** Climate, clock/calendar, photos/camera, scenes, other devices, and lights each have their own content. Position dots appear briefly while switching.
-- **Apple Home controls.** Select a home, filter rooms, read supported accessories, adjust writable numeric values, and run existing scenes with confirmation. Thermostat arrows respect the device's range and step. Writes are read back before being reported as successful.
-- **Your photos, on display.** Choose a PhotoKit album or a single image. The photo wall combines a large clock with a foreground slideshow and crossfades. Full and limited Photos access are supported.
-- **Optional extras.** Open a compatible HomeKit camera, show upcoming calendar events and reminders, or play a local audio file through the system AirPlay picker.
-- **A self-contained demo.** Explore without a home or accessories. Demo mode is visibly labeled and never initializes the real HomeKit manager.
+The recording includes two real album transitions at the normal 30-second interval. It demonstrates the running interface; real HomeKit and HomePod behavior require separate hardware checks. [Recording details →](docs/MEDIA.md)
 
-### Gestures
+## A useful screen, even when nobody is tapping it
 
-| Action | Result |
-| --- | --- |
-| Swipe left or right | Switch between Home, Clock, Photos, and Settings |
-| Swipe up or down inside a widget | Cycle that widget's available content |
-| Tap empty wallpaper | Reveal navigation on the right in landscape or at the bottom in portrait |
-| Tap the photo wall | Reveal navigation |
-| Tap thermostat arrows | Adjust a writable target temperature |
+| **A home at a glance** | **Your photos deserve a bigger audience** |
+| :--- | :--- |
+| A large climate tile, five smaller widgets, and soft glass over warm gray or teal. Headers and navigation stay tucked away. | Choose an album or a single photo. The photo wall adds a large clock and gentle crossfades. Your camera roll finally gets a living-room residency. |
+| **Controls with a purpose** | **A little less interface** |
+| Select a home, filter rooms, control supported accessories, and confirm before running a scene. Thermostat arrows follow the device's supported steps and limits. | Swipe between pages and through distinct widget stacks. Position dots appear during switching, then get out of the way. |
 
-Transitions respect Reduce Motion. Optional foreground screen-awake mode is available in Settings.
+Also included: optional HomeKit camera viewing, opt-in calendar and reminders, local audio playback with the system AirPlay picker, and foreground screen-awake mode. Demo mode works without accessories and never initializes the real HomeKit manager.
+
+### A few gestures. That's the manual.
+
+| Do this | Get this |
+| :--- | :--- |
+| Swipe **left / right** | Home → Clock → Photos → Settings |
+| Swipe **up / down inside a widget** | That widget's next or previous item |
+| Tap **empty wallpaper** or the photo wall | Navigation: right side in landscape, bottom in portrait |
+| Tap **temperature arrows** | Adjust a supported, writable thermostat target |
+
+Animations respect Reduce Motion. Each widget stack has its own content; your light switch doesn't turn into a second clock.
 
 ## Get started
 
-### Explore in the simulator
-
-1. Clone the repository and open `HomePad.xcodeproj` in Xcode.
-2. Select the **HomePad** scheme and an installed iPad simulator running iPadOS 17 or later.
-3. Build and run, then choose **Explore demo**.
-
-The app's display name is **HomeViewPad**. The Xcode project, scheme, and source directory retain their original `HomePad` names to keep existing development workflows stable. There are no third-party package dependencies.
-
-### Use your own iPad
-
-1. Copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig`.
-2. Set your own unique bundle identifier and Apple development team in that local file. It is ignored by Git; do not commit signing identities or provisioning profiles.
-3. Connect the iPad, select it in Xcode, and build with the **HomePad** scheme. Your signing account must be able to provision the HomeKit entitlement. Complete Apple's device trust and Developer Mode prompts when required.
-4. Choose **Connect Apple Home**, allow access, and select your home in Settings. Configure accessories and scenes in Apple's Home app first.
-5. Tap the photo widget to choose a single photo, or connect the photo library and select an album. With limited access, the app displays only allowed photos.
-
-Photos rotate every 30 seconds while the Home page or photo wall is visible. Rotation pauses when a panel is open or the app is inactive. Permission-denied, empty, offline, and unavailable states are shown explicitly.
-
-## Privacy and boundaries
-
-No app account, backend, analytics, or tracking SDK. HomeKit, PhotoKit, EventKit, and AirPlay use Apple's public APIs and system permissions. Optional calendar and reminder content is hidden until you opt in.
-
-Album images are requested on demand; iCloud images may download through PhotoKit. A single imported photo is saved inside the app's sandbox. The app never edits your Photos library. Anyone who can see this shared screen can see the personal content you enable. Read the [data lifecycle](docs/ARCHITECTURE.md).
-
-**This is an early personal project.** Simulator tests cover UI and application logic; real accessory compatibility, camera streaming, AirPlay, and long-running wall-display use still need hardware validation. See the [hardware checklist](docs/HARDWARE_CHECKLIST.md).
-
-HomeViewPad is not a home hub. It does not host Siri, access a HomePod microphone, send Intercom messages, or embed FaceTime. It does not create automations or directly edit locks, blinds, or thermostat modes. Existing scenes can include those actions, so scene execution always asks for confirmation. There is no weather service, Apple Music catalog integration, presence detection, or background camera recording.
-
-## Development
-
-Requires macOS and Xcode with an iPadOS simulator runtime. The deployment target is iPadOS 17; the currently validated toolchain is recorded in [VALIDATION.md](docs/VALIDATION.md).
+**Bring Xcode. The app isn't on the App Store yet.**
 
 ```sh
-# List available simulator destinations.
+git clone https://github.com/kuscholar/HomeViewPad.git
+cd HomeViewPad
+open HomePad.xcodeproj
+```
+
+Choose the **HomePad** scheme and an iPad simulator running iPadOS 17 or later. Build, run, and tap **Explore demo**. No third-party packages or home accessories required.
+
+<details>
+<summary><strong>Put it on your own iPad</strong></summary>
+
+1. Copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig`.
+2. Enter your own unique bundle identifier and development team. The local file is ignored by Git.
+3. Connect your iPad and build with the **HomePad** scheme. Your account must support HomeKit provisioning; complete Apple's trust and Developer Mode prompts as needed.
+4. Tap **Connect Apple Home**, grant access, and choose your home. Set up accessories and scenes in Apple's Home app first.
+5. Open the photo widget to choose one photo or connect an album. Limited Photos permission displays only your allowed images.
+
+HomePod mini is optional. Add it to your home using Apple's Home app; select it in the system AirPlay picker when playing a local audio file. For Apple Music, use Apple's Music app and its system audio routing.
+
+The display name is **HomeViewPad**; the project, scheme, and source directory retain their original **HomePad** names. Photos rotate every 30 seconds while Home or the photo wall is visible, and pause while a panel is open or the app is inactive.
+
+</details>
+
+## Your home doesn't need another account
+
+No app account, backend, analytics, or tracking SDK. HomeKit, PhotoKit, EventKit, and AirPlay use public Apple APIs and system permissions. Calendar and reminders stay hidden until you opt in.
+
+Album photos are loaded on demand; iCloud may download them through PhotoKit. A single imported photo is stored in the app sandbox. The app never edits your Photos library. **A shared screen is still a shared screen:** anyone nearby can see the content you choose to display. [Data lifecycle →](docs/ARCHITECTURE.md)
+
+<details>
+<summary><strong>The small print, in normal-sized words</strong></summary>
+
+This is an early independent project, not an Apple product or a complete HomeView replacement. HomeViewPad is not a home hub and cannot access a HomePod microphone, host Siri, send Intercom messages, or embed FaceTime.
+
+It does not create automations or directly edit locks, blinds, or thermostat modes. Existing scenes can contain those actions, so scene execution always asks for confirmation. There is no weather service, Apple Music catalog integration, presence detection, or background camera recording.
+
+Simulator tests cover app logic and interface flows. Real accessory compatibility, camera streaming, AirPlay, and long-running wall-display behavior still require [hardware validation](docs/HARDWARE_CHECKLIST.md). [What we've actually tested →](docs/VALIDATION.md)
+
+</details>
+
+## Make it yours
+
+Bug reports and focused improvements are welcome. Include your iPad model, iPadOS version, reproduction steps, and whether you're using demo mode or a real home. Remove personal photos, home identifiers, and signing information from reports.
+
+<details>
+<summary><strong>Build, test, and record a demo</strong></summary>
+
+Requires macOS and Xcode with an installed iPadOS simulator runtime. See [validated toolchains](docs/VALIDATION.md).
+
+```sh
 xcrun simctl list devices available
-
-# Seed non-personal image fixtures once on your booted test simulator.
 python3 scripts/seed_test_photos.py SIMULATOR_UUID
-
-# Run XCTest and XCUITest.
 sh scripts/test.sh SIMULATOR_UUID
-
-# Record the demo journey and encode a GIF with Apple's media frameworks.
 python3 scripts/record_demo.py SIMULATOR_UUID
 ```
 
-The demo recording script interacts only with the selected simulator. Use a dedicated test simulator containing only photos you have approved for the recording. The synthetic fixtures above remain available for routine tests. Raw video, test results, and logs stay in the ignored `.validation/` directory.
+Use a dedicated simulator containing only approved recording photos; synthetic fixtures are available for routine tests. Raw videos, logs, and results stay in ignored `.validation/`.
 
-The checked-in project can be regenerated with `python3 scripts/generate_project.py` after adding source files. This overwrites generated project settings but preserves the separate, ignored `Config/Local.xcconfig` file. Keep personal signing overrides there.
+Regenerate the project with `python3 scripts/generate_project.py` after adding source files. This overwrites generated settings but preserves the separate, ignored `Config/Local.xcconfig`. Keep personal signing overrides there.
 
-Launch arguments `--demo`, `--state denied|empty|offline|loading`, `--far`, and `--fresh` support reproducible review. `--state` only applies to demo mode.
+Launch arguments: `--demo`, `--state denied|empty|offline|loading`, `--far`, and `--fresh`. `--state` applies only in demo mode.
 
-## Contributing
+Follow [AGENTS.md](AGENTS.md): public APIs, original or licensed assets, no employer code or private services. Actual commits are restricted to after 22:00 on weekdays or anytime on weekends in America/New_York. Check with `python3 scripts/commit_guard.py`; never alter timestamps. Enable the optional hook with `git config core.hooksPath .githooks`.
 
-Bug reports and focused improvements are welcome. Include your iPad model, iPadOS version, reproduction steps, and whether the issue occurs in demo or real-home mode. Remove home names, accessory identifiers, photos, and signing information from reports.
+</details>
 
-Keep the project independent of employer code and private services. Use public APIs and original or appropriately licensed assets. Follow [AGENTS.md](AGENTS.md), including this repository's commit-time policy: actual commits only after 22:00 on weekdays or anytime on weekends in America/New_York. Run `python3 scripts/commit_guard.py` before committing; never alter timestamps. The optional local hook can be enabled with `git config core.hooksPath .githooks`.
+---
 
-## License
+<p align="center"><strong>Give that iPad a room with a view.</strong><br><sub>Built with SwiftUI, spare hardware, and a healthy respect for a good stand.</sub></p>
 
-[MIT](LICENSE). Apple, iPad, HomePod mini, HomeKit, and AirPlay are trademarks of Apple Inc. HomeViewPad is independently developed and is not affiliated with Apple or other similarly named products. See [media notes](docs/MEDIA.md) for the README illustration and demo fixtures.
+[MIT license](LICENSE) · [Architecture](docs/ARCHITECTURE.md) · [Validation](docs/VALIDATION.md) · [Media credits](docs/MEDIA.md)
+
+Apple, Apple HomeView, iPad, HomePod mini, HomeKit, and AirPlay belong to Apple Inc. HomeViewPad is an independent project, not affiliated with or endorsed by Apple or other similarly named products. The DIY comparison describes overlapping use cases, not feature parity.

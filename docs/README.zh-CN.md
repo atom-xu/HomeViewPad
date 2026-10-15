@@ -1,49 +1,128 @@
-# HomeViewPad
+<p align="center">
+  <img src="media/homeviewpad-logo.png" width="128" height="128" alt="HomeViewPad：一扇看见家的玻璃窗">
+</p>
+<h1 align="center">HomeViewPad</h1>
+<p align="center"><strong>想要 HomeView？先翻翻抽屉。</strong><br>一台 iPad，一个 HomePod mini，再加一点重新摆放的智慧。</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/iPadOS-17%2B-145C50?style=flat-square" alt="iPadOS 17 或以上">
+  <img src="https://img.shields.io/badge/Built_with-SwiftUI-145C50?style=flat-square" alt="使用 SwiftUI 构建">
+  <a href="../LICENSE"><img src="https://img.shields.io/badge/License-MIT-D6A64D?style=flat-square" alt="MIT 许可证"></a>
+  <img src="https://img.shields.io/badge/Status-Early_preview-D6A64D?style=flat-square" alt="早期预览版">
+</p>
+<p align="center"><a href="../README.md">English</a> · <a href="#先看它干活">看演示</a> · <a href="#让闲置-ipad-重新上岗">开始使用</a> · <a href="ARCHITECTURE.md">隐私与架构</a></p>
 
-**一眼看见家的状态。**
+---
 
-一个原生 SwiftUI iPad 家庭面板，把 Apple Home 控制、相册和时钟放在安静、简洁的玻璃界面中。
+## 苹果发布了 HomeView。我们重新整理了一下桌面。
 
-[English](../README.md) · [架构与隐私](ARCHITECTURE.md) · [测试记录](VALIDATION.md) · [MIT 许可证](../LICENSE)
+看完 [Apple HomeView](https://www.apple.com/apple-homeview/)，再看看手里的 iPad 和旁边的 HomePod mini，突然觉得：**屏幕有了，音箱有了，好像就差让它们坐一桌。**
 
-![iPad 上的 HomeViewPad 与 HomePod mini 使用场景](media/ipad-homepod-use-case.png)
+HomeViewPad 给闲置 iPad 安排了一份新工作：控制家里的灯和温度，显示一眼就能看清的时钟，再把相册里的照片搬进客厅。把 HomePod mini 放在旁边，或者给它们找个共同的支架，一个 DIY 家庭面板就有了雏形。
 
-*基于实际应用截图生成的 AI 场景示意图，屏幕显示 DEMO 数据，不代表 Apple 官方产品或真实硬件联动验证。*
+**发布会没有。支架可以有。**
 
-## 放在家里的一块屏幕
+<p align="center">
+  <img src="media/ipad-homepod-use-case.png" width="960" alt="运行 HomeViewPad 的 iPad 与 HomePod mini 并排摆在家中">
+  <br><sub>基于实际 App 截图生成的 AI 场景示意图，屏幕使用 DEMO 数据。</sub>
+</p>
 
-将 iPad 放在支架或墙面上，查看温度、调整兼容温控器、控制灯光、运行已有场景；左右滑动切换时钟和照片墙。HomePod mini 可以在旁边独立承担家庭中枢和 Siri 音箱的角色；它不是使用此 App 的必需品，App 也不会与它进行直接配对。音频通过系统 AirPlay 选择器输出。
+### 我们的「高度集成」方案
 
-![应用真实运行的模拟器录屏](media/demo.gif)
+| 准备什么 | 负责什么 |
+| :--- | :--- |
+| **家里已有的 iPad** | 屏幕、触控和电子相框。需要 iPadOS 17 或以上。 |
+| **HomeViewPad** | 玻璃组件、Apple Home 控制、时钟与照片墙。原生 SwiftUI，MIT 许可。 |
+| **可选的 HomePod mini** | 通过 Apple 自身功能提供 Siri、支持的家庭中枢功能和音频播放。 |
+| **一个支架，一个插座** | 工业设计部门。 |
 
-*GIF 来自运行中的 iPad 模拟器，使用确定性的虚拟配件和项目作者提供的三张真实照片，不是真实家庭设备操作。*
+iPad 跑 App，HomePod mini 在 Apple Home 中独立工作。这套组合能覆盖看照片、看时间、点按控家等日常用途；**并不等于拥有 HomeView 的全部功能**。内置 Siri AI、家庭成员识别、集成 FaceTime 和 Intercom，都不会因为我们买了一个支架就自动出现。
 
-## 主要功能
+## 先看它干活
 
-- 全屏玻璃组件：一个大正方形温控组件与五个小组件，灰色／青绿色背景。
-- 每个位置拥有独立组件栈，上下滑动切换，位置指示点仅短暂出现。
-- 接入 HomeKit 家庭、房间、支持的配件和场景；写入后读取确认，温度箭头遵守设备范围与步长。
-- PhotoKit 相册和单张照片选择，照片墙叠加数字时钟，前台每 30 秒轮播。
-- 按需开启兼容摄像头、日历、提醒事项与本地音频播放。
-- 无需设备即可体验 DEMO；演示模式不创建真实 HomeKit 管理器。
+<p align="center">
+  <img src="media/demo.gif" width="880" alt="真实运行演示：温度调整、灯光、组件切换、时钟和三张照片轮播">
+  <br><sub>真实模拟器录屏 · 演示配件 · 作者提供的照片 · 约 90 秒</sub>
+</p>
 
-左右滑动切换主屏、时钟、照片和设置。点击背景空白处显示导航：横屏在右侧，竖屏在底部。点击照片墙也能显示导航。
+调一下温度，关一盏灯，滑过时钟，再让照片占满屏幕。
 
-## 本地运行
+GIF 保留了两次真实相册轮播，间隔仍是 30 秒。它展示实际界面运行，不代表真实 HomeKit 或 HomePod 联动验证。[素材与录制说明 →](MEDIA.md)
 
-1. 用 Xcode 打开 `HomePad.xcodeproj`，选择 **HomePad** scheme 和 iPadOS 17 或以上的 iPad 模拟器。
-2. 运行后选择 **Explore demo**。
-3. 安装到自己的 iPad 时，把 `Config/Local.xcconfig.example` 复制为 `Config/Local.xcconfig`，填写自己的 Bundle ID 与开发团队。此文件已被 Git 忽略。
-4. 使用真实家庭时选择 **Connect Apple Home** 并授权；照片组件中可选择单张图片，或授权访问相册。
+## 不点它的时候，也值得放在那里
 
-对外名称为 HomeViewPad，工程和 scheme 暂时保留 HomePad，避免打断现有构建流程。详细构建、测试和 GIF 录制命令见[英文 README](../README.md#development)。
+| **一眼看见家的状态** | **让相册走出相册** |
+| :--- | :--- |
+| 大号温控组件搭配五个小组件，玻璃材质、暖灰或青绿背景。菜单平时收好，主屏留给内容。 | 选择相册或单张图片，配上大号时钟和渐变切换。那些拍完就没再打开的照片，终于在客厅有了展位。 |
+| **该控制的时候，直接动手** | **少一点界面，多一点生活** |
+| 选择家庭和房间，控制支持的配件，确认后运行场景。温度箭头遵守设备的调节范围和步长。 | 左右切页面，上下切组件。每个组件位置各司其职，轮播指示点只在切换时短暂出现。 |
 
-## 隐私与当前限制
+还包括按需开启的 HomeKit 摄像头、可选日历与提醒事项、本地音频与系统 AirPlay 选择器，以及前台保持屏幕常亮的选项。没有智能家居设备，也可以直接体验 DEMO。
 
-不需要 App 账号或后端，没有分析和跟踪 SDK。家庭、照片、日历和提醒事项使用 Apple 系统权限。相册图片按需读取，iCloud 图片可能通过 PhotoKit 下载；单张导入照片会保存到 App 沙盒。App 不修改系统照片库。
+### 说明书就这几行
 
-这仍是早期个人项目。模拟器通过不等于真实设备验证；HomeKit 配件、摄像头、HomePod/AirPlay 与长期常亮使用仍需按[硬件清单](HARDWARE_CHECKLIST.md)验证。共享屏幕上开启的个人内容，旁人也能看见。
+| 操作 | 效果 |
+| :--- | :--- |
+| **左右滑动** | 主屏 → 时钟 → 照片 → 设置 |
+| **组件内上下滑动** | 切换该位置可用的内容 |
+| **点击背景空白或照片墙** | 显示导航：横屏在右，竖屏在下 |
+| **点击温度箭头** | 调整兼容温控器的可写目标温度 |
 
-本 App 不是家庭中枢，不承载 Siri、不访问 HomePod 麦克风，不支持 Intercom、内嵌 FaceTime 或创建自动化。它是独立项目，与 Apple 及其他相似名称的产品没有关联。
+动画支持系统「减弱动态效果」。灯光组件也不会一滑就变成另一块重复的时钟。
 
-代码采用 MIT 许可证。贡献请遵守 [AGENTS.md](../AGENTS.md)；此仓库实际 Git 提交仅允许在纽约时区工作日 22:00 之后或周末进行，不得修改或伪造时间戳。
+## 让闲置 iPad 重新上岗
+
+**目前需要用 Xcode 构建，尚未上架 App Store。**
+
+```sh
+git clone https://github.com/kuscholar/HomeViewPad.git
+cd HomeViewPad
+open HomePad.xcodeproj
+```
+
+选择 **HomePad** scheme 和 iPadOS 17 或以上的 iPad 模拟器，运行后点击 **Explore demo**。没有第三方包依赖，也不需要先准备配件。
+
+<details>
+<summary><strong>安装到自己的 iPad</strong></summary>
+
+1. 把 `Config/Local.xcconfig.example` 复制为 `Config/Local.xcconfig`。
+2. 填入自己的唯一 Bundle ID 和开发团队。此本地文件已被 Git 忽略。
+3. 连接 iPad，用 **HomePad** scheme 构建。账号需要支持 HomeKit 签名配置，并按 Apple 提示完成设备信任与开发者模式设置。
+4. 选择 **Connect Apple Home**、授权并选择家庭。配件和场景先在 Apple 的「家庭」App 中配置。
+5. 点击照片组件，选择单张图片，或连接照片库并选择相册。有限授权下只显示允许访问的照片。
+
+HomePod mini 是可选项，在 Apple「家庭」App 中独立设置。播放本地音频时可通过系统 AirPlay 选择器选择它；Apple Music 使用系统「音乐」App 和音频路由。
+
+对外名称是 HomeViewPad，工程、scheme 和源文件目录暂时保留 HomePad。照片在主屏或照片墙可见时每 30 秒轮播；打开面板或离开前台时暂停。
+
+</details>
+
+## 家里不用再多一个账号
+
+无需 App 账号、后端或分析 SDK。家庭、照片、日历和提醒事项使用 Apple 公共 API 与系统授权。个人日历和提醒默认隐藏，只有主动开启后才显示。
+
+相册按需读取，iCloud 图片可能经 PhotoKit 下载；单张导入照片保存在 App 沙盒内。App 不修改系统照片库。**共享屏幕上的内容，旁人也能看见。** [数据如何保存与清除 →](ARCHITECTURE.md)
+
+<details>
+<summary><strong>玩笑归玩笑，能力边界写清楚</strong></summary>
+
+这是早期独立项目，不是 Apple 官方产品，也不完整替代 HomeView。App 本身不是家庭中枢，不承载 Siri、不访问 HomePod 麦克风，不支持 Intercom 或内嵌 FaceTime。
+
+目前不创建自动化，也不直接编辑门锁、窗帘或温控器模式。已有场景可能包含这些动作，因此执行场景前始终需要确认。没有天气服务、Apple Music 曲库、人物识别或后台摄像头录制。
+
+模拟器通过不等于硬件验证。真实配件、摄像头、HomePod/AirPlay 和长期常亮仍需要按[硬件清单](HARDWARE_CHECKLIST.md)验证。[实际测试记录 →](VALIDATION.md)
+
+</details>
+
+## 一起把它做得更好
+
+欢迎问题报告和有明确目标的改进。请说明 iPad 型号、系统版本、复现步骤，以及使用 DEMO 还是真实家庭；提交前移除照片、家庭标识和签名信息。
+
+[构建、测试和录屏命令](../README.md#make-it-yours) · [贡献规则](../AGENTS.md)
+
+---
+
+<p align="center"><strong>旧 iPad 的第二份工作，最好离沙发近一点。</strong><br><sub>SwiftUI、家里现成的设备，以及对好支架的一点执念。</sub></p>
+
+[MIT 许可证](../LICENSE) · [架构](ARCHITECTURE.md) · [验证记录](VALIDATION.md) · [素材说明](MEDIA.md)
+
+Apple、Apple HomeView、iPad、HomePod mini、HomeKit 和 AirPlay 属于 Apple Inc.。HomeViewPad 与 Apple 及其他相似名称的产品没有关联或背书关系。文中的 DIY 类比指相近的日常用途，不表示功能完全一致。

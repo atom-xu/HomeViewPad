@@ -10,5 +10,9 @@
     "height": 606,
     "frames": 1119,
     "durationSeconds": 89.52
+  },
+  "homeviewpad-logo.png": {
+    "bytes": 1425886,
+    "sha256": "22498d87ee05fa0f7630bc42b262570cf4964d339db7a2ffc92d96125d659cde"
   }
 }
