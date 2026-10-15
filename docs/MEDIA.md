@@ -14,11 +14,11 @@ The exact generation prompt is preserved in [media/hero-prompt.txt](media/hero-p
 
 ## Recorded demo
 
-`media/demo.gif` is encoded from a real simulator video, not a sequence of generated UI mockups. It shows the deterministic demo home's thermostat, light controls and widget switching, followed by the clock, photo wall and navigation rail.
+`media/demo.gif` is encoded from a real simulator video, not a sequence of generated UI mockups. The 15-second edit starts on the black Overview page, then shows the deterministic demo home's thermostat, light controls and widget switching, followed by the clock, all three photos and the navigation rail.
 
 The updated recording uses three photographs supplied by the project owner specifically for this demo: fish, a museum display, and a city park fountain. They were imported into a newly created, dedicated iPad simulator, so the album contains only those three images. The original JPEG files are not included in the repository or app bundle. Their appearance in this recording does not offer the underlying photographs as reusable MIT-licensed photo assets.
 
-The capture waits for two actual album transitions so all three photographs appear on the photo wall. The app's normal 30-second rotation and crossfade timing are unchanged. The DEMO label refers to the simulated home accessories and clock; PhotoKit reads actual image assets in the simulator.
+The raw capture waits for two actual album transitions so all three photographs appear. Export cuts the long waits and accelerates the remaining actual video to 15 seconds; no UI frames are synthesized. The app's normal 30-second rotation and crossfade timing are unchanged. The DEMO label refers to the simulated home accessories, clock and fixed Philadelphia weather; live weather and Apple location are verified separately. PhotoKit reads actual image assets in the simulator.
 
 To reproduce with your own approved photos, use a dedicated, booted iPad simulator:
 
@@ -29,4 +29,4 @@ python3 scripts/record_demo.py SIMULATOR_UUID
 
 For ordinary tests, `python3 scripts/seed_test_photos.py SIMULATOR_UUID` provides non-personal gradient fixtures instead. Do not mix these with the three-photo showcase if you want the same presentation.
 
-The script records between explicit markers in `testReadmeDemoJourney`, ends recording with SIGINT so the movie is finalized, and converts it using AVFoundation and ImageIO. The GIF loops at 12.5 fps with its longest edge bounded to 880 px. Raw recordings and test evidence remain in ignored `.validation/`. See [validation](VALIDATION.md) and the [media checksum manifest](evidence/media-manifest.json) for the final recording details.
+The script records between explicit markers in `testReadmeDemoJourney`, ends recording with SIGINT so the movie is finalized, and converts it using AVFoundation and ImageIO. Capture markers retain the opening/control sequence, first photo, both real photo transitions and return/navigation. AVFoundation samples those segments into 300 frames at 20 fps for an exactly 15-second looping GIF, with its longest edge bounded to 880 px. `markers.json` beside the raw recording preserves the cut points. Raw recordings and test evidence remain in ignored `.validation/`. See [validation](VALIDATION.md) and the [media checksum manifest](evidence/media-manifest.json) for the final recording details.

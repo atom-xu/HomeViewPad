@@ -4,12 +4,12 @@
     "sha256": "a7ce6f096596937a0a517f2c15e1549afe941a4086b09cdf8e87592084960e39"
   },
   "demo.gif": {
-    "bytes": 9005627,
-    "sha256": "1c1aeeb41b4504099eb57d4707690b9807b1f201fcffd5979209850e29819e3c",
+    "bytes": 7827346,
+    "sha256": "31067b6723f2d054756380aa86e0810b0fcd0e5e2923c2bae3e2a76478b040c0",
     "width": 880,
     "height": 606,
-    "frames": 1119,
-    "durationSeconds": 89.52
+    "frames": 300,
+    "durationSeconds": 15.0
   },
   "homeviewpad-logo.png": {
     "bytes": 1425886,

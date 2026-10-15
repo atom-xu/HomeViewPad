@@ -7,19 +7,21 @@ private let ink = Color(red: 0.36, green: 0.35, blue: 0.39)
 private let lavender = Color(red: 0.78, green: 0.76, blue: 0.88)
 private let paper = Color.white
 
-enum Panel: String, Identifiable { case settings, music, agenda, camera, controls, photos, accessory; var id: String { rawValue } }
+enum Panel: String, Identifiable { case settings, music, agenda, camera, controls, photos, accessory, weather; var id: String { rawValue } }
 struct Dashboard: View {
     @StateObject private var home = HomeStore()
     @StateObject private var personal = PersonalStore()
     @StateObject private var audio = AudioStore()
     @StateObject private var photos = PhotoLibraryStore()
+    @StateObject private var weatherLocation = WeatherLocation()
+    @StateObject private var weather = WeatherStore(demo: ProcessInfo.processInfo.arguments.contains("--demo") || (!ProcessInfo.processInfo.arguments.contains("--fresh") && UserDefaults.standard.string(forKey: "homeMode") == "demo"))
     @Environment(\.scenePhase) private var phase
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @AppStorage("tealWallpaper") private var tealWallpaper = false
     @AppStorage("keepAwake") private var keepAwake = false
     @AppStorage("showPersonal") private var showPersonal = false
     @State private var didConfigure = false
-    @State private var page = DashboardPage.home
+    @State private var page = DashboardPage.overview
     @State private var navigationVisible = false
     @State private var pageForward = true
     @State private var widgetOffsets = Array(repeating: 0, count: 6)
@@ -108,6 +110,7 @@ struct Dashboard: View {
                 if mode == "demo" { home.startDemo() } else if mode == "live" { home.connect() }
             }
             UIApplication.shared.isIdleTimerDisabled = keepAwake && phase == .active
+            weather.setDemo(home.demo)
             if ProcessInfo.processInfo.arguments.contains("--far") { page = .clock }
         }
         .task(id: phase == .active && (page == .home || page == .overview || page == .photos) && panel == nil && photos.slideshow) {
@@ -117,6 +120,14 @@ struct Dashboard: View {
                 photos.next()
             }
         }
+        .task(id: "\(phase == .active)-\(home.demo)-\(page == .overview || panel == .weather)-\(weather.city?.latitude ?? 0)-\(weather.city?.longitude ?? 0)-\(weather.followsLocation)") {
+            guard phase == .active, !home.demo, page == .overview || panel == .weather else { return }
+            while !Task.isCancelled {
+                weatherLocation.update(weather)
+                await weather.refresh()
+                do { try await Task.sleep(for: .seconds(60)) } catch { return }
+            }
+        }
         .onChange(of: keepAwake) { _, value in UIApplication.shared.isIdleTimerDisabled = value && phase == .active }
         .onChange(of: phase) { _, value in
             UIApplication.shared.isIdleTimerDisabled = keepAwake && value == .active
@@ -124,7 +135,7 @@ struct Dashboard: View {
             if value == .active {
                 home.refresh()
                 if showPersonal && !home.demo { Task { await personal.loadCalendar(); await personal.loadReminders() } }
-            } else { personal.clear(); audio.player.pause(); navigationVisible = false }
+            } else { weatherLocation.stop(); personal.clear(); audio.player.pause(); navigationVisible = false }
         }
         .onChange(of: home.status) { _, value in
             if !home.demo && value != .ready && panel == .camera { panel = nil; selectedCamera = nil }
@@ -134,7 +145,7 @@ struct Dashboard: View {
             selectedRoom = "All rooms"; widgetOffsets = Array(repeating: 0, count: 6); selectedAccessoryID = nil; sceneToRun = nil
             if panel == .accessory || panel == .camera { panel = nil; selectedCamera = nil }
         }
-        .onChange(of: home.demo) { _, _ in selectedRoom = "All rooms"; widgetOffsets = Array(repeating: 0, count: 6); personal.clear(); audio.stop() }
+        .onChange(of: home.demo) { _, value in weather.setDemo(value); if value { weatherLocation.stop() }; selectedRoom = "All rooms"; widgetOffsets = Array(repeating: 0, count: 6); personal.clear(); audio.stop() }
     }
     private func activate(_ tile: HomeTile) {
         if tile.kind == .power { home.toggle(tile) }
@@ -173,7 +184,7 @@ struct Dashboard: View {
                 }
             }
         case .overview:
-            OverviewBoard(photos: photos, demoDate: home.demo ? demoDate : nil, side: side, chooseAlbum: { panel = .photos })
+            OverviewBoard(photos: photos, weather: weather, demoDate: home.demo ? demoDate : nil, side: side, chooseAlbum: { panel = .photos }, configureWeather: { panel = .weather })
         case .clock:
             AnalogHomeClock(date: home.demo ? demoDate : nil, numbered: false)
                 .padding(side * 0.07).frame(width: side, height: side)
@@ -423,6 +434,7 @@ struct Dashboard: View {
         case .camera:
             VStack { if home.cameras.count > 1 { Picker("Camera", selection: $selectedCamera) { ForEach(home.cameras, id: \.uniqueIdentifier) { Text($0.name).tag(Optional($0)) } }.padding() }; CameraSheet(accessory: selectedCamera, demo: home.demo).id(selectedCamera?.uniqueIdentifier) }
         case .photos: PhotosPanel(photos: photos)
+        case .weather: WeatherPanel(weather: weather, location: weatherLocation)
         case .accessory:
             if let id = selectedAccessoryID { AccessoryAdjustmentView(home: home, id: id) }
         case .settings: settings
@@ -488,6 +500,7 @@ struct Dashboard: View {
                 Text("Tap the background to show navigation: below in portrait, on the right in landscape. Position dots show the current widget. Swipe left or right to change pages. Swipe up or down inside a widget to change it. VoiceOver offers the same actions.").font(.footnote)
                 Toggle("Keep display awake in foreground", isOn: $keepAwake)
                 Text("Does not replace the lock screen or reopen the app after reboot. Use Guided Access in iPad Settings if appropriate. Far view is manual; no camera tracks you.").font(.footnote)
+                Button("Weather city and units") { panel = .weather }.accessibilityIdentifier("weatherSettings")
                 Button("Photo widget and albums") { panel = .photos }.accessibilityIdentifier("photoSettings")
             }
             Section("Personal content") {

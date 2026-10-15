@@ -4,8 +4,23 @@ final class HomePadUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         XCUIDevice.shared.orientation = .portrait
-        app = XCUIApplication(); app.launchArguments = ["--demo", "--uitesting"]; app.launch()
+        app = XCUIApplication(); app.launchArguments = ["--demo", "--uitesting"]; launchHome()
         XCTAssertTrue(app.staticTexts["demoBadge"].waitForExistence(timeout: 10))
+    }
+    func dismissLocationPrompt() {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let deny = springboard.buttons.matching(NSPredicate(format: "label BEGINSWITH[c] %@", "Don")).firstMatch
+        if deny.waitForExistence(timeout: 2) { deny.tap() }
+    }
+    func launchHome() {
+        app.launch()
+        if !app.launchArguments.contains("--demo") { dismissLocationPrompt() }
+        XCTAssertTrue(app.descendants(matching: .any)["overviewBoard"].waitForExistence(timeout: 5))
+        app.swipeLeft()
+        expectation(for: NSPredicate { _, _ in
+            !self.app.descendants(matching: .any)["overviewBoard"].exists && self.app.buttons["photoWidget"].isHittable
+        }, evaluatedWith: nil)
+        waitForExpectations(timeout: 5)
     }
     func shot(_ name: String) {
         Thread.sleep(forTimeInterval: 1)
@@ -30,7 +45,7 @@ final class HomePadUITests: XCTestCase {
     // A reproducible capture journey using only demo accessories and seeded simulator photos.
     // scripts/record_demo.py records between the READY and DONE markers.
     func testReadmeDemoJourney() {
-        app.resetAuthorizationStatus(for: .photos); app.launch()
+        app.resetAuthorizationStatus(for: .photos); launchHome()
         app.buttons["photoWidget"].tap()
         XCTAssertTrue(app.buttons["connectPhotos"].waitForExistence(timeout: 5)); app.buttons["connectPhotos"].tap()
         let allow = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Allow Full Access"]
@@ -40,8 +55,11 @@ final class HomePadUITests: XCTestCase {
         XCUIDevice.shared.orientation = .landscapeLeft
         expectation(for: NSPredicate { _, _ in self.app.frame.width > self.app.frame.height }, evaluatedWith: nil)
         waitForExpectations(timeout: 8)
+        tab(0)
         print("HOMEVIEWPAD_DEMO_READY")
-        Thread.sleep(forTimeInterval: 4)
+        Thread.sleep(forTimeInterval: 3)
+        app.swipeLeft()
+        XCTAssertTrue(app.buttons["temperatureUp"].waitForExistence(timeout: 3))
         app.buttons["temperatureUp"].tap()
         XCTAssertEqual(app.staticTexts["temperatureValue"].label, "22.5")
         Thread.sleep(forTimeInterval: 1)
@@ -54,11 +72,9 @@ final class HomePadUITests: XCTestCase {
         Thread.sleep(forTimeInterval: 1)
         app.buttons["accessory-Reading lamp"].swipeDown()
         app.descendants(matching: .any)["climateWidget"].swipeLeft()
-        XCTAssertTrue(app.descendants(matching: .any)["overviewBoard"].waitForExistence(timeout: 3))
-        shot("Black overview")
-        app.swipeLeft()
         XCTAssertTrue(app.descendants(matching: .any)["fullClock"].waitForExistence(timeout: 3))
         Thread.sleep(forTimeInterval: 2)
+        print("HOMEVIEWPAD_DEMO_PHOTOS")
         app.swipeLeft()
         XCTAssertTrue(app.staticTexts["photoWallClock"].waitForExistence(timeout: 3))
         let wall = app.descendants(matching: .any)["photoWall"]
@@ -68,10 +84,13 @@ final class HomePadUITests: XCTestCase {
             let previousPhoto = wall.value as? String
             expectation(for: NSPredicate { _, _ in wall.value as? String != previousPhoto }, evaluatedWith: nil)
             waitForExpectations(timeout: 36)
+            print("HOMEVIEWPAD_DEMO_PHOTO_\(index)")
             shot("README photo wall \(index)")
         }
-        Thread.sleep(forTimeInterval: 3)
+        Thread.sleep(forTimeInterval: 2)
+        print("HOMEVIEWPAD_DEMO_RETURN")
         app.swipeRight(); app.swipeRight(); app.swipeRight()
+        XCTAssertTrue(app.descendants(matching: .any)["overviewBoard"].waitForExistence(timeout: 3))
         showNavigation(); Thread.sleep(forTimeInterval: 2)
         app.buttons["hideNavigation"].tap()
         Thread.sleep(forTimeInterval: 2)
@@ -144,7 +163,7 @@ final class HomePadUITests: XCTestCase {
         XCTAssertFalse(app.buttons["tab-0"].exists)
     }
     func testBlackOverviewLayoutAndLiveWeatherDisclosure() {
-        tab(1)
+        tab(0)
         let date = app.descendants(matching: .any)["overviewDate"]
         let clock = app.descendants(matching: .any)["overviewClock"]
         let album = app.buttons["overviewAlbum"]
@@ -182,16 +201,18 @@ final class HomePadUITests: XCTestCase {
         assertGrid(); shot("Black overview landscape")
         showNavigation(); XCTAssertTrue(app.descendants(matching: .any)["sideNavigation"].exists)
         app.buttons["hideNavigation"].tap()
-        app.swipeRight(); XCTAssertTrue(app.buttons["photoWidget"].waitForExistence(timeout: 3))
-        app.swipeLeft(); XCTAssertTrue(album.waitForExistence(timeout: 3))
+        app.swipeRight(); XCTAssertTrue(album.exists)
+        app.swipeLeft(); XCTAssertTrue(app.buttons["photoWidget"].waitForExistence(timeout: 3))
         app.swipeLeft(); XCTAssertTrue(app.descendants(matching: .any)["fullClock"].waitForExistence(timeout: 3))
-        app.terminate(); app.launchArguments = ["--fresh", "--uitesting"]; app.launch()
-        XCTAssertTrue(app.buttons["connectHome"].waitForExistence(timeout: 5))
-        tab(1)
-        XCTAssertTrue(weather.label.contains("Not connected"))
-        XCTAssertFalse(weather.label.contains("54°"))
-        XCTAssertFalse(app.staticTexts["demoBadge"].exists)
-        shot("Black overview live unavailable weather")
+        tab(0); assertGrid()
+        expectation(for: NSPredicate(format: "hittable == true"), evaluatedWith: weather); waitForExpectations(timeout: 5)
+        weather.tap()
+        XCTAssertTrue(app.staticTexts["weatherDemoNotice"].waitForExistence(timeout: 3))
+        XCTAssertFalse(app.textFields["weatherCitySearch"].exists)
+        closePanel()
+        app.terminate(); app.launch()
+        XCTAssertTrue(album.waitForExistence(timeout: 5)) // Overview is the launch page.
+        XCTAssertFalse(app.buttons["photoWidget"].exists)
     }
     func testHorizontalPagingAndIndependentWidgetSwipes() {
         let photo = app.buttons["photoWidget"]
@@ -214,9 +235,6 @@ final class HomePadUITests: XCTestCase {
         app.buttons["accessory-Reading lamp"].swipeDown()
         XCTAssertTrue(lamp.waitForExistence(timeout: 3)); XCTAssertTrue(lamp.label.contains("On"))
         app.descendants(matching: .any)["climateWidget"].swipeLeft()
-        XCTAssertTrue(app.descendants(matching: .any)["overviewBoard"].waitForExistence(timeout: 3))
-        shot("Black overview")
-        app.swipeLeft()
         XCTAssertTrue(app.descendants(matching: .any)["fullClock"].waitForExistence(timeout: 3))
         shot("Clock page")
         app.swipeLeft(); XCTAssertTrue(app.staticTexts["photoWallClock"].waitForExistence(timeout: 3))
@@ -224,7 +242,7 @@ final class HomePadUITests: XCTestCase {
         app.swipeLeft(); XCTAssertTrue(app.buttons["Disconnect home"].waitForExistence(timeout: 3))
         XCTAssertFalse(app.buttons["Start timer"].exists)
         app.swipeRight(); XCTAssertTrue(app.staticTexts["photoWallClock"].waitForExistence(timeout: 3))
-        tab(0); XCTAssertTrue(photo.exists); XCTAssertTrue(lamp.label.contains("On"))
+        tab(1); XCTAssertTrue(photo.exists); XCTAssertTrue(lamp.label.contains("On"))
         XCTAssertFalse(app.buttons["tab-0"].exists)
     }
     func testThermostatArrowsAndTransientIndicators() {
@@ -270,8 +288,51 @@ final class HomePadUITests: XCTestCase {
         XCTAssertTrue(app.buttons["connectHome"].exists); XCTAssertFalse(app.staticTexts["demoBadge"].exists); shot("Real onboarding")
         app.buttons["exploreDemo"].tap(); XCTAssertTrue(app.staticTexts["demoBadge"].exists)
     }
-    func testRealConnectionGracefulWithoutDevices() {
+    func testLiveWeatherDefaultCitySearchAndRestore() {
+        app.terminate(); app.launchArguments = ["--fresh", "--uitesting", "-weatherFollowsLocation", "YES"]; app.launch()
+        dismissLocationPrompt()
+        let weather = app.buttons["overviewWeather"]
+        XCTAssertTrue(weather.waitForExistence(timeout: 5)); weather.tap()
+        XCTAssertTrue(app.textFields["weatherCitySearch"].waitForExistence(timeout: 5))
+        app.buttons["removeWeatherCity"].tap() // Explicitly choose the Philadelphia fallback.
+        XCTAssertEqual(app.staticTexts["weatherSelectedCity"].label, "Philadelphia")
+        XCTAssertTrue(app.staticTexts["weatherLiveReading"].waitForExistence(timeout: 30))
+        XCTAssertFalse(app.staticTexts["demoBadge"].exists)
+        shot("Live Philadelphia weather")
+        let search = app.textFields["weatherCitySearch"]
+        search.tap(); search.typeText("New York\n")
+        XCTAssertEqual(search.value as? String, "New York")
+        app.collectionViews.firstMatch.swipeUp()
+        shot("Weather city search")
+        let result = app.buttons["weatherCity-5128581"]
+        XCTAssertTrue(result.waitForExistence(timeout: 20)); result.tap()
+        XCTAssertTrue(app.staticTexts["weatherLiveReading"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.staticTexts["weatherSelectedCity"].label.contains("New York"))
+        closePanel(); shot("Live weather overview")
         app.terminate(); app.launchArguments = ["--fresh", "--uitesting"]; app.launch()
+        XCTAssertTrue(weather.waitForExistence(timeout: 5)); weather.tap()
+        XCTAssertTrue(app.staticTexts["weatherSelectedCity"].label.contains("New York"))
+        app.buttons["removeWeatherCity"].tap() // Leave the simulator on the requested default city.
+        closePanel()
+    }
+    func testLocationPermissionUsesDetectedCity() {
+        app.terminate(); app.resetAuthorizationStatus(for: .location)
+        app.launchArguments = ["--fresh", "--uitesting", "-weatherFollowsLocation", "YES"]; app.launch()
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let allow = springboard.buttons["Allow While Using App"]
+        XCTAssertTrue(allow.waitForExistence(timeout: 8)); allow.tap()
+        let weather = app.buttons["overviewWeather"]
+        XCTAssertTrue(weather.waitForExistence(timeout: 5)); weather.tap()
+        let status = app.staticTexts["weatherLocationStatus"]
+        expectation(for: NSPredicate { _, _ in status.label.contains("Using your current city") }, evaluatedWith: nil)
+        waitForExpectations(timeout: 40)
+        XCTAssertTrue(app.staticTexts["weatherLiveReading"].waitForExistence(timeout: 30))
+        XCTAssertFalse(app.staticTexts["demoBadge"].exists)
+        shot("Apple location and live weather")
+        app.buttons["removeWeatherCity"].tap(); closePanel()
+    }
+    func testRealConnectionGracefulWithoutDevices() {
+        app.terminate(); app.launchArguments = ["--fresh", "--uitesting"]; launchHome()
         XCTAssertTrue(app.buttons["connectHome"].waitForExistence(timeout: 5)); app.buttons["connectHome"].tap()
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         if springboard.buttons["Don’t Allow"].waitForExistence(timeout: 3) { springboard.buttons["Don’t Allow"].tap() }
@@ -291,11 +352,11 @@ final class HomePadUITests: XCTestCase {
         panel("musicCard"); app.buttons["Choose audio file"].tap()
         XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 5)); shot("Audio file picker"); app.buttons["Cancel"].firstMatch.tap()
         XCTAssertTrue(app.buttons["Choose audio file"].waitForExistence(timeout: 5))
-        closePanel(); tab(0); XCTAssertTrue(app.buttons["photoWidget"].exists)
+        closePanel(); tab(1); XCTAssertTrue(app.buttons["photoWidget"].exists)
     }
     func testPhotoLibraryDenialKeepsSinglePhotoAvailable() {
         app.resetAuthorizationStatus(for: .photos)
-        app.launch() // Resetting an existing Photos grant terminates the app.
+        launchHome() // Resetting an existing Photos grant terminates the app.
         app.buttons["photoWidget"].tap()
         XCTAssertTrue(app.buttons["connectPhotos"].waitForExistence(timeout: 5)); app.buttons["connectPhotos"].tap()
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
@@ -308,7 +369,7 @@ final class HomePadUITests: XCTestCase {
     func testPhotoLibraryAlbumDisplayRotationRestoreAndRemoval() {
         app.launchArguments += ["-photoSlideshow", "YES"]
         app.resetAuthorizationStatus(for: .photos)
-        app.launch()
+        launchHome()
         app.buttons["photoWidget"].tap()
         XCTAssertTrue(app.buttons["connectPhotos"].waitForExistence(timeout: 5)); app.buttons["connectPhotos"].tap()
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
@@ -323,7 +384,7 @@ final class HomePadUITests: XCTestCase {
         XCTAssertTrue(app.buttons["nextPhoto"].isEnabled); app.buttons["nextPhoto"].tap()
         expectation(for: NSPredicate { _, _ in position.label != initial }, evaluatedWith: nil); waitForExpectations(timeout: 5)
         closePanel(); shot("Dashboard with library photo")
-        tab(1)
+        tab(0)
         let overviewAlbum = app.buttons["overviewAlbum"]
         XCTAssertFalse((overviewAlbum.value as? String ?? "").contains("No photo"))
         let overviewPosition = overviewAlbum.value as? String
@@ -351,11 +412,11 @@ final class HomePadUITests: XCTestCase {
         app.buttons["hideNavigation"].tap()
         app.swipeLeft(); XCTAssertTrue(app.buttons["Disconnect home"].waitForExistence(timeout: 3))
         app.swipeRight(); XCTAssertTrue(app.staticTexts["photoWallClock"].waitForExistence(timeout: 3))
-        app.terminate(); app.launch()
+        app.terminate(); launchHome()
         app.buttons["photoWidget"].tap()
         XCTAssertTrue(app.images["photoPreview"].waitForExistence(timeout: 10))
         // Revoking permission must not restore the cached album image on relaunch.
-        app.resetAuthorizationStatus(for: .photos); app.launch()
+        app.resetAuthorizationStatus(for: .photos); launchHome()
         app.buttons["photoWidget"].tap()
         XCTAssertTrue(app.buttons["connectPhotos"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.images["photoPreview"].exists)
@@ -373,7 +434,7 @@ final class HomePadUITests: XCTestCase {
         XCTAssertTrue(app.buttons.matching(identifier: "accessory-Pendant lights").firstMatch.exists)
     }
     func testLargeTextLayout() {
-        app.terminate(); app.launchArguments = ["--demo", "--uitesting", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]; app.launch()
+        app.terminate(); app.launchArguments = ["--demo", "--uitesting", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]; launchHome()
         XCTAssertTrue(app.staticTexts["demoBadge"].waitForExistence(timeout: 5)); shot("Accessibility large text")
         reveal(app.buttons["photoWidget"]); XCTAssertTrue(app.buttons["photoWidget"].isHittable)
         tab(4); XCTAssertTrue(app.buttons["Disconnect home"].exists)
@@ -383,8 +444,8 @@ final class HomePadUITests: XCTestCase {
         let teal = app.switches["tealWallpaper"]
         if teal.switches.firstMatch.exists { teal.switches.firstMatch.tap() } else { teal.tap() }
         XCTAssertEqual(teal.value as? String, "1")
-        tab(0); shot("Teal dashboard")
+        tab(1); shot("Teal dashboard")
         tab(4); XCTAssertEqual(app.switches["tealWallpaper"].value as? String, "1")
-        tab(0); XCTAssertTrue(app.descendants(matching: .any)["climateWidget"].exists)
+        tab(1); XCTAssertTrue(app.descendants(matching: .any)["climateWidget"].exists)
     }
 }

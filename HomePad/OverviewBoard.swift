@@ -3,9 +3,11 @@ import SwiftUI
 /// Four fixed, opaque widgets. PhotoKit is shared with Home and the photo wall.
 struct OverviewBoard: View {
     @ObservedObject var photos: PhotoLibraryStore
+    @ObservedObject var weather: WeatherStore
     let demoDate: Date?
     let side: CGFloat
     let chooseAlbum: () -> Void
+    let configureWeather: () -> Void
     private let yellow = Color(red: 1, green: 0.77, blue: 0.16)
 
     var body: some View {
@@ -88,28 +90,30 @@ struct OverviewBoard: View {
     }
 
     private func weatherWidget(size: CGFloat) -> some View {
-        // No weather provider is configured. Fixtures must never escape demo mode.
         let demo = demoDate != nil
-        return VStack(alignment: .leading, spacing: size * 0.015) {
-            HStack(spacing: size * 0.02) {
-                Text(demo ? "San Francisco" : "Weather")
-                if demo { Image(systemName: "location.fill").font(.system(size: size * 0.038)) }
-            }.font(.system(size: size * 0.063, weight: .medium)).foregroundStyle(yellow)
-                .lineLimit(1).minimumScaleFactor(0.7)
-            Text(demo ? "54°" : "—°")
-                .font(.system(size: size * 0.40, weight: .light)).tracking(-size * 0.02)
-                .lineLimit(1).minimumScaleFactor(0.65)
-            Image(systemName: demo ? "cloud.sun.fill" : "cloud")
-                .symbolRenderingMode(.palette).foregroundStyle(.white, yellow)
-                .font(.system(size: size * 0.085))
-            Text(demo ? "Partly Cloudy" : "Not connected")
-                .font(.system(size: size * 0.058)).lineLimit(1).minimumScaleFactor(0.7)
-            Text(demo ? "H:57° L:49°" : "No weather source")
-                .font(.system(size: size * 0.052)).foregroundStyle(.white.opacity(0.75))
-                .lineLimit(1).minimumScaleFactor(0.7)
-        }.frame(width: size * 0.86, alignment: .leading)
-            .frame(width: size, height: size).background(.black)
-            .accessibilityElement(children: .combine)
-            .accessibilityIdentifier("overviewWeather")
+        let reading = demo ? WeatherReading.demo : weather.reading
+        let fahrenheit = demo ? true : weather.fahrenheit
+        let status = demo ? "Partly Cloudy" : weather.failed ? (reading == nil ? "Unavailable" : "Offline · cached") : weather.stale() ? "Outdated · tap to refresh" : reading?.condition ?? (weather.city == nil ? "Choose a city" : "Loading…")
+        return Button(action: configureWeather) {
+            VStack(alignment: .leading, spacing: size * 0.015) {
+                Text(demo ? "Philadelphia" : weather.city?.name ?? "Weather")
+                    .font(.system(size: size * 0.063, weight: .medium)).foregroundStyle(yellow)
+                    .lineLimit(1).minimumScaleFactor(0.7)
+                Text(reading.map { $0.degrees($0.temperature, fahrenheit: fahrenheit) } ?? "—°")
+                    .font(.system(size: size * 0.40, weight: .light)).tracking(-size * 0.02)
+                    .lineLimit(1).minimumScaleFactor(0.65)
+                Image(systemName: reading?.symbol ?? "cloud")
+                    .symbolRenderingMode(.palette).foregroundStyle(.white, yellow)
+                    .font(.system(size: size * 0.085))
+                Text(status).font(.system(size: size * 0.058)).lineLimit(1).minimumScaleFactor(0.6)
+                Text(reading.map { "H:\($0.degrees($0.high, fahrenheit: fahrenheit)) L:\($0.degrees($0.low, fahrenheit: fahrenheit))" } ?? "Tap to configure")
+                    .font(.system(size: size * 0.052)).foregroundStyle(.white.opacity(0.75))
+                    .lineLimit(1).minimumScaleFactor(0.7)
+                if !demo, reading != nil {
+                    Text("Open-Meteo · \(fahrenheit ? "°F" : "°C")").font(.system(size: size * 0.035)).foregroundStyle(.gray)
+                }
+            }.frame(width: size * 0.86, alignment: .leading)
+                .frame(width: size, height: size).background(.black).contentShape(Rectangle())
+        }.accessibilityElement(children: .combine).accessibilityIdentifier("overviewWeather")
     }
 }

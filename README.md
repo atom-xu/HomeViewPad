@@ -48,7 +48,7 @@ The iPad runs the app. HomePod mini works independently in your Apple Home setup
 
 Temperature up. Lights off. A different widget. Then your photos get the whole screen.
 
-The recording includes two real album transitions at the normal 30-second interval. It demonstrates the running interface; real HomeKit and HomePod behavior require separate hardware checks. [Recording details →](docs/MEDIA.md)
+A 15-second edit of a fresh simulator recording, with faster playback and the long slideshow waits cut out. All three supplied photos appear; the app itself still rotates albums every 30 seconds. It demonstrates the running interface; real HomeKit and HomePod behavior require separate hardware checks. [Recording details →](docs/MEDIA.md)
 
 ## A useful screen, even when nobody is tapping it
 
@@ -58,7 +58,7 @@ The recording includes two real album transitions at the normal 30-second interv
 | **Controls with a purpose** | **A little less interface** |
 | Select a home, filter rooms, control supported accessories, and confirm before running a scene. Thermostat arrows follow the device's supported steps and limits. | Swipe between pages and through distinct widget stacks. Position dots appear during switching, then get out of the way. |
 
-Prefer lights out? **Overview** puts just four square widgets on pure black: date, a numbered analog clock, your album, and weather. White type, yellow accents, no glass. Weather is a labeled demo fixture for now; live mode shows an unavailable state until a weather source is added.
+Prefer lights out? **Overview** puts just four square widgets on pure black: date, a numbered analog clock, your album, and weather. White type, yellow accents, no glass. It is now the first page. Live weather comes from [Open-Meteo](https://open-meteo.com/): Philadelphia by default, your city after Apple Location Services permission, or a city you choose. Tap weather to search, refresh, or switch °C/°F. Demo weather stays fixed and labeled.
 
 Also included: optional HomeKit camera viewing, opt-in calendar and reminders, local audio playback with the system AirPlay picker, and foreground screen-awake mode. Demo mode works without accessories and never initializes the real HomeKit manager.
 
@@ -66,7 +66,7 @@ Also included: optional HomeKit camera viewing, opt-in calendar and reminders, l
 
 | Do this | Get this |
 | :--- | :--- |
-| Swipe **left / right** | Home → Overview → Clock → Photos → Settings |
+| Swipe **left / right** | Overview → Home → Clock → Photos → Settings |
 | Swipe **up / down inside a widget** | That widget's next or previous item |
 | Tap **empty wallpaper** or the photo wall | Navigation: right side in landscape, bottom in portrait |
 | Tap **temperature arrows** | Adjust a supported, writable thermostat target |
@@ -83,7 +83,7 @@ cd HomeViewPad
 open HomePad.xcodeproj
 ```
 
-Choose the **HomePad** scheme and an iPad simulator running iPadOS 17 or later. Build, run, and tap **Explore demo**. No third-party packages or home accessories required.
+Choose the **HomePad** scheme and an iPad simulator running iPadOS 17 or later. Build, run, swipe left to **Home**, and tap **Explore demo**. No third-party packages or home accessories required.
 
 <details>
 <summary><strong>Put it on your own iPad</strong></summary>
@@ -91,7 +91,7 @@ Choose the **HomePad** scheme and an iPad simulator running iPadOS 17 or later. 
 1. Copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig`.
 2. Enter your own unique bundle identifier and development team. The local file is ignored by Git.
 3. Connect your iPad and build with the **HomePad** scheme. Your account must support HomeKit provisioning; complete Apple's trust and Developer Mode prompts as needed.
-4. Tap **Connect Apple Home**, grant access, and choose your home. Set up accessories and scenes in Apple's Home app first.
+4. Swipe left to **Home**, tap **Connect Apple Home**, grant access, and choose your home. Set up accessories and scenes in Apple's Home app first.
 5. Open the photo widget to choose one photo or connect an album. Limited Photos permission displays only your allowed images.
 
 HomePod mini is optional. Add it to your home using Apple's Home app; select it in the system AirPlay picker when playing a local audio file. For Apple Music, use Apple's Music app and its system audio routing.
@@ -102,7 +102,9 @@ The display name is **HomeViewPad**; the project, scheme, and source directory r
 
 ## Your home doesn't need another account
 
-No app account, backend, analytics, or tracking SDK. HomeKit, PhotoKit, EventKit, and AirPlay use public Apple APIs and system permissions. Calendar and reminders stay hidden until you opt in.
+No app account, app-owned backend, analytics, or tracking SDK. HomeKit, PhotoKit, EventKit, and AirPlay use public Apple APIs and system permissions. Calendar and reminders stay hidden until you opt in.
+
+Weather sends city searches and coordinates to Open-Meteo. Automatic location uses Apple's foreground permission and city lookup; weather coordinates are rounded to about 1 km and automatically detected coordinates are not saved to disk. Manual city and unit choices are saved locally. Offline readings are labeled as cached. The free weather endpoint is for personal/non-commercial use; a commercial release needs a suitable [Open-Meteo plan](https://open-meteo.com/en/pricing) or another licensed provider.
 
 Album photos are loaded on demand; iCloud may download them through PhotoKit. A single imported photo is stored in the app sandbox. The app never edits your Photos library. **A shared screen is still a shared screen:** anyone nearby can see the content you choose to display. [Data lifecycle →](docs/ARCHITECTURE.md)
 
@@ -111,7 +113,7 @@ Album photos are loaded on demand; iCloud may download them through PhotoKit. A 
 
 This is an early independent project, not an Apple product or a complete HomeView replacement. HomeViewPad is not a home hub and cannot access a HomePod microphone, host Siri, send Intercom messages, or embed FaceTime.
 
-It does not create automations or directly edit locks, blinds, or thermostat modes. Existing scenes can contain those actions, so scene execution always asks for confirmation. There is no weather service, Apple Music catalog integration, presence detection, or background camera recording.
+It does not create automations or directly edit locks, blinds, or thermostat modes. Existing scenes can contain those actions, so scene execution always asks for confirmation. There is no Apple Music catalog integration, presence detection, or background camera recording.
 
 Simulator tests cover app logic and interface flows. Real accessory compatibility, camera streaming, AirPlay, and long-running wall-display behavior still require [hardware validation](docs/HARDWARE_CHECKLIST.md). [What we've actually tested →](docs/VALIDATION.md)
 

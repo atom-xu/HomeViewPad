@@ -118,11 +118,11 @@ extension HomePadTests {
         XCTAssertEqual(DashboardSwipe.classify(x: -15, y: 100), .down)
     }
     func testPageEdgesDoNotWrapUnexpectedly() {
-        XCTAssertEqual(DashboardPage.home.adjacent(forward: false), .home)
+        XCTAssertEqual(DashboardPage.overview.adjacent(forward: false), .overview)
         XCTAssertEqual(DashboardPage.settings.adjacent(forward: true), .settings)
-        XCTAssertEqual(DashboardPage.home.adjacent(forward: true), .overview)
-        XCTAssertEqual(DashboardPage.overview.adjacent(forward: true), .clock)
-        XCTAssertEqual(DashboardPage.clock.adjacent(forward: false), .overview)
+        XCTAssertEqual(DashboardPage.home.adjacent(forward: false), .overview)
+        XCTAssertEqual(DashboardPage.overview.adjacent(forward: true), .home)
+        XCTAssertEqual(DashboardPage.clock.adjacent(forward: false), .home)
         XCTAssertEqual(DashboardPage.settings.adjacent(forward: false), .photos)
         XCTAssertEqual(DashboardPage(rawValue: 3), .photos)
     }
