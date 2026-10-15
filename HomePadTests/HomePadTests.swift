@@ -120,9 +120,11 @@ extension HomePadTests {
     func testPageEdgesDoNotWrapUnexpectedly() {
         XCTAssertEqual(DashboardPage.home.adjacent(forward: false), .home)
         XCTAssertEqual(DashboardPage.settings.adjacent(forward: true), .settings)
-        XCTAssertEqual(DashboardPage.home.adjacent(forward: true), .clock)
+        XCTAssertEqual(DashboardPage.home.adjacent(forward: true), .overview)
+        XCTAssertEqual(DashboardPage.overview.adjacent(forward: true), .clock)
+        XCTAssertEqual(DashboardPage.clock.adjacent(forward: false), .overview)
         XCTAssertEqual(DashboardPage.settings.adjacent(forward: false), .photos)
-        XCTAssertEqual(DashboardPage(rawValue: 2), .photos)
+        XCTAssertEqual(DashboardPage(rawValue: 3), .photos)
     }
     func testCarouselWindowIncludesSelectionWithoutOverflowingTile() {
         XCTAssertEqual(CarouselPosition.visibleIndices(selection: 0, count: 0), [])

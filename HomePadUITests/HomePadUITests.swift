@@ -54,6 +54,9 @@ final class HomePadUITests: XCTestCase {
         Thread.sleep(forTimeInterval: 1)
         app.buttons["accessory-Reading lamp"].swipeDown()
         app.descendants(matching: .any)["climateWidget"].swipeLeft()
+        XCTAssertTrue(app.descendants(matching: .any)["overviewBoard"].waitForExistence(timeout: 3))
+        shot("Black overview")
+        app.swipeLeft()
         XCTAssertTrue(app.descendants(matching: .any)["fullClock"].waitForExistence(timeout: 3))
         Thread.sleep(forTimeInterval: 2)
         app.swipeLeft()
@@ -68,7 +71,7 @@ final class HomePadUITests: XCTestCase {
             shot("README photo wall \(index)")
         }
         Thread.sleep(forTimeInterval: 3)
-        app.swipeRight(); app.swipeRight()
+        app.swipeRight(); app.swipeRight(); app.swipeRight()
         showNavigation(); Thread.sleep(forTimeInterval: 2)
         app.buttons["hideNavigation"].tap()
         Thread.sleep(forTimeInterval: 2)
@@ -130,7 +133,7 @@ final class HomePadUITests: XCTestCase {
         XCTAssertTrue(app.descendants(matching: .any)["bottomNavigation"].exists)
         XCTAssertFalse(app.descendants(matching: .any)["sideNavigation"].exists)
         XCTAssertGreaterThan(app.buttons["tab-0"].frame.minY, app.frame.height * 0.8)
-        XCTAssertEqual(app.buttons["tab-0"].frame.midY, app.buttons["tab-3"].frame.midY, accuracy: 2)
+        XCTAssertEqual(app.buttons["tab-0"].frame.midY, app.buttons["tab-4"].frame.midY, accuracy: 2)
         shot("Portrait bottom navigation")
         XCUIDevice.shared.orientation = .landscapeLeft
         expectation(for: NSPredicate { _, _ in self.app.frame.width > self.app.frame.height }, evaluatedWith: nil); waitForExpectations(timeout: 8)
@@ -140,8 +143,61 @@ final class HomePadUITests: XCTestCase {
         app.buttons["hideNavigation"].tap()
         XCTAssertFalse(app.buttons["tab-0"].exists)
     }
+    func testBlackOverviewLayoutAndLiveWeatherDisclosure() {
+        tab(1)
+        let date = app.descendants(matching: .any)["overviewDate"]
+        let clock = app.descendants(matching: .any)["overviewClock"]
+        let album = app.buttons["overviewAlbum"]
+        let weather = app.descendants(matching: .any)["overviewWeather"]
+        func assertGrid() {
+            // SwiftUI can expose intermediate accessibility frames during a page transition.
+            expectation(for: NSPredicate { _, _ in
+                [date, clock, album, weather].allSatisfy { widget in
+                    guard widget.exists else { return false }
+                    let frame = widget.frame
+                    return frame.width > 0 && abs(frame.width - frame.height) < 2
+                }
+            }, evaluatedWith: nil)
+            waitForExpectations(timeout: 5)
+            for widget in [date, clock, album, weather] {
+                XCTAssertTrue(widget.exists)
+                let frame = widget.frame
+                XCTAssertEqual(frame.width, frame.height, accuracy: 2)
+            }
+            XCTAssertEqual(date.frame.minY, clock.frame.minY, accuracy: 2)
+            XCTAssertEqual(date.frame.minX, album.frame.minX, accuracy: 2)
+            XCTAssertEqual(clock.frame.minX, weather.frame.minX, accuracy: 2)
+            XCTAssertEqual(album.frame.minY, weather.frame.minY, accuracy: 2)
+            XCTAssertLessThan(date.frame.maxY, album.frame.minY)
+            XCTAssertFalse(app.buttons["tab-0"].exists)
+            XCTAssertFalse(app.navigationBars.firstMatch.exists)
+        }
+        assertGrid(); XCTAssertTrue(weather.label.contains("54°"))
+        XCTAssertTrue(app.staticTexts["demoBadge"].exists)
+        shot("Black overview portrait")
+        album.tap(); XCTAssertTrue(app.buttons["singlePhotoPicker"].waitForExistence(timeout: 3)); closePanel()
+        XCUIDevice.shared.orientation = .landscapeLeft
+        expectation(for: NSPredicate { _, _ in self.app.frame.width > self.app.frame.height }, evaluatedWith: nil)
+        waitForExpectations(timeout: 8)
+        assertGrid(); shot("Black overview landscape")
+        showNavigation(); XCTAssertTrue(app.descendants(matching: .any)["sideNavigation"].exists)
+        app.buttons["hideNavigation"].tap()
+        app.swipeRight(); XCTAssertTrue(app.buttons["photoWidget"].waitForExistence(timeout: 3))
+        app.swipeLeft(); XCTAssertTrue(album.waitForExistence(timeout: 3))
+        app.swipeLeft(); XCTAssertTrue(app.descendants(matching: .any)["fullClock"].waitForExistence(timeout: 3))
+        app.terminate(); app.launchArguments = ["--fresh", "--uitesting"]; app.launch()
+        XCTAssertTrue(app.buttons["connectHome"].waitForExistence(timeout: 5))
+        tab(1)
+        XCTAssertTrue(weather.label.contains("Not connected"))
+        XCTAssertFalse(weather.label.contains("54°"))
+        XCTAssertFalse(app.staticTexts["demoBadge"].exists)
+        shot("Black overview live unavailable weather")
+    }
     func testHorizontalPagingAndIndependentWidgetSwipes() {
         let photo = app.buttons["photoWidget"]
+        // This journey checks the empty photo wall; don't inherit a prior run's album.
+        photo.tap()
+        let clear = app.buttons["clearPhotos"]; reveal(clear); clear.tap(); closePanel()
         XCTAssertFalse(app.descendants(matching: .any)["widgetPosition-2"].exists)
         photo.swipeUp()
         XCTAssertTrue(app.buttons["cameraWidget"].waitForExistence(timeout: 3))
@@ -158,6 +214,9 @@ final class HomePadUITests: XCTestCase {
         app.buttons["accessory-Reading lamp"].swipeDown()
         XCTAssertTrue(lamp.waitForExistence(timeout: 3)); XCTAssertTrue(lamp.label.contains("On"))
         app.descendants(matching: .any)["climateWidget"].swipeLeft()
+        XCTAssertTrue(app.descendants(matching: .any)["overviewBoard"].waitForExistence(timeout: 3))
+        shot("Black overview")
+        app.swipeLeft()
         XCTAssertTrue(app.descendants(matching: .any)["fullClock"].waitForExistence(timeout: 3))
         shot("Clock page")
         app.swipeLeft(); XCTAssertTrue(app.staticTexts["photoWallClock"].waitForExistence(timeout: 3))
@@ -191,8 +250,8 @@ final class HomePadUITests: XCTestCase {
         XCTAssertEqual(value.label, "22.0")
         XCUIDevice.shared.press(.home); app.activate()
         XCTAssertTrue(up.waitForExistence(timeout: 5))
-        tab(3); XCTAssertTrue(app.buttons["Disconnect home"].waitForExistence(timeout: 3))
-        showNavigation(); XCTAssertFalse(app.buttons["tab-4"].exists)
+        tab(4); XCTAssertTrue(app.buttons["Disconnect home"].waitForExistence(timeout: 3))
+        showNavigation(); XCTAssertFalse(app.buttons["tab-5"].exists)
         XCTAssertFalse(app.buttons["Start timer"].exists)
     }
     func testLandscapeCameraAndAgenda() {
@@ -200,14 +259,14 @@ final class HomePadUITests: XCTestCase {
         expectation(for: NSPredicate { _, _ in self.app.frame.width > self.app.frame.height }, evaluatedWith: nil); waitForExpectations(timeout: 8)
         panel("agendaCard"); XCTAssertTrue(app.staticTexts["17:30 · Water the plants"].exists); closePanel()
         panel("cameraCard"); XCTAssertTrue(app.staticTexts["Demo camera"].waitForExistence(timeout: 5)); shot("Camera placeholder"); closePanel()
-        tab(1); shot("Clock landscape")
+        tab(2); shot("Clock landscape")
     }
     func testFailureStatesAndReturnToRealOnboarding() {
         for state in ["denied", "empty", "offline", "loading"] {
-            tab(3); reveal(app.buttons["Simulate \(state)"]); app.buttons["Simulate \(state)"].tap()
+            tab(4); reveal(app.buttons["Simulate \(state)"]); app.buttons["Simulate \(state)"].tap()
             XCTAssertTrue(app.staticTexts["homeStateTitle"].waitForExistence(timeout: 3)); XCTAssertTrue(app.staticTexts["demoBadge"].exists); shot("State \(state)")
         }
-        tab(3); app.buttons["Disconnect home"].tap()
+        tab(4); app.buttons["Disconnect home"].tap()
         XCTAssertTrue(app.buttons["connectHome"].exists); XCTAssertFalse(app.staticTexts["demoBadge"].exists); shot("Real onboarding")
         app.buttons["exploreDemo"].tap(); XCTAssertTrue(app.staticTexts["demoBadge"].exists)
     }
@@ -264,7 +323,16 @@ final class HomePadUITests: XCTestCase {
         XCTAssertTrue(app.buttons["nextPhoto"].isEnabled); app.buttons["nextPhoto"].tap()
         expectation(for: NSPredicate { _, _ in position.label != initial }, evaluatedWith: nil); waitForExpectations(timeout: 5)
         closePanel(); shot("Dashboard with library photo")
-        tab(2)
+        tab(1)
+        let overviewAlbum = app.buttons["overviewAlbum"]
+        XCTAssertFalse((overviewAlbum.value as? String ?? "").contains("No photo"))
+        let overviewPosition = overviewAlbum.value as? String
+        expectation(for: NSPredicate { _, _ in overviewAlbum.value as? String != overviewPosition }, evaluatedWith: nil)
+        waitForExpectations(timeout: 36)
+        shot("Black overview with album")
+        overviewAlbum.tap()
+        XCTAssertTrue(app.images["photoPreview"].waitForExistence(timeout: 5)); closePanel()
+        tab(3)
         let wall = app.descendants(matching: .any)["photoWall"]
         XCTAssertTrue(app.staticTexts["photoWallClock"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["chooseWallAlbum"].exists)
@@ -308,15 +376,15 @@ final class HomePadUITests: XCTestCase {
         app.terminate(); app.launchArguments = ["--demo", "--uitesting", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]; app.launch()
         XCTAssertTrue(app.staticTexts["demoBadge"].waitForExistence(timeout: 5)); shot("Accessibility large text")
         reveal(app.buttons["photoWidget"]); XCTAssertTrue(app.buttons["photoWidget"].isHittable)
-        tab(3); XCTAssertTrue(app.buttons["Disconnect home"].exists)
+        tab(4); XCTAssertTrue(app.buttons["Disconnect home"].exists)
     }
     func testGlassThemePersistsAfterNavigation() {
-        tab(3)
+        tab(4)
         let teal = app.switches["tealWallpaper"]
         if teal.switches.firstMatch.exists { teal.switches.firstMatch.tap() } else { teal.tap() }
         XCTAssertEqual(teal.value as? String, "1")
         tab(0); shot("Teal dashboard")
-        tab(3); XCTAssertEqual(app.switches["tealWallpaper"].value as? String, "1")
+        tab(4); XCTAssertEqual(app.switches["tealWallpaper"].value as? String, "1")
         tab(0); XCTAssertTrue(app.descendants(matching: .any)["climateWidget"].exists)
     }
 }

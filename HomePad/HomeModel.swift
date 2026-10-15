@@ -323,9 +323,9 @@ enum DashboardSwipe {
     }
 }
 enum DashboardPage: Int, CaseIterable {
-    case home, clock, photos, settings
-    var title: String { ["Home", "Clock", "Photos", "Settings"][rawValue] }
-    var symbol: String { ["square.grid.2x2", "clock", "photo.on.rectangle.angled", "slider.horizontal.3"][rawValue] }
+    case home, overview, clock, photos, settings
+    var title: String { ["Home", "Overview", "Clock", "Photos", "Settings"][rawValue] }
+    var symbol: String { ["square.grid.2x2", "square.grid.2x2.fill", "clock", "photo.on.rectangle.angled", "slider.horizontal.3"][rawValue] }
     func adjacent(forward: Bool) -> DashboardPage {
         DashboardPage(rawValue: min(Self.allCases.count - 1, max(0, rawValue + (forward ? 1 : -1))))!
     }

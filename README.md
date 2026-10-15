@@ -58,13 +58,15 @@ The recording includes two real album transitions at the normal 30-second interv
 | **Controls with a purpose** | **A little less interface** |
 | Select a home, filter rooms, control supported accessories, and confirm before running a scene. Thermostat arrows follow the device's supported steps and limits. | Swipe between pages and through distinct widget stacks. Position dots appear during switching, then get out of the way. |
 
+Prefer lights out? **Overview** puts just four square widgets on pure black: date, a numbered analog clock, your album, and weather. White type, yellow accents, no glass. Weather is a labeled demo fixture for now; live mode shows an unavailable state until a weather source is added.
+
 Also included: optional HomeKit camera viewing, opt-in calendar and reminders, local audio playback with the system AirPlay picker, and foreground screen-awake mode. Demo mode works without accessories and never initializes the real HomeKit manager.
 
 ### A few gestures. That's the manual.
 
 | Do this | Get this |
 | :--- | :--- |
-| Swipe **left / right** | Home → Clock → Photos → Settings |
+| Swipe **left / right** | Home → Overview → Clock → Photos → Settings |
 | Swipe **up / down inside a widget** | That widget's next or previous item |
 | Tap **empty wallpaper** or the photo wall | Navigation: right side in landscape, bottom in portrait |
 | Tap **temperature arrows** | Adjust a supported, writable thermostat target |
@@ -94,7 +96,7 @@ Choose the **HomePad** scheme and an iPad simulator running iPadOS 17 or later. 
 
 HomePod mini is optional. Add it to your home using Apple's Home app; select it in the system AirPlay picker when playing a local audio file. For Apple Music, use Apple's Music app and its system audio routing.
 
-The display name is **HomeViewPad**; the project, scheme, and source directory retain their original **HomePad** names. Photos rotate every 30 seconds while Home or the photo wall is visible, and pause while a panel is open or the app is inactive.
+The display name is **HomeViewPad**; the project, scheme, and source directory retain their original **HomePad** names. Photos rotate every 30 seconds while Home, Overview, or the photo wall is visible, and pause while a panel is open or the app is inactive.
 
 </details>
 

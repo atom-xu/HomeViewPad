@@ -1,5 +1,18 @@
 # Validation
 
+## Black four-widget Overview page — 2026-10-14
+
+Added Overview between Home and Clock, with date and a numbered analog clock above an album and weather. The entire viewport and all four square widgets use opaque black, white typography and yellow accents. The existing glass Home page is unchanged. Tapping the album opens the shared PhotoKit chooser; the visible Overview album participates in the existing 30-second slideshow.
+
+- Toolchain and runtime: Xcode 27.0, iPad Pro 11-inch (M5), iPadOS 27.0 (24A434), iOS Simulator. Deployment target remains iPadOS 17.0.
+- The [complete scheme run](evidence/overview-suite-summary.json) executed **31 tests: 30 passed, one failed, zero skips** (15 unit + 16 UI). The failed paging test assumed an empty photo wall but inherited a previously selected simulator album. It now explicitly removes the app's displayed-photo selection before checking the empty state; library assets are untouched.
+- A separate preview run passed the new layout test with the owner's supplied photos. A later rerun caught an intermediate accessibility frame during the animated page transition. The geometry check now waits for the four square frames to settle and reads each frame once. The [final focused rerun](evidence/overview-followup-summary.json) passed **both affected tests, zero failures or skips**, on the final source. All 31 distinct test methods have therefore passed across the complete run and focused reruns; this is not a claim of a subsequent all-green 31-test bundle. The only app changes after the complete-run build were the single-photo accessibility description and the slideshow help text.
+- Portrait and landscape screenshots were exported and visually inspected, including the owner's previously supplied park photo. Date and temperature digits, dial numerals, photo thumbnail and labels are complete. All four viewport corners are RGB (0, 0, 0); no glass, borders or header appear on the new page. Raw screenshots remain under ignored `.validation/overview-preview-shots/`.
+- Tests cover four square cells and their row/column placement, album-panel access, page order in both directions, hidden navigation and its landscape placement, and the live/demo weather distinction. The album lifecycle test also waits for an actual Overview album advance at the unchanged 30-second interval.
+- Weather has no configured provider. Only labeled demo mode shows the fixed San Francisco fixture; live mode shows “Not connected / No weather source.” No new location permission, network integration or HomeKit initialization in demo mode was added.
+- The generator was rerun with identical output and preserved the ignored local signing override. The existing README GIF predates this page; its recording was not replaced in this change.
+- This build has not been installed on the physical iPad. No physical HomeKit, HomePod, camera or AirPlay validation is claimed.
+
 ## README identity and copy refresh — 2026-10-14
 
 Documentation and media only; app source and behavior were unchanged. Both READMEs now use the generated HomeViewPad logo, centered headers, feature tables, the existing actual demo GIF, and collapsible setup/development sections. The DIY HomeView comparison is limited to overlapping everyday uses; HomePod features and app features remain explicitly distinguished.

@@ -38,6 +38,7 @@ struct Dashboard: View {
             ZStack {
                 AmbientWallpaper(teal: tealWallpaper).ignoresSafeArea()
                     .animation(reduceMotion ? nil : .easeInOut(duration: 0.45), value: tealWallpaper)
+                if page == .overview { Color.black.ignoresSafeArea().allowsHitTesting(false).transition(.opacity) }
                 // Only uncovered wallpaper receives taps. Widget taps retain their own actions.
                 Color.clear.contentShape(Rectangle())
                     .onTapGesture(perform: toggleNavigation)
@@ -109,8 +110,8 @@ struct Dashboard: View {
             UIApplication.shared.isIdleTimerDisabled = keepAwake && phase == .active
             if ProcessInfo.processInfo.arguments.contains("--far") { page = .clock }
         }
-        .task(id: phase == .active && (page == .home || page == .photos) && panel == nil && photos.slideshow) {
-            guard phase == .active, page == .home || page == .photos, panel == nil, photos.slideshow else { return }
+        .task(id: phase == .active && (page == .home || page == .overview || page == .photos) && panel == nil && photos.slideshow) {
+            guard phase == .active, page == .home || page == .overview || page == .photos, panel == nil, photos.slideshow else { return }
             while !Task.isCancelled {
                 do { try await Task.sleep(for: .seconds(30)) } catch { return }
                 photos.next()
@@ -171,6 +172,8 @@ struct Dashboard: View {
                     }.padding(20)
                 }
             }
+        case .overview:
+            OverviewBoard(photos: photos, demoDate: home.demo ? demoDate : nil, side: side, chooseAlbum: { panel = .photos })
         case .clock:
             AnalogHomeClock(date: home.demo ? demoDate : nil, numbered: false)
                 .padding(side * 0.07).frame(width: side, height: side)
@@ -523,32 +526,33 @@ struct Dashboard: View {
 }
 
 /// Original vector clock drawn with system typography; no promotional assets.
-private struct AnalogHomeClock: View {
+struct AnalogHomeClock: View {
     var date: Date?
     var numbered = true
+    var monochrome = false
     var body: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
             Canvas { graphics, size in
                 let d = min(size.width, size.height)
                 let center = CGPoint(x: size.width / 2, y: size.height / 2)
                 let radius = d * 0.47
-                let accent = Color(red: 0.50, green: 0.46, blue: 0.66)
+                let accent = monochrome ? Color(red: 1, green: 0.77, blue: 0.16) : Color(red: 0.50, green: 0.46, blue: 0.66)
                 for tick in 0..<60 {
                     if !numbered && tick % 5 != 0 { continue }
                     let angle = Double(tick) * .pi / 30 - .pi / 2
                     let outer = radius
                     let inner = radius - (tick % 5 == 0 ? (numbered ? d * 0.038 : d * 0.075) : d * 0.017)
                     var path = Path(); path.move(to: CGPoint(x: center.x + cos(angle)*inner, y: center.y + sin(angle)*inner)); path.addLine(to: CGPoint(x: center.x + cos(angle)*outer, y: center.y + sin(angle)*outer))
-                    graphics.stroke(path, with: .color(numbered ? accent.opacity(0.6) : .white), style: StrokeStyle(lineWidth: tick % 5 == 0 ? d * 0.009 : d * 0.004, lineCap: .round))
+                    graphics.stroke(path, with: .color(monochrome ? .white.opacity(tick % 5 == 0 ? 0.95 : 0.5) : numbered ? accent.opacity(0.6) : .white), style: StrokeStyle(lineWidth: tick % 5 == 0 ? d * 0.009 : d * 0.004, lineCap: .round))
                 }
                 if numbered { for n in 1...12 {
                     let a = Double(n) * .pi / 6 - .pi / 2
-                    graphics.draw(Text(String(n)).font(.system(size: d * 0.075, weight: .medium)).foregroundColor(accent), at: CGPoint(x: center.x + cos(a)*d*0.365, y: center.y + sin(a)*d*0.365))
+                    graphics.draw(Text(String(n)).font(.system(size: d * 0.075, weight: .medium)).foregroundColor(monochrome ? .white : accent), at: CGPoint(x: center.x + cos(a)*d*0.365, y: center.y + sin(a)*d*0.365))
                 } }
                 let components = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? context.date)
                 let minute = date == nil ? Double(components.minute ?? 0) : 9, second = date == nil ? Double(components.second ?? 0) : 30
                 let hour = (date == nil ? Double((components.hour ?? 0) % 12) : 10) + minute / 60
-                for (angle, length, thickness, color) in [(hour * .pi/6, d*0.25, d*0.018, numbered ? Color.black : .white), (minute * .pi/30, d*0.39, d*0.014, numbered ? Color.black : .white), (second * .pi/30, d*0.42, d*0.006, numbered ? accent : .white.opacity(0.65))] {
+                for (angle, length, thickness, color) in [(hour * .pi/6, d*0.25, d*0.018, numbered && !monochrome ? Color.black : .white), (minute * .pi/30, d*0.39, d*0.014, numbered && !monochrome ? Color.black : .white), (second * .pi/30, d*0.42, d*0.006, numbered ? accent : .white.opacity(0.65))] {
                     var hand = Path(); hand.move(to: CGPoint(x: center.x - sin(angle)*d*0.045, y: center.y + cos(angle)*d*0.045)); hand.addLine(to: CGPoint(x: center.x + sin(angle)*length, y: center.y - cos(angle)*length))
                     graphics.stroke(hand, with: .color(color), style: StrokeStyle(lineWidth: thickness, lineCap: .round))
                 }

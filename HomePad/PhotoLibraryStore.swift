@@ -228,7 +228,7 @@ struct PhotosPanel: View {
                     if photos.photoCount > 0 { Text("Photo \(photos.position + 1) of \(photos.photoCount)").accessibilityIdentifier("photoPosition") }
                     Toggle("Rotate every 30 seconds", isOn: $photos.slideshow)
                     Button("Next photo") { photos.next() }.disabled(photos.photoCount < 2 || photos.loading).accessibilityIdentifier("nextPhoto")
-                    Text("Plays while Home or the Photos wall is visible. iCloud photos may download as needed.").font(.footnote)
+                    Text("Plays while Home, Overview or the Photos wall is visible. iCloud photos may download as needed.").font(.footnote)
                 }
             }
             Section {
