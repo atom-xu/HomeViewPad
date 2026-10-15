@@ -1,0 +1,490 @@
+// !$*UTF8*$!
+{
+"archiveVersion" = "1";
+"classes" = {
+};
+"objectVersion" = "56";
+"objects" = {
+"10FE28B5AEB069818AD7E4CF" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "text.xcconfig";
+"path" = "Config/Signing.xcconfig";
+"sourceTree" = "<group>";
+};
+"CA54A42B4A9C139CC34A1758" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "AccessoryAdjustmentView.swift";
+"sourceTree" = "<group>";
+};
+"A5D102C4099AA4677D47585F" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "CA54A42B4A9C139CC34A1758";
+};
+"34AB739550B1DE8136C32715" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "Dashboard.swift";
+"sourceTree" = "<group>";
+};
+"57D5D8D6618706330E4A60CA" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "34AB739550B1DE8136C32715";
+};
+"87EC8ECE4FCC548928E67657" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "HomeModel.swift";
+"sourceTree" = "<group>";
+};
+"97102B831EA251F7F3C35467" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "87EC8ECE4FCC548928E67657";
+};
+"064E5E67BE21435E4DB56222" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "HomePadApp.swift";
+"sourceTree" = "<group>";
+};
+"FF118EFFA3E4ED65A3788A1C" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "064E5E67BE21435E4DB56222";
+};
+"13B7E911A131FAF51625063E" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "PhotoLibraryStore.swift";
+"sourceTree" = "<group>";
+};
+"7CD98C24CC9AD266E1350EC0" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "13B7E911A131FAF51625063E";
+};
+"E04E6C7223AF904091E917AE" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "PhotoWall.swift";
+"sourceTree" = "<group>";
+};
+"6AEAB14E80B3E2C011A01B66" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "E04E6C7223AF904091E917AE";
+};
+"1200156F9FDB3A662D94CF69" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "Services.swift";
+"sourceTree" = "<group>";
+};
+"5C246E44664B389432A95791" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "1200156F9FDB3A662D94CF69";
+};
+"0F90C52E44FC5B0ACE8DD615" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "WidgetCarousel.swift";
+"sourceTree" = "<group>";
+};
+"50D3DB49F3FFDED028708EA0" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "0F90C52E44FC5B0ACE8DD615";
+};
+"DBA5156AC578E64E8AFDF0EB" = {
+"isa" = "PBXGroup";
+"children" = ("CA54A42B4A9C139CC34A1758","34AB739550B1DE8136C32715","87EC8ECE4FCC548928E67657","064E5E67BE21435E4DB56222","13B7E911A131FAF51625063E","E04E6C7223AF904091E917AE","1200156F9FDB3A662D94CF69","0F90C52E44FC5B0ACE8DD615","28AAD1477D5182D66D4B03B3","26B2A637F7DC4079D5AB78A5");
+"path" = "HomePad";
+"sourceTree" = "<group>";
+};
+"BBF72EAA6ACD9BEEAE8D812D" = {
+"isa" = "PBXFileReference";
+"explicitFileType" = "wrapper.application";
+"path" = "HomePad.app";
+"sourceTree" = "BUILT_PRODUCTS_DIR";
+};
+"21B30F9FB1E38C14A3ED2CD5" = {
+"isa" = "PBXSourcesBuildPhase";
+"buildActionMask" = "2147483647";
+"files" = ("A5D102C4099AA4677D47585F","57D5D8D6618706330E4A60CA","97102B831EA251F7F3C35467","FF118EFFA3E4ED65A3788A1C","7CD98C24CC9AD266E1350EC0","6AEAB14E80B3E2C011A01B66","5C246E44664B389432A95791","50D3DB49F3FFDED028708EA0");
+"runOnlyForDeploymentPostprocessing" = "0";
+};
+"58406098283001994903FFD6" = {
+"isa" = "PBXFrameworksBuildPhase";
+"buildActionMask" = "2147483647";
+"files" = ();
+"runOnlyForDeploymentPostprocessing" = "0";
+};
+"28AAD1477D5182D66D4B03B3" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "folder.assetcatalog";
+"path" = "Assets.xcassets";
+"sourceTree" = "<group>";
+};
+"1B316C2A61BC07AD2926E500" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "28AAD1477D5182D66D4B03B3";
+};
+"26B2A637F7DC4079D5AB78A5" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "text.xml";
+"path" = "PrivacyInfo.xcprivacy";
+"sourceTree" = "<group>";
+};
+"85485ABDDFC5AA715BEE5C09" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "26B2A637F7DC4079D5AB78A5";
+};
+"631ADA825BFD59F187BD534C" = {
+"isa" = "PBXResourcesBuildPhase";
+"buildActionMask" = "2147483647";
+"files" = ("1B316C2A61BC07AD2926E500","85485ABDDFC5AA715BEE5C09");
+"runOnlyForDeploymentPostprocessing" = "0";
+};
+"4AAFF2A12B58BFD95794F890" = {
+"isa" = "XCBuildConfiguration";
+"name" = "Debug";
+"buildSettings" = {
+"SWIFT_VERSION" = "5.0";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
+"SDKROOT" = "iphoneos";
+"TARGETED_DEVICE_FAMILY" = "2";
+"SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
+"ENABLE_TESTABILITY" = "YES";
+"CODE_SIGN_STYLE" = "Automatic";
+"CLANG_ENABLE_MODULES" = "YES";
+"SWIFT_STRICT_CONCURRENCY" = "minimal";
+"PRODUCT_BUNDLE_IDENTIFIER" = "$(HOMEVIEWPAD_BUNDLE_IDENTIFIER)";
+"PRODUCT_NAME" = "$(TARGET_NAME)";
+"GENERATE_INFOPLIST_FILE" = "NO";
+"DEVELOPMENT_TEAM" = "$(HOMEVIEWPAD_DEVELOPMENT_TEAM)";
+"ASSETCATALOG_COMPILER_APPICON_NAME" = "AppIcon";
+"INFOPLIST_FILE" = "HomePad/Info.plist";
+"CODE_SIGN_ENTITLEMENTS" = "HomePad/HomePad.entitlements";
+"MARKETING_VERSION" = "1.0";
+"CURRENT_PROJECT_VERSION" = "1";
+"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+"SUPPORTS_MACCATALYST" = "NO";
+};
+"baseConfigurationReference" = "10FE28B5AEB069818AD7E4CF";
+};
+"2A217362EFB0CAFDA00A3D66" = {
+"isa" = "XCBuildConfiguration";
+"name" = "Release";
+"buildSettings" = {
+"SWIFT_VERSION" = "5.0";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
+"SDKROOT" = "iphoneos";
+"TARGETED_DEVICE_FAMILY" = "2";
+"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+"ENABLE_TESTABILITY" = "YES";
+"CODE_SIGN_STYLE" = "Automatic";
+"CLANG_ENABLE_MODULES" = "YES";
+"SWIFT_STRICT_CONCURRENCY" = "minimal";
+"PRODUCT_BUNDLE_IDENTIFIER" = "$(HOMEVIEWPAD_BUNDLE_IDENTIFIER)";
+"PRODUCT_NAME" = "$(TARGET_NAME)";
+"GENERATE_INFOPLIST_FILE" = "NO";
+"DEVELOPMENT_TEAM" = "$(HOMEVIEWPAD_DEVELOPMENT_TEAM)";
+"ASSETCATALOG_COMPILER_APPICON_NAME" = "AppIcon";
+"INFOPLIST_FILE" = "HomePad/Info.plist";
+"CODE_SIGN_ENTITLEMENTS" = "HomePad/HomePad.entitlements";
+"MARKETING_VERSION" = "1.0";
+"CURRENT_PROJECT_VERSION" = "1";
+"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+"SUPPORTS_MACCATALYST" = "NO";
+};
+"baseConfigurationReference" = "10FE28B5AEB069818AD7E4CF";
+};
+"9D4C4B75000439B5C1D1FAA2" = {
+"isa" = "XCConfigurationList";
+"buildConfigurations" = ("4AAFF2A12B58BFD95794F890","2A217362EFB0CAFDA00A3D66");
+"defaultConfigurationIsVisible" = "0";
+"defaultConfigurationName" = "Release";
+};
+"6466E8D383B9D48ACAB45256" = {
+"isa" = "PBXNativeTarget";
+"buildConfigurationList" = "9D4C4B75000439B5C1D1FAA2";
+"buildPhases" = ("21B30F9FB1E38C14A3ED2CD5","58406098283001994903FFD6","631ADA825BFD59F187BD534C");
+"buildRules" = ();
+"dependencies" = ();
+"name" = "HomePad";
+"productName" = "HomePad";
+"productReference" = "BBF72EAA6ACD9BEEAE8D812D";
+"productType" = "com.apple.product-type.application";
+};
+"860E83E8DF6497DB1F2CFF37" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "HomePadTests.swift";
+"sourceTree" = "<group>";
+};
+"20C4F4CCAE92319923031DA3" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "860E83E8DF6497DB1F2CFF37";
+};
+"9B35289DEC772DBFFFBED691" = {
+"isa" = "PBXGroup";
+"children" = ("860E83E8DF6497DB1F2CFF37");
+"path" = "HomePadTests";
+"sourceTree" = "<group>";
+};
+"5F01E10437CE49CBCF7CF7A9" = {
+"isa" = "PBXFileReference";
+"explicitFileType" = "wrapper.cfbundle";
+"path" = "HomePadTests.xctest";
+"sourceTree" = "BUILT_PRODUCTS_DIR";
+};
+"D076B23E988E0BF79C4B65C5" = {
+"isa" = "PBXSourcesBuildPhase";
+"buildActionMask" = "2147483647";
+"files" = ("20C4F4CCAE92319923031DA3");
+"runOnlyForDeploymentPostprocessing" = "0";
+};
+"2359D51B26613050A2EF57B0" = {
+"isa" = "PBXFrameworksBuildPhase";
+"buildActionMask" = "2147483647";
+"files" = ();
+"runOnlyForDeploymentPostprocessing" = "0";
+};
+"725683EB9783ED0EB1B6C8C5" = {
+"isa" = "PBXContainerItemProxy";
+"containerPortal" = "98F54143AB4E86B28C3AFEE0";
+"proxyType" = "1";
+"remoteGlobalIDString" = "6466E8D383B9D48ACAB45256";
+"remoteInfo" = "HomePad";
+};
+"B815B12E213433BE3352FC98" = {
+"isa" = "PBXTargetDependency";
+"target" = "6466E8D383B9D48ACAB45256";
+"targetProxy" = "725683EB9783ED0EB1B6C8C5";
+};
+"49A29309D4C94F375B23ED97" = {
+"isa" = "XCBuildConfiguration";
+"name" = "Debug";
+"buildSettings" = {
+"SWIFT_VERSION" = "5.0";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
+"SDKROOT" = "iphoneos";
+"TARGETED_DEVICE_FAMILY" = "2";
+"SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
+"ENABLE_TESTABILITY" = "YES";
+"CODE_SIGN_STYLE" = "Automatic";
+"CLANG_ENABLE_MODULES" = "YES";
+"SWIFT_STRICT_CONCURRENCY" = "minimal";
+"PRODUCT_BUNDLE_IDENTIFIER" = "org.homepad.personal.homepadtests";
+"PRODUCT_NAME" = "$(TARGET_NAME)";
+"GENERATE_INFOPLIST_FILE" = "YES";
+"TEST_HOST" = "$(BUILT_PRODUCTS_DIR)/HomePad.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HomePad";
+"BUNDLE_LOADER" = "$(TEST_HOST)";
+};
+"baseConfigurationReference" = "10FE28B5AEB069818AD7E4CF";
+};
+"C4D92CBB3C0C9AB5BAE37C8A" = {
+"isa" = "XCBuildConfiguration";
+"name" = "Release";
+"buildSettings" = {
+"SWIFT_VERSION" = "5.0";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
+"SDKROOT" = "iphoneos";
+"TARGETED_DEVICE_FAMILY" = "2";
+"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+"ENABLE_TESTABILITY" = "YES";
+"CODE_SIGN_STYLE" = "Automatic";
+"CLANG_ENABLE_MODULES" = "YES";
+"SWIFT_STRICT_CONCURRENCY" = "minimal";
+"PRODUCT_BUNDLE_IDENTIFIER" = "org.homepad.personal.homepadtests";
+"PRODUCT_NAME" = "$(TARGET_NAME)";
+"GENERATE_INFOPLIST_FILE" = "YES";
+"TEST_HOST" = "$(BUILT_PRODUCTS_DIR)/HomePad.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HomePad";
+"BUNDLE_LOADER" = "$(TEST_HOST)";
+};
+"baseConfigurationReference" = "10FE28B5AEB069818AD7E4CF";
+};
+"5B79DAC36F7C855E845E0E76" = {
+"isa" = "XCConfigurationList";
+"buildConfigurations" = ("49A29309D4C94F375B23ED97","C4D92CBB3C0C9AB5BAE37C8A");
+"defaultConfigurationIsVisible" = "0";
+"defaultConfigurationName" = "Release";
+};
+"A38CAD9CEE94D8E54DB12B12" = {
+"isa" = "PBXNativeTarget";
+"buildConfigurationList" = "5B79DAC36F7C855E845E0E76";
+"buildPhases" = ("D076B23E988E0BF79C4B65C5","2359D51B26613050A2EF57B0");
+"buildRules" = ();
+"dependencies" = ("B815B12E213433BE3352FC98");
+"name" = "HomePadTests";
+"productName" = "HomePadTests";
+"productReference" = "5F01E10437CE49CBCF7CF7A9";
+"productType" = "com.apple.product-type.bundle.unit-test";
+};
+"6C72472D0812A481755713F5" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "HomePadUITests.swift";
+"sourceTree" = "<group>";
+};
+"6CB42C26FB6634EA8B1888E2" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "6C72472D0812A481755713F5";
+};
+"6BA2B5497FD1B0011A10219F" = {
+"isa" = "PBXGroup";
+"children" = ("6C72472D0812A481755713F5");
+"path" = "HomePadUITests";
+"sourceTree" = "<group>";
+};
+"8604A6B09E668BFA3B8DD8AC" = {
+"isa" = "PBXFileReference";
+"explicitFileType" = "wrapper.cfbundle";
+"path" = "HomePadUITests.xctest";
+"sourceTree" = "BUILT_PRODUCTS_DIR";
+};
+"9BBA277C3054BE8271E3D521" = {
+"isa" = "PBXSourcesBuildPhase";
+"buildActionMask" = "2147483647";
+"files" = ("6CB42C26FB6634EA8B1888E2");
+"runOnlyForDeploymentPostprocessing" = "0";
+};
+"B5F19DBAA9088704055C7ADB" = {
+"isa" = "PBXFrameworksBuildPhase";
+"buildActionMask" = "2147483647";
+"files" = ();
+"runOnlyForDeploymentPostprocessing" = "0";
+};
+"4810CB3AED561CF8115822FA" = {
+"isa" = "PBXContainerItemProxy";
+"containerPortal" = "98F54143AB4E86B28C3AFEE0";
+"proxyType" = "1";
+"remoteGlobalIDString" = "6466E8D383B9D48ACAB45256";
+"remoteInfo" = "HomePad";
+};
+"DD3D866EFF5F884CEC546034" = {
+"isa" = "PBXTargetDependency";
+"target" = "6466E8D383B9D48ACAB45256";
+"targetProxy" = "4810CB3AED561CF8115822FA";
+};
+"DF9BC57517326C1B9B18D6D5" = {
+"isa" = "XCBuildConfiguration";
+"name" = "Debug";
+"buildSettings" = {
+"SWIFT_VERSION" = "5.0";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
+"SDKROOT" = "iphoneos";
+"TARGETED_DEVICE_FAMILY" = "2";
+"SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
+"ENABLE_TESTABILITY" = "YES";
+"CODE_SIGN_STYLE" = "Automatic";
+"CLANG_ENABLE_MODULES" = "YES";
+"SWIFT_STRICT_CONCURRENCY" = "minimal";
+"PRODUCT_BUNDLE_IDENTIFIER" = "org.homepad.personal.homepaduitests";
+"PRODUCT_NAME" = "$(TARGET_NAME)";
+"GENERATE_INFOPLIST_FILE" = "YES";
+"TEST_TARGET_NAME" = "HomePad";
+};
+"baseConfigurationReference" = "10FE28B5AEB069818AD7E4CF";
+};
+"AE698338D76FF0F0494CD949" = {
+"isa" = "XCBuildConfiguration";
+"name" = "Release";
+"buildSettings" = {
+"SWIFT_VERSION" = "5.0";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
+"SDKROOT" = "iphoneos";
+"TARGETED_DEVICE_FAMILY" = "2";
+"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+"ENABLE_TESTABILITY" = "YES";
+"CODE_SIGN_STYLE" = "Automatic";
+"CLANG_ENABLE_MODULES" = "YES";
+"SWIFT_STRICT_CONCURRENCY" = "minimal";
+"PRODUCT_BUNDLE_IDENTIFIER" = "org.homepad.personal.homepaduitests";
+"PRODUCT_NAME" = "$(TARGET_NAME)";
+"GENERATE_INFOPLIST_FILE" = "YES";
+"TEST_TARGET_NAME" = "HomePad";
+};
+"baseConfigurationReference" = "10FE28B5AEB069818AD7E4CF";
+};
+"A0016C7A7E10B79BE0945566" = {
+"isa" = "XCConfigurationList";
+"buildConfigurations" = ("DF9BC57517326C1B9B18D6D5","AE698338D76FF0F0494CD949");
+"defaultConfigurationIsVisible" = "0";
+"defaultConfigurationName" = "Release";
+};
+"19D8EAAA6B40FF993FF5A3F1" = {
+"isa" = "PBXNativeTarget";
+"buildConfigurationList" = "A0016C7A7E10B79BE0945566";
+"buildPhases" = ("9BBA277C3054BE8271E3D521","B5F19DBAA9088704055C7ADB");
+"buildRules" = ();
+"dependencies" = ("DD3D866EFF5F884CEC546034");
+"name" = "HomePadUITests";
+"productName" = "HomePadUITests";
+"productReference" = "8604A6B09E668BFA3B8DD8AC";
+"productType" = "com.apple.product-type.bundle.ui-testing";
+};
+"FBDC4F23F93125BBEEAE800C" = {
+"isa" = "PBXGroup";
+"children" = ("BBF72EAA6ACD9BEEAE8D812D","5F01E10437CE49CBCF7CF7A9","8604A6B09E668BFA3B8DD8AC");
+"name" = "Products";
+"sourceTree" = "<group>";
+};
+"B28B7AF69320201D1CF206EB" = {
+"isa" = "PBXGroup";
+"children" = ("DBA5156AC578E64E8AFDF0EB","9B35289DEC772DBFFFBED691","6BA2B5497FD1B0011A10219F","FBDC4F23F93125BBEEAE800C","10FE28B5AEB069818AD7E4CF");
+"sourceTree" = "<group>";
+};
+"89E1FD6268CC0F221A2BE178" = {
+"isa" = "XCBuildConfiguration";
+"name" = "Debug";
+"buildSettings" = {
+"SWIFT_VERSION" = "5.0";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
+"SDKROOT" = "iphoneos";
+"TARGETED_DEVICE_FAMILY" = "2";
+"SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
+"ENABLE_TESTABILITY" = "YES";
+"CODE_SIGN_STYLE" = "Automatic";
+"CLANG_ENABLE_MODULES" = "YES";
+"SWIFT_STRICT_CONCURRENCY" = "minimal";
+};
+"baseConfigurationReference" = "10FE28B5AEB069818AD7E4CF";
+};
+"E6DE6C99132752C914FEF632" = {
+"isa" = "XCBuildConfiguration";
+"name" = "Release";
+"buildSettings" = {
+"SWIFT_VERSION" = "5.0";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
+"SDKROOT" = "iphoneos";
+"TARGETED_DEVICE_FAMILY" = "2";
+"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+"ENABLE_TESTABILITY" = "YES";
+"CODE_SIGN_STYLE" = "Automatic";
+"CLANG_ENABLE_MODULES" = "YES";
+"SWIFT_STRICT_CONCURRENCY" = "minimal";
+};
+"baseConfigurationReference" = "10FE28B5AEB069818AD7E4CF";
+};
+"862894B703A6DEDF96A9DD6C" = {
+"isa" = "XCConfigurationList";
+"buildConfigurations" = ("89E1FD6268CC0F221A2BE178","E6DE6C99132752C914FEF632");
+"defaultConfigurationIsVisible" = "0";
+"defaultConfigurationName" = "Release";
+};
+"98F54143AB4E86B28C3AFEE0" = {
+"isa" = "PBXProject";
+"attributes" = {
+"LastUpgradeCheck" = "2700";
+};
+"buildConfigurationList" = "862894B703A6DEDF96A9DD6C";
+"compatibilityVersion" = "Xcode 14.0";
+"developmentRegion" = "en";
+"hasScannedForEncodings" = "0";
+"knownRegions" = ("en","Base");
+"mainGroup" = "B28B7AF69320201D1CF206EB";
+"productRefGroup" = "FBDC4F23F93125BBEEAE800C";
+"projectDirPath" = "";
+"projectRoot" = "";
+"targets" = ("6466E8D383B9D48ACAB45256","A38CAD9CEE94D8E54DB12B12","19D8EAAA6B40FF993FF5A3F1");
+};
+};
+"rootObject" = "98F54143AB4E86B28C3AFEE0";
+}

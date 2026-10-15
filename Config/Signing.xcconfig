@@ -1,0 +1,4 @@
+// Shared defaults. Put personal overrides in the ignored Local.xcconfig.
+HOMEVIEWPAD_BUNDLE_IDENTIFIER = org.homeviewpad.app
+HOMEVIEWPAD_DEVELOPMENT_TEAM =
+#include? "Local.xcconfig"

@@ -1,0 +1,19 @@
+.DS_Store
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.xcresult/
+*.log
+.validation/
+
+# Local signing and recording intermediates
+Config/Local.xcconfig
+*.mobileprovision
+*.p12
+*.p8
+*.keychain*
+.env
+.env.*
+*.mp4
+*.mov

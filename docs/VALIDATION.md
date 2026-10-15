@@ -1,0 +1,29 @@
+# Validation
+
+## Publication preparation — 2026-10-14
+
+The display name and user-facing copy are now **HomeViewPad**. Internal Xcode project/scheme names remain HomePad. Shared signing settings use `Config/Signing.xcconfig`; the owner's existing installation identity is preserved only in ignored `Config/Local.xcconfig`.
+
+- Toolchain: Xcode 27.0 (27A266a), macOS 27.0.1, arm64.
+- Simulator: iPad Pro 11-inch (M5), iPadOS 27.0 (24A434).
+- Deployment target: iPadOS 17.0.
+- Initial rename run: all 14 UI tests passed; one unit assertion still expected the old display name. The assertion was updated.
+- Final full suite completed at 21:58 EDT: **30 passed (15 unit + 15 UI), zero failures, zero skips**. The added UI journey records the README demo. See the [sanitized result summary](evidence/publication-summary.json).
+- A separate simulator build with the generic `org.homeviewpad.app` bundle identifier and no development team succeeded.
+- The generator was rerun and its output hashes were identical; the ignored local signing override was preserved.
+- Renamed-app screenshots and GIF sample frames were visually inspected: complete thermostat digits/arrows, correct landscape layout, visible DEMO badges, clock, photo wall and navigation transitions.
+- GIF: 337 frames, 880 × 606 px, 12.5 fps, 26.96 seconds, 3,387,820 bytes. The source video is about 27.19 seconds; conversion trims 0.1 seconds at each end.
+
+The new README hero is AI-generated concept art using an actual app screenshot as its reference. It is not a photograph of a tested hardware installation. The GIF is captured from the running simulator using XCUITest and `simctl recordVideo`; only demo accessories and non-personal test photos are used.
+
+## Previous verified baseline
+
+Before this publication preparation, the full suite passed **29 tests: 15 unit + 14 UI, zero failures and zero skips**, on the same simulator/runtime at 20:42 EDT on 2026-10-14. The sanitized [result summary](evidence/reference-layout-summary.json) retains the counts and runtime. Layout screenshots were inspected in portrait and landscape, including complete thermostat digits and arrows.
+
+A signed Debug build of that baseline was installed and launched on an iPad Pro 11-inch running iPadOS 26.6 (23G71). Installation and process launch were confirmed separately. The renamed build has not been installed on physical hardware during this documentation task.
+
+## Limits
+
+No physical HomeKit thermostat write, HomePod/AirPlay playback, real camera stream, or sustained wall-display performance has been verified by these simulator results. PhotoKit simulator authorization and reads are separate from physical iPad album testing. Use the [hardware checklist](HARDWARE_CHECKLIST.md).
+
+Raw xcresult bundles, videos, machine-specific logs and historical screenshots are retained locally under ignored `.validation/`; they are not shipped in this repository. Public summaries omit personal device and signing identifiers.

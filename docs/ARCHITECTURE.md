@@ -1,0 +1,47 @@
+# Architecture and privacy
+
+SwiftUI application, iPadOS 17+, no packages, no server. The checked-in Xcode project contains app, XCTest unit tests, and XCUITest UI tests. Its generator uses only Python's standard library.
+
+- `Dashboard.swift`: responsive presentation, sheet navigation, foreground state, display preferences, and adaptive widget board. Native controls provide keyboard/VoiceOver semantics. Scrolling and flexible card grids handle changing size classes. Text uses semantic styles except the intentionally scalable hero clock. Active states include text, not color alone. There is no essential animation or tracking camera.
+- `HomeModel.swift`: main-actor HomeStore with separate deterministic demo fixtures and a lazily created real HMHomeManager. HomeKit delegates hop to the main actor. A generation token ignores completions from abandoned connections. Existing homes and services are discovered; all supported readable characteristics become typed tiles, including secondary characteristics on a service: power, temperature, humidity, brightness, target temperature and fan speed. Numeric writes require the device's minimum, maximum and step, writable permission, reachability and a valid current value. Temperature, humidity and target-temperature tiles belong exclusively to the climate hero; target temperatures appear first. Its arrows validate device-advertised steps and bounds and use the same write/read-back path. Demo target changes only update deterministic in-memory fixtures. Writes are not optimistically successful. Per-characteristic in-flight controls block repeats until write and read-back complete. Event notifications clear earlier read failures. Scenes ask for confirmation and block concurrent execution. Empty, restricted, unresolved, and unreachable homes have distinct states and retry actions.
+- `AccessoryAdjustmentView.swift`: explicit numeric adjustment and Apply action; unavailable values disable writes.
+- `PhotoLibraryStore.swift`: opt-in PhotoKit albums and single-image PhotosPicker import, generation-guarded image requests and a bounded 2048-pixel decoded image. Full access permits album enumeration; limited access displays only authorized images. A change observer refetches after edits/deletions, and foreground transitions recheck authorization. The photo panel never writes to the Photos library.
+- `WidgetCarousel.swift`: reusable square slot with directional vertical transitions, bounded position dots visible during a vertical drag and for one second after switching and named accessibility actions.
+- `PhotoWall.swift`: full-screen album composition, large digital clock and shared image crossfades. A `PhotoFrame` identity changes only when decoding completes.
+- `Services.swift`: EventKit read-only providers, AVPlayer and AirPlay bridge, and a camera session with a 20-second connection timeout and explicit teardown. Camera presentation uses `HMCameraView`; no stream is saved. Lifecycle transitions pause audio and stop camera streaming.
+
+## Data lifecycle
+
+HomeKit owns the home database and permissions. HomeViewPad does not export its home model. Home selection is available in Settings; its stable identifier is remembered. The first available home is used when the saved home no longer exists. Connection mode, display-awake preference and personal-display preference are in app-scoped UserDefaults, declared in the privacy manifest. No accounts, tracking SDKs, telemetry endpoints, analytics, custom networking or external credentials exist.
+
+A single imported photo is downsampled and stored as `Documents/ambient-photo.jpg` in the app sandbox. Remove it in Settings or uninstall the app. This file may be included in the device's ordinary backup; HomeViewPad has no sync service. The single-photo picker only gives the chosen image. Album mode instead stores the selected collection identifier and rotation preference in app-scoped UserDefaults, fetches only visible image assets, and does not create a local album copy. A missing/restricted selected album is never silently replaced by All Photos. Image requests are cancelled on source changes and inactivity; stale completions cannot restore removed photos. iCloud images may download through PhotoKit when displayed. The app never changes or deletes library assets. Removing displayed photos clears its selection and imported copy. Only the visible Home screen or Photos wall advances the 30-second slideshow; other pages, sheets and background activity pause it.
+
+Calendar and reminder data is loaded only after system consent and the shared-screen opt-in; read-only results remain in memory. Disabling personal display or leaving the foreground clears them. A generation token prevents an earlier refresh from restoring cleared results. A foreground privacy cover helps obscure content during inactivity; physical observation of an unlocked shared screen remains possible. Any system permission can be revoked in iPad Settings.
+
+Audio uses a security-scoped URL only for the current selected file; selecting another file releases the old scope. No permanent bookmarks or credentials are created. AirPlay selection is entirely system-mediated. The app has no background audio mode.
+
+## Maintainability boundaries
+
+No SwiftUI view issues accessory writes directly. HomeStore provides a small command surface. Demo fixtures never instantiate HMHomeManager. Hardware-specific errors are displayed instead of replaced with sample values. Simulator tests validate app flows and fixture state, not HomeKit hardware correctness. Scene effects, remote reachability, signing entitlement and camera/AirPlay compatibility require the separate hardware checklist.
+
+The current first version does not implement thermostat mode/lock/blind editors, automation creation, multiple concurrent camera streams, notifications, or household identity. Add these as isolated adapters with real-device tests, rather than broadening demo-only claims.
+
+
+## Immersive navigation revision
+
+`DashboardPage` defines Home, Clock, Photos and Settings. The immersive board fills `min(width,height) - 16` points and uses an explicit square frame for every slot, including the clock. The application requests hidden status bar and persistent system overlays using public SwiftUI APIs; the system can still reveal its own chrome. A tap recognizer on the uncovered wallpaper toggles navigation without intercepting widget buttons. Navigation overlays the bottom in portrait and the right side in landscape without resizing the board. The full-screen photo wall also accepts a background tap. Music remains a navigation shortcut.
+
+`DashboardSwipe` rejects short and ambiguous diagonal drags. The root handles horizontal directions only; each widget handles vertical directions only. Independent slot offsets select disjoint content groups: climate; clock/calendar; photos/camera; scenes; other devices; lights. Empty groups show category-specific placeholders; they never borrow another stack’s items. Changing a widget never issues a hardware command. Offsets are session state and survive page changes; home/room changes reset them to avoid carrying another home's selections across contexts. Existing scenes still require confirmation in their current presentation context.
+
+The large-text layout retains square widgets in a single scrolling column. Vertical drags scroll this accessibility layout; named Next widget / Previous widget actions provide switching without competing with scrolling. Every slot also exposes Show navigation, and the page exposes next/previous page accessibility actions. The demo disclosure is integrated into the first widget. The Home wallpaper contains no personal data. The separate Photos page intentionally displays the chosen photo library content across the screen.
+
+## Public API references
+
+- [Apple: Interacting with a home automation network](https://developer.apple.com/documentation/homekit/interacting-with-a-home-automation-network) — read, write and event notifications.
+- [Apple: Delivering an enhanced privacy experience in your Photos app](https://developer.apple.com/documentation/photokit/delivering-an-enhanced-privacy-experience-in-your-photos-app) — explicit PhotoKit permission and limited-library behavior.
+
+## Transition and photo loading lifecycle
+
+Page transitions slide horizontally; widget transitions slide vertically, following the gesture direction. Navigation appears from the bottom or right according to orientation. Reduce Motion substitutes short fades. Each widget displays a maximum of five position dots; the active indicator and accessibility value identify its selection even in large homes.
+
+The photo loader keeps the current authorized image while requesting the next one. It publishes the new frame, position and asset ID together only after a successful decode. Both the small photo widget and wall crossfade between frame identities. Permission loss, a missing selected album, removal or replacement cancels requests and clears the frame immediately; clearing does not animate a revoked image out slowly. The wall clock uses real time in live mode and the fixed fixture date in labeled demo mode.
