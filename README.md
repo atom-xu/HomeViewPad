@@ -43,7 +43,7 @@ The iPad runs the app. HomePod mini works independently in your Apple Home setup
 
 <p align="center">
   <img src="docs/media/demo.gif" width="880" alt="HomeViewPad in action: thermostat arrows, lights, widget stacks, clock, and a three-photo slideshow">
-  <br><sub>Actual iPad simulator recording · Demo accessories · Owner-supplied photos · About 90 seconds</sub>
+  <br><sub>Actual iPad simulator recording · Demo accessories · Owner-supplied photos · About 15 seconds</sub>
 </p>
 
 Temperature up. Lights off. A different widget. Then your photos get the whole screen.
