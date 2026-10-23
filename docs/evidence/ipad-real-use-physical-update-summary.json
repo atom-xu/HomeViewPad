@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-16",
+  "device": {
+    "model": "iPad Pro 11-inch (4th generation), iPad14,3",
+    "os": "iPadOS 27.0.1 (24A446)",
+    "connection": "paired local network"
+  },
+  "xcode": "27.0 (27A266a)",
+  "sdk": "27.0",
+  "app": {
+    "bundleIdentifier": "cn.vilhil.homeviewpad",
+    "displayName": "HomePad",
+    "version": "1.0",
+    "build": "1"
+  },
+  "sourceManifestSHA256": "8aceed0dece70a07f01de9d2eca2e1153fd364ea724e9bab7d6c68c46cfd6a7a",
+  "automaticSignedBuildSucceeded": true,
+  "strictCodesignVerified": true,
+  "profileIncludesTargetDevice": true,
+  "installSucceeded": true,
+  "exactAppReadbackSucceeded": true,
+  "ordinaryLaunchArguments": [
+    "--page",
+    "1"
+  ],
+  "processReadbackMatchesLaunchedExecutable": true,
+  "demoOrTestOrLanguageOverrides": false,
+  "actualDeviceObservation": [
+    "Before the final Photos/AX patch, real Chinese Home retained the selected household/card configuration and showed the new equal-height rectangular column without a demo badge.",
+    "After final update, Device Hub showed the real Photos page with an image and the current date/time, without a demo badge. The user could navigate independently; no inference about the navigation trigger is made."
+  ],
+  "physicalActionsNotPerformed": [
+    "No real accessory or scene command",
+    "No music playback or AirPlay selection",
+    "No system music/calendar/camera/photo grant on behalf of the user",
+    "No private photo selection or exported photo data"
+  ],
+  "limitations": [
+    "HomeKit write/readback, live video, Apple Music account/stream and AirPlay hardware acceptance remain separate.",
+    "Photo source/selection origin was not established from the observed image.",
+    "Landscape screen observation does not prove rotation-lock, window modes or system-lock wake behavior."
+  ],
+  "gitCommitPushPublication": false,
+  "rawArtifacts": "device-release-* under ignored .validation/local/real-use-01; private identifiers omitted from this summary"
+}

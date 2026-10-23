@@ -1,0 +1,159 @@
+{
+  "date_utc": "2026-10-17T03:19:32.418719+00:00",
+  "scope": "Selected round-2 03 Dwell original AppIcon replacement",
+  "asset_modified": "HomePad/Assets.xcassets/AppIcon.appiconset/AppIcon.png",
+  "source": "design/app-icon/2026-10-homepad-v2/03-dwell/icon-1024.png",
+  "byte_identical_to_selected_original": true,
+  "sha256": "491690da02105802543230fbf8eb18645df98e12033b15e12f9b0eec25f57947",
+  "source_format": {
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "mode": "RGB",
+    "fully_opaque": true,
+    "full_square_without_baked_corner_mask": true
+  },
+  "backup": ".validation/local/app-icon-original-20261017/backup/AppIcon.appiconset",
+  "backup_png_sha256": "a2b79987b2320df5e978b6101ccf3b45cd74345adf6f542be857710fa85cba6c",
+  "configuration_files_preserved": [
+    "HomePad/Assets.xcassets/AppIcon.appiconset/Contents.json",
+    "HomePad.xcodeproj/project.pbxproj",
+    "scripts/generate_project.py",
+    "HomePad/Info.plist",
+    "HomePad/HomePad.entitlements",
+    "HomePad.xcodeproj/xcshareddata/xcschemes/HomePad.xcscheme"
+  ],
+  "build_input_count": 40,
+  "build_inputs_unchanged_during_both_builds": true,
+  "xcode": {
+    "version": "27.0",
+    "build": "27A266a"
+  },
+  "host": {
+    "macos": "27.0",
+    "architecture": "arm64"
+  },
+  "targets": "HomePad application; HomePadTests and HomePadUITests contain no app icon binding",
+  "builds": [
+    {
+      "configuration": "Debug",
+      "destination": "generic/platform=iOS Simulator",
+      "sdk": "iphonesimulator27.0",
+      "architectures": [
+        "x86_64",
+        "arm64"
+      ],
+      "exit_code": 0,
+      "result": "BUILD SUCCEEDED",
+      "log": ".validation/local/app-icon-original-20261017/simulator-build.log",
+      "warnings": [
+        "/Users/atom/Desktop/homepad/HomePad/HomeModel.swift:306:15: warning: consider using asynchronous alternative function",
+        "/Users/atom/Desktop/homepad/HomePad/Services.swift:319:61: warning: 'weak' ownership of capture 'self' differs from implicitly-captured strong reference in outer scope [#ImplicitStrongCapture]",
+        "/Users/atom/Desktop/homepad/HomePad/Services.swift:319:20: warning: consider using asynchronous alternative function",
+        "/Users/atom/Desktop/homepad/HomePad/MusicPage.swift:724:14: warning: 'showsRouteButton' was deprecated in iOS 13.0: Use AVRoutePickerView instead. [#DeprecatedDeclaration]",
+        "2026-10-17 11:16:34.033 appintentsmetadataprocessor[93279:13918497] warning: Metadata extraction skipped, no AppIntents.framework dependency found"
+      ],
+      "app_icon_warning_count": 0,
+      "command": "xcodebuild -project HomePad.xcodeproj -scheme HomePad -configuration Debug -destination \"generic/platform=iOS Simulator\" -derivedDataPath <isolated tmp directory> -resultBundlePath <separate xcresult> CODE_SIGNING_ALLOWED=NO build",
+      "xcresult_status": "succeeded",
+      "xcresult_error_count": 0,
+      "xcresult_warning_count": 4,
+      "log_warning_entry_count": 5
+    },
+    {
+      "configuration": "Release",
+      "destination": "generic/platform=iOS",
+      "sdk": "iphoneos27.0",
+      "architectures": [
+        "arm64"
+      ],
+      "exit_code": 0,
+      "result": "BUILD SUCCEEDED",
+      "log": ".validation/local/app-icon-original-20261017/device-release-build.log",
+      "warnings": [
+        "/Users/atom/Desktop/homepad/HomePad/Services.swift:319:61: warning: 'weak' ownership of capture 'self' differs from implicitly-captured strong reference in outer scope [#ImplicitStrongCapture]",
+        "/Users/atom/Desktop/homepad/HomePad/Services.swift:319:20: warning: consider using asynchronous alternative function",
+        "/Users/atom/Desktop/homepad/HomePad/MusicPage.swift:724:14: warning: 'showsRouteButton' was deprecated in iOS 13.0: Use AVRoutePickerView instead. [#DeprecatedDeclaration]",
+        "/Users/atom/Desktop/homepad/HomePad/HomeModel.swift:306:15: warning: consider using asynchronous alternative function",
+        "2026-10-17 11:17:38.959 appintentsmetadataprocessor[94259:13924192] warning: Metadata extraction skipped, no AppIntents.framework dependency found"
+      ],
+      "app_icon_warning_count": 0,
+      "command": "xcodebuild -project HomePad.xcodeproj -scheme HomePad -configuration Release -destination \"generic/platform=iOS\" -derivedDataPath <isolated tmp directory> -resultBundlePath <separate xcresult> CODE_SIGNING_ALLOWED=NO build",
+      "xcresult_status": "succeeded",
+      "xcresult_error_count": 0,
+      "xcresult_warning_count": 4,
+      "log_warning_entry_count": 5
+    }
+  ],
+  "compiled_bundle_verification": [
+    {
+      "configuration": "Debug",
+      "primary_ipad_icon": {
+        "CFBundleIconFiles": [
+          "AppIcon60x60",
+          "AppIcon76x76"
+        ],
+        "CFBundleIconName": "AppIcon"
+      },
+      "opaque_1024_catalog_master": true,
+      "compiled_pngs": [
+        {
+          "filename": "AppIcon60x60@2x.png",
+          "dimensions": [
+            120,
+            120
+          ],
+          "fully_opaque": true
+        },
+        {
+          "filename": "AppIcon76x76@2x~ipad.png",
+          "dimensions": [
+            152,
+            152
+          ],
+          "fully_opaque": true
+        }
+      ],
+      "pngs_visually_inspected": true,
+      "device_png_inspection": "standard PNG"
+    },
+    {
+      "configuration": "Release",
+      "primary_ipad_icon": {
+        "CFBundleIconFiles": [
+          "AppIcon60x60",
+          "AppIcon76x76"
+        ],
+        "CFBundleIconName": "AppIcon"
+      },
+      "opaque_1024_catalog_master": true,
+      "compiled_pngs": [
+        {
+          "filename": "AppIcon60x60@2x.png",
+          "dimensions": [
+            120,
+            120
+          ],
+          "fully_opaque": true
+        },
+        {
+          "filename": "AppIcon76x76@2x~ipad.png",
+          "dimensions": [
+            152,
+            152
+          ],
+          "fully_opaque": true
+        }
+      ],
+      "pngs_visually_inspected": true,
+      "device_png_inspection": "Apple pngcrush normalization of validation copies only"
+    }
+  ],
+  "runtime_ui_execution": "No simulator/device UI execution for this change.",
+  "tests": "No XCTest/XCUITest run for this resource-only change; an unrelated music navigation suite was already running and was not interrupted.",
+  "simulator_installation": "Not performed; existing user preview and acceptance simulators were left untouched.",
+  "physical_device_installation": "Not performed.",
+  "system_mask_tinted_clear_and_physical_color": "Not tested on a running device.",
+  "commit_push_publish": "Not performed."
+}

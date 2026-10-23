@@ -3,7 +3,244 @@ import HomeKit
 import Photos
 @testable import HomePad
 
+/// Snapshot tests model adapter completion/time only. They never construct
+/// unsupported HomeKit snapshot objects or render synthetic camera pictures.
+@MainActor private final class TestCameraSnapshotClient: HomePadCameraSnapshotClient {
+    var requests = 0
+    var cancellations = 0
+    var reportsFailureOnCancel = false
+    private var completions: [Int: (Result<CameraSnapshotFrame, Error>) -> Void] = [:]
+    func takeSnapshot(_ completion: @escaping (Result<CameraSnapshotFrame, Error>) -> Void) {
+        completions[requests] = completion; requests += 1
+    }
+    func cancel() {
+        cancellations += 1
+        if reportsFailureOnCancel {
+            for completion in Array(completions.values) { completion(.failure(URLError(.cancelled))) }
+        }
+    }
+    func complete(_ request: Int, at date: Date) {
+        completions.removeValue(forKey: request)?(.success(CameraSnapshotFrame(snapshot: nil, capturedAt: date)))
+    }
+    func fail(_ request: Int) { completions.removeValue(forKey: request)?(.failure(URLError(.notConnectedToInternet))) }
+    func failWithoutDiscardingCallback(_ request: Int) { completions[request]?(.failure(URLError(.notConnectedToInternet))) }
+}
+
+extension HomePadTests {
+    @MainActor func testQueuedSnapshotCallbackCannotConsumeReplacementRequestCompletion() async {
+        var oldCompletions = 0
+        var replacementDates: [Date] = []
+        let earlier = Date(timeIntervalSince1970: 1_000)
+        let latest = Date(timeIntervalSince1970: 2_000)
+        let old = CameraSnapshotRequestDelivery { _ in oldCompletions += 1 }
+        // The delegate has entered the app, but its main-actor hop is still
+        // queued. Cancel and replace without yielding to that queued task.
+        old.enqueue(.success(CameraSnapshotFrame(snapshot: nil, capturedAt: earlier)))
+        old.cancel()
+        let replacement = CameraSnapshotRequestDelivery { result in
+            if case .success(let frame) = result { replacementDates.append(frame.capturedAt) }
+        }
+        for _ in 0..<10 { await Task.yield() }
+        XCTAssertEqual(oldCompletions, 0)
+        XCTAssertTrue(replacementDates.isEmpty, "An old callback cannot finish a newer request")
+        replacement.enqueue(.success(CameraSnapshotFrame(snapshot: nil, capturedAt: latest)))
+        for _ in 0..<10 { await Task.yield() }
+        XCTAssertEqual(oldCompletions, 0)
+        XCTAssertEqual(replacementDates, [latest])
+    }
+
+    @MainActor func testSnapshotRequestDeliveryClearsCompletionBeforeReentrantCancellation() async {
+        var completions = 0
+        var delivery: CameraSnapshotRequestDelivery?
+        delivery = CameraSnapshotRequestDelivery { _ in
+            completions += 1
+            delivery?.cancel()
+            delivery?.enqueue(.failure(URLError(.cancelled)))
+        }
+        delivery?.enqueue(.success(CameraSnapshotFrame(snapshot: nil, capturedAt: Date(timeIntervalSince1970: 1_000))))
+        for _ in 0..<20 { await Task.yield() }
+        XCTAssertEqual(completions, 1)
+        delivery?.cancel(); delivery = nil
+    }
+
+    @MainActor func testCameraSnapshotsRequireForegroundAccessAndExplicitVisibleCamera() {
+        let client = TestCameraSnapshotClient()
+        let store = CameraSnapshotStore(automaticRefresh: false, makeClient: { _ in client })
+        let cameraID = UUID(), consumer = UUID()
+        store.setAccess(allowed: true); store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 0, "Access alone must not select or photograph a camera")
+        store.setAccess(allowed: false)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: consumer, visible: true)
+        store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 0)
+        store.setAccess(allowed: true)
+        XCTAssertEqual(client.requests, 1)
+    }
+
+    @MainActor func testCameraSnapshotsRefreshAtTenSecondsWithoutOverlappingRequests() {
+        var date = Date(timeIntervalSince1970: 1_000)
+        let client = TestCameraSnapshotClient()
+        let store = CameraSnapshotStore(now: { date }, automaticRefresh: false, makeClient: { _ in client })
+        let cameraID = UUID(), consumer = UUID()
+        store.setAccess(allowed: true)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: consumer, visible: true)
+        XCTAssertEqual(client.requests, 1)
+        date.addTimeInterval(9); store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 1)
+        date.addTimeInterval(1); store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 1, "Ten seconds cannot start a second request while the first is pending")
+        client.complete(0, at: date)
+        store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 2)
+        client.complete(1, at: date)
+        date.addTimeInterval(9); store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 2)
+        date.addTimeInterval(1); store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 3)
+        store.setAccess(allowed: false)
+    }
+
+    @MainActor func testReenteringCameraCardKeepsSnapshotAndOriginalRefreshDeadline() {
+        var date = Date(timeIntervalSince1970: 1_000)
+        let client = TestCameraSnapshotClient()
+        let store = CameraSnapshotStore(now: { date }, automaticRefresh: false, makeClient: { _ in client })
+        let cameraID = UUID(), consumer = UUID()
+        store.setAccess(allowed: true)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: consumer, visible: true)
+        client.complete(0, at: date)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: consumer, visible: false)
+        date.addTimeInterval(5); store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 1)
+        XCTAssertEqual(store.lastUpdated(for: cameraID), Date(timeIntervalSince1970: 1_000))
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: consumer, visible: true)
+        XCTAssertEqual(client.requests, 1, "A page switch must not replace a recent cached frame or reconnect immediately")
+        date.addTimeInterval(5); store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 2)
+        store.setAccess(allowed: false)
+    }
+
+    @MainActor func testDuplicateCameraCardsShareRequestAndLastConsumerStopsPolling() {
+        var date = Date(timeIntervalSince1970: 1_000)
+        let client = TestCameraSnapshotClient()
+        var created = 0
+        let store = CameraSnapshotStore(now: { date }, automaticRefresh: false, makeClient: { _ in created += 1; return client })
+        let cameraID = UUID(), first = UUID(), second = UUID()
+        store.setAccess(allowed: true)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: first, visible: true)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: second, visible: true)
+        XCTAssertEqual(created, 1); XCTAssertEqual(client.requests, 1)
+        client.complete(0, at: date)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: first, visible: false)
+        date.addTimeInterval(10); store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 2)
+        client.complete(1, at: date)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: second, visible: false)
+        date.addTimeInterval(10); store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 2)
+        XCTAssertNotNil(store.lastUpdated(for: cameraID))
+        store.setAccess(allowed: false)
+    }
+
+    @MainActor func testFailedCameraSnapshotRetainsPreviousFrameWithExplicitStaleStatusAndCanRecover() {
+        var date = Date(timeIntervalSince1970: 1_000)
+        let client = TestCameraSnapshotClient()
+        let store = CameraSnapshotStore(now: { date }, automaticRefresh: false, makeClient: { _ in client })
+        let cameraID = UUID()
+        store.setAccess(allowed: true)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: UUID(), visible: true)
+        client.complete(0, at: date)
+        XCTAssertFalse(store.isStale(for: cameraID))
+        date.addTimeInterval(10); store.refreshVisibleCameras(); client.fail(1)
+        XCTAssertEqual(store.lastUpdated(for: cameraID), Date(timeIntervalSince1970: 1_000))
+        XCTAssertTrue(store.isStale(for: cameraID))
+        XCTAssertEqual(store.message(for: cameraID), "Snapshot update failed · showing earlier image")
+        date.addTimeInterval(10); store.refreshVisibleCameras(); client.complete(2, at: date)
+        XCTAssertEqual(store.lastUpdated(for: cameraID), date)
+        XCTAssertFalse(store.isStale(for: cameraID))
+        XCTAssertEqual(store.message(for: cameraID), "Snapshot · updates every 10 seconds")
+        store.setAccess(allowed: false)
+    }
+
+    @MainActor func testClearingHouseholdDropsCameraRegistrationsAndRejectsLateSnapshot() {
+        let date = Date(timeIntervalSince1970: 1_000)
+        let client = TestCameraSnapshotClient()
+        let store = CameraSnapshotStore(now: { date }, automaticRefresh: false, makeClient: { _ in client })
+        let cameraID = UUID(), consumer = UUID()
+        store.setAccess(allowed: true)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: consumer, visible: true)
+        store.clear(); client.complete(0, at: date)
+        XCTAssertNil(store.lastUpdated(for: cameraID))
+        store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 1, "Another home must not inherit a camera registration")
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: consumer, visible: true)
+        XCTAssertEqual(client.requests, 2)
+        client.complete(1, at: date)
+        XCTAssertEqual(store.lastUpdated(for: cameraID), date)
+        store.setAccess(allowed: false)
+    }
+
+    @MainActor func testCameraBackgroundOrRevocationClearsCachedFrameAndRejectsPendingResult() {
+        var date = Date(timeIntervalSince1970: 1_000)
+        let client = TestCameraSnapshotClient()
+        let store = CameraSnapshotStore(now: { date }, automaticRefresh: false, makeClient: { _ in client })
+        let cameraID = UUID()
+        store.setAccess(allowed: true)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: UUID(), visible: true)
+        client.complete(0, at: date)
+        date.addTimeInterval(10); store.refreshVisibleCameras()
+        store.setAccess(allowed: false)
+        XCTAssertNil(store.lastUpdated(for: cameraID))
+        client.complete(1, at: date)
+        XCTAssertNil(store.lastUpdated(for: cameraID))
+        store.refreshVisibleCameras()
+        XCTAssertEqual(client.requests, 2)
+        store.setAccess(allowed: true)
+        XCTAssertEqual(client.requests, 3)
+        client.complete(2, at: date)
+        XCTAssertEqual(store.lastUpdated(for: cameraID), date)
+        store.setAccess(allowed: false)
+    }
+
+    @MainActor func testSnapshotCleanupRejectsSynchronousCancellationCallbackWithoutReentry() {
+        let client = TestCameraSnapshotClient(); client.reportsFailureOnCancel = true
+        let store = CameraSnapshotStore(automaticRefresh: false, makeClient: { _ in client })
+        let cameraID = UUID()
+        store.setAccess(allowed: true)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: UUID(), visible: true)
+        client.failWithoutDiscardingCallback(0)
+        XCTAssertEqual(client.cancellations, 1)
+        XCTAssertEqual(store.message(for: cameraID), "Snapshot unavailable. Tap to open the camera.")
+        store.setAccess(allowed: false)
+        XCTAssertNil(store.lastUpdated(for: cameraID))
+        XCTAssertEqual(client.cancellations, 2)
+    }
+
+    @MainActor func testHomeKitEarlierSnapshotIsRetainedAndMarkedWithActualCaptureTime() {
+        let now = Date(timeIntervalSince1970: 1_000)
+        let captured = now.addingTimeInterval(-60)
+        let client = TestCameraSnapshotClient()
+        let store = CameraSnapshotStore(now: { now }, automaticRefresh: false, makeClient: { _ in client })
+        let cameraID = UUID()
+        store.setAccess(allowed: true)
+        store.setVisible(cameraID: cameraID, profile: nil, consumerID: UUID(), visible: true)
+        client.complete(0, at: captured)
+        XCTAssertEqual(store.lastUpdated(for: cameraID), captured)
+        XCTAssertTrue(store.isStale(for: cameraID))
+        XCTAssertEqual(store.message(for: cameraID), "Earlier snapshot")
+        store.setAccess(allowed: false)
+    }
+}
+
 final class HomePadTests: XCTestCase {
+    private var previousLanguage: String?
+    override func setUpWithError() throws {
+        previousLanguage = UserDefaults.standard.string(forKey: "appLanguage")
+        UserDefaults.standard.set("en", forKey: "appLanguage")
+    }
+    override func tearDownWithError() throws {
+        if let previousLanguage { UserDefaults.standard.set(previousLanguage, forKey: "appLanguage") }
+        else { UserDefaults.standard.removeObject(forKey: "appLanguage") }
+    }
     @MainActor func testDemoToggleScenesAndIsolation() {
         let home = HomeStore(); home.startDemo()
         XCTAssertEqual(home.tiles.count, 5)
@@ -97,7 +334,7 @@ extension HomePadTests {
         XCTAssertTrue(home.tiles.isEmpty); XCTAssertTrue(home.scenes.isEmpty)
         XCTAssertTrue(home.cameras.isEmpty); XCTAssertTrue(home.homes.isEmpty)
         XCTAssertTrue(home.busy.isEmpty); XCTAssertFalse(home.sceneBusy)
-        XCTAssertNil(home.notice); XCTAssertEqual(home.homeName, "HomeViewPad")
+        XCTAssertNil(home.notice); XCTAssertEqual(home.homeName, "HomePad")
         XCTAssertEqual(home.status, .denied)
     }
     @MainActor func testStoppingAudioClearsPersonalFileMetadata() {
@@ -123,7 +360,9 @@ extension HomePadTests {
         XCTAssertEqual(DashboardPage.home.adjacent(forward: false), .overview)
         XCTAssertEqual(DashboardPage.overview.adjacent(forward: true), .home)
         XCTAssertEqual(DashboardPage.clock.adjacent(forward: false), .home)
-        XCTAssertEqual(DashboardPage.settings.adjacent(forward: false), .photos)
+        XCTAssertEqual(DashboardPage.settings.adjacent(forward: false), .music)
+        XCTAssertEqual(DashboardPage.music.adjacent(forward: false), .photos)
+        XCTAssertEqual(DashboardPage.photos.adjacent(forward: true), .music)
         XCTAssertEqual(DashboardPage(rawValue: 3), .photos)
     }
     func testCarouselWindowIncludesSelectionWithoutOverflowingTile() {
@@ -142,7 +381,8 @@ extension HomePadTests {
         let stacks = (0..<6).map { DashboardWidget.options(for: $0, tiles: home.tiles, scenes: home.scenes) }
         let all = stacks.flatMap { $0 }
         XCTAssertEqual(Set(all).count, all.count)
-        XCTAssertEqual(stacks[1], [.clock, .agenda]); XCTAssertEqual(stacks[2], [.photo, .camera])
+        XCTAssertEqual(stacks[1], [.clock, .agenda]); XCTAssertEqual(stacks[2], [.camera])
+        XCTAssertFalse(all.contains(.photo)) // Photos belong only to Overview and the Photos page.
         XCTAssertEqual(stacks[4], [.accessory(home.tiles[2].id)])
         XCTAssertEqual(stacks[5], [.accessory(home.tiles[0].id), .accessory(home.tiles[1].id)])
         XCTAssertEqual(stacks[0].first, .climate(home.tiles[4].id))
@@ -173,4 +413,21 @@ extension HomePadTests {
         XCTAssertEqual(home.tiles[4].value, "22.5 °C")
         home.startDemo(); XCTAssertEqual(home.tiles[4].number, 22)
     }
+    func testPlayingArtworkDecoratesOnlyHomeAndClock() {
+        for page in DashboardPage.allCases {
+            XCTAssertEqual(MusicArtworkBackdropPolicy.shows(on: page, enabled: true, playing: true, hasArtwork: true, localFileSelected: false),
+                           page == .home || page == .clock,
+                           "The independent Photos page and opaque Overview must keep their own composition")
+        }
+    }
+
+    func testPlayingArtworkRestoresChosenBackgroundWhenUnavailableOrPaused() {
+        for page in [DashboardPage.home, .clock] {
+            XCTAssertFalse(MusicArtworkBackdropPolicy.shows(on: page, enabled: false, playing: true, hasArtwork: true, localFileSelected: false))
+            XCTAssertFalse(MusicArtworkBackdropPolicy.shows(on: page, enabled: true, playing: false, hasArtwork: true, localFileSelected: false))
+            XCTAssertFalse(MusicArtworkBackdropPolicy.shows(on: page, enabled: true, playing: true, hasArtwork: false, localFileSelected: false))
+            XCTAssertFalse(MusicArtworkBackdropPolicy.shows(on: page, enabled: true, playing: true, hasArtwork: true, localFileSelected: true))
+        }
+    }
+
 }

@@ -1,0 +1,56 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceName": "HomePad Acceptance",
+        "modelName": "iPad Pro 11-inch (M5)",
+        "osBuildNumber": "23F73",
+        "osVersion": "26.5",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "passedTests": 59,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "HomePad \u00b7 Built with macOS 27.0",
+  "expectedFailures": 0,
+  "failedTests": 0,
+  "finishTime": 1792091692.46,
+  "passedTests": 59,
+  "result": "Passed",
+  "runtimeWarnings": [],
+  "skippedTests": 0,
+  "startTime": 1792090504.933,
+  "statistics": [],
+  "testFailures": [],
+  "title": "Test - HomePad",
+  "topInsights": [
+    {
+      "category": "Longest Test Runs",
+      "impact": "13% of duration",
+      "text": "1 longest test run with outlier durations exceeding 150.44s (three standard deviations)"
+    }
+  ],
+  "totalTestCount": 59,
+  "sourceState": {
+    "branch": "codex/ipad-display-01",
+    "baseCommit": "3c395111ab2a6c85e62ca763f7c156da4845b49c",
+    "gitStatus": "uncommitted, unpushed",
+    "manifestSHA256": "48eeec39aea673bdad0f1d0beba55a97038d57cbebabcac88e799b9b7a2f1ffa",
+    "frozenFiles": 33,
+    "unchangedDuringSuite": true,
+    "scope": "Complete HomePad scheme after square cells in both orientations and viewport measurement correction; no only-testing or skip-testing filters.",
+    "unitTestCount": 35,
+    "uiTestCount": 24,
+    "changedFilesFromFirstSquareSuite": [
+      "HomePadUITests/HomePadUITests.swift"
+    ]
+  }
+}

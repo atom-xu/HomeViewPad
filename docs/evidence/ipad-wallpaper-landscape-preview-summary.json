@@ -1,0 +1,22 @@
+{
+  "verifiedAtUTC": "2026-10-16T01:06:01.240361+00:00",
+  "sourceManifestSHA256": "b6ca47ec97de39762395b53ea28f396dea06a1c243ad181067bc8ed27dc93b4f",
+  "device": "iPad Pro 13-inch (M5) Simulator",
+  "runtime": "iPadOS 26.5 (23F73)",
+  "launchSucceeded": true,
+  "verifiedBundleFiles": {
+    "HomePad": true,
+    "Info.plist": true,
+    "en.lproj/InfoPlist.strings": true,
+    "zh-Hans.lproj/InfoPlist.strings": true,
+    "en.lproj/Localizable.strings": true,
+    "zh-Hans.lproj/Localizable.strings": true
+  },
+  "supportedOrientations": [
+    "UIInterfaceOrientationLandscapeLeft",
+    "UIInterfaceOrientationLandscapeRight"
+  ],
+  "systemRotationLockChanged": false,
+  "launchLanguageOverride": false,
+  "screenshot": ".validation/local/wallpaper-landscape/preview.png"
+}

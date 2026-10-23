@@ -1,0 +1,56 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceName": "HomePad Acceptance",
+        "modelName": "iPad Pro 11-inch (M5)",
+        "osBuildNumber": "23F73",
+        "osVersion": "26.5",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 1,
+      "passedTests": 58,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "HomePad \u00b7 Built with macOS 27.0",
+  "expectedFailures": 0,
+  "failedTests": 1,
+  "finishTime": 1792090284.55,
+  "passedTests": 58,
+  "result": "Failed",
+  "runtimeWarnings": [],
+  "skippedTests": 0,
+  "startTime": 1792089098.811,
+  "statistics": [],
+  "testFailures": [
+    {
+      "testName": "testFullscreenHomeReferenceGeometryAndHiddenNavigation()",
+      "failureText": "Asynchronous wait failed: Exceeded timeout of 5 seconds, with unfulfilled expectations: \"Expect predicate `BLOCKPREDICATE(0x10a583630)`\"."
+    }
+  ],
+  "title": "Test - HomePad",
+  "topInsights": [
+    {
+      "category": "Longest Test Runs",
+      "impact": "13% of duration",
+      "text": "1 longest test run with outlier durations exceeding 150.11s (three standard deviations)"
+    }
+  ],
+  "totalTestCount": 59,
+  "sourceState": {
+    "branch": "codex/ipad-display-01",
+    "baseCommit": "3c395111ab2a6c85e62ca763f7c156da4845b49c",
+    "gitStatus": "uncommitted, unpushed",
+    "manifestSHA256": "5715b19752053fc942196d4052cada2298b996e716490fe7e9b98b6b1a2950b6",
+    "frozenFiles": 33,
+    "unchangedDuringSuite": true,
+    "scope": "First complete square-layout suite. One full-viewport assertion used the Home accessibility content container; portrait square assertions passed. Landscape video shows the square grid centered in the fullscreen wallpaper. Actual AX container frame was not captured."
+  }
+}

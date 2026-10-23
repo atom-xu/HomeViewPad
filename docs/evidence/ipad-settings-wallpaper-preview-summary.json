@@ -1,0 +1,33 @@
+{
+  "verifiedAtUTC": "2026-10-16T02:20:47.104264+00:00",
+  "sourceManifestSHA256": "9f16832e2a8efe9c0619db31dec5e09076b24c204e5d9fae115d9e187d78491c",
+  "device": "iPad Pro 13-inch (M5) Simulator",
+  "runtime": "iPadOS 26.5 (23F73)",
+  "launchSucceeded": true,
+  "verifiedBundleFiles": {
+    "HomePad": true,
+    "AppIcon60x60@2x.png": true,
+    "__preview.dylib": true,
+    "Assets.car": true,
+    "AppIcon76x76@2x~ipad.png": true,
+    "PrivacyInfo.xcprivacy": true,
+    "HomePad.debug.dylib": true,
+    "Info.plist": true,
+    "PkgInfo": true,
+    "zh-Hans.lproj/Localizable.strings": true,
+    "zh-Hans.lproj/InfoPlist.strings": true,
+    "en.lproj/Localizable.strings": true,
+    "en.lproj/InfoPlist.strings": true
+  },
+  "supportedOrientations": [
+    "UIInterfaceOrientationLandscapeLeft",
+    "UIInterfaceOrientationLandscapeRight"
+  ],
+  "systemRotationLockChanged": false,
+  "launchLanguageOverride": false,
+  "cameraConsentChanged": false,
+  "fullSchemeResult": "90 passed, 2 failed; follow-up 2 passed, location reverse-geocoding still failed",
+  "screenshot": ".validation/local/settings-v2/final/preview.png",
+  "followupTestManifestSHA256": "a626603005eaa5c11209453daaab4b2d4f2607c94dd4059056928da9f0d2e4f4",
+  "applicationSourceUnchangedAfterCompleteScheme": true
+}

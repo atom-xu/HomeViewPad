@@ -1,0 +1,61 @@
+{
+  "scope": "Native Apple Music player and shared Home widget",
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "simulator": "iPad Pro 11-inch (M5)",
+    "runtime": "iPadOS 26.5 (23F73)"
+  },
+  "finalManifestSHA256": "4e8d6de7f3f3c76442d8f7a6741af62fb877fed3a2f629673d8d32d9b29be453",
+  "attempts": [
+    {
+      "name": "focused",
+      "result": "Failed",
+      "passed": 27,
+      "failed": 2,
+      "skipped": 0,
+      "total": 29,
+      "failures": [
+        {
+          "test": "testMusicAccessibleChinesePlayerAndAlbumList()"
+        },
+        {
+          "test": "testMusicHomeWidgetAndCoverFlowSharePlaybackWithoutPageSwipe()"
+        }
+      ]
+    },
+    {
+      "name": "repair",
+      "result": "Failed",
+      "passed": 27,
+      "failed": 2,
+      "skipped": 0,
+      "total": 29,
+      "failures": [
+        {
+          "test": "testMusicAccessibleChinesePlayerAndAlbumList()"
+        },
+        {
+          "test": "testMusicHomeWidgetAndCoverFlowSharePlaybackWithoutPageSwipe()"
+        }
+      ]
+    },
+    {
+      "name": "ax-check",
+      "result": "Passed",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "total": 2,
+      "failures": []
+    }
+  ],
+  "diagnosis": "SwiftUI parent accessibility identifiers propagated to leaf buttons and text. Explicit contain semantics preserve each control identifier; no assertions were weakened.",
+  "imagesInspected": [
+    "music-cover-flow-native-test-albums",
+    "music-home-widget-shared-test-playback",
+    "music-chinese-accessibility-album-tracks-test-data",
+    "music-chinese-accessibility-player-test-data",
+    "music-immersive-native-player-test-data"
+  ],
+  "fixtureBoundary": "DEBUG plus both --uitesting and --music-fixture required. Visible TEST DATA label; no real account or audio."
+}

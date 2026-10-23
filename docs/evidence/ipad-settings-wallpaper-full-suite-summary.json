@@ -1,0 +1,48 @@
+{
+  "scope": "Complete HomePad scheme, settings simplification plus photo wallpaper and landscape-only support",
+  "totalTests": 92,
+  "passedTests": 90,
+  "failedTests": 2,
+  "skippedTests": 0,
+  "unitTests": {
+    "passed": 66,
+    "failed": 0
+  },
+  "uiTests": {
+    "passed": 24,
+    "failed": 2
+  },
+  "sourceManifestSHA256": "9f16832e2a8efe9c0619db31dec5e09076b24c204e5d9fae115d9e187d78491c",
+  "sourceFileCount": 38,
+  "sourceUnchangedBeforeAfter": true,
+  "startedAtUTC": "2026-10-16T01:48:48.925597+00:00",
+  "finishedAtUTC": "2026-10-16T02:13:36.710855+00:00",
+  "toolchain": "Xcode 27.0 (27A266a), macOS 27.0 (26A428), SDK 27.0",
+  "testedDevice": "iPad Pro 11-inch (M5) Simulator",
+  "runtime": "iPadOS 26.5 (23F73)",
+  "runtimeWarningCount": 26,
+  "runtimeWarning": "UIRequiresFullScreen will soon be ignored; support for all orientations will soon be required.",
+  "failures": [
+    {
+      "test": "testLocationPermissionUsesDetectedCity",
+      "finding": "System reverse geocoder returned GEOErrorDomain -8: Received no results status from server; app displayed Location unavailable without fake fallback."
+    },
+    {
+      "test": "testSystemPickerDismissal",
+      "finding": "After system PhotosPicker Cancel, test tapped underlying Done while its hit point was {-1,-1}; Photos panel remained. Follow-up strengthens test synchronization only."
+    }
+  ],
+  "passedFeatureJourneys": [
+    "Actual wallpaper selection, cancel, replacement, SHA identity on relaunch, full-viewport Home/Clock and default restoration",
+    "Both landscape directions and physical rotation compatibility viewport; Home geometry unchanged",
+    "Chinese, accessibility large text Home/Settings, widget editing and persistence",
+    "Settings four-category navigation, progressive screen modes and persistence, privacy/panel-return journey",
+    "Legacy face-wake consent boundaries in English and Chinese"
+  ],
+  "appCodeChangedAfterCompleteScheme": false,
+  "rawArtifacts": ".validation/local/settings-v2/final/",
+  "physicalHardwareVerified": false,
+  "committed": false,
+  "pushed": false,
+  "singleAllGreenBundle": false
+}

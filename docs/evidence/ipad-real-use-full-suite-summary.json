@@ -1,0 +1,76 @@
+{
+  "scope": "Complete unfiltered HomePad scheme, real-use revision 01 before cosmetic camera title follow-up",
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "sdk": "27.0",
+    "device": "iPad Pro 11-inch (M5) Simulator",
+    "runtime": "iPadOS 26.5 (23F73)",
+    "testPhotos": "two generated gradients plus runtime samples",
+    "location": "simulator injected, not GPS"
+  },
+  "source": {
+    "files": 46,
+    "manifestSHA256": "f639c07462460951431c44534de9affda8cc8f5ea4b5dcdddae3d7f7b43f67ec",
+    "unchangedDuringRun": true
+  },
+  "result": "Failed",
+  "total": 141,
+  "passed": 133,
+  "failed": 8,
+  "skipped": 0,
+  "unitTests": {
+    "passed": 112,
+    "failed": 0
+  },
+  "uiTests": {
+    "passed": 21,
+    "failed": 8
+  },
+  "startUTC": "2026-10-16T13:26:36.383000+00:00",
+  "finishUTC": "2026-10-16T13:50:13.538000+00:00",
+  "failedMethods": [
+    {
+      "name": "testCustomCameraShortcutPersistsAndRemainsDemo()",
+      "failure": "XCTAssertTrue failed"
+    },
+    {
+      "name": "testLegacyFaceWakeRequiresSeparateForegroundConsentInBothLanguages()",
+      "failure": "Failed to get matching snapshot: No matches found for Elements matching predicate '\"faceStatus\" IN identifiers' from input {("
+    },
+    {
+      "name": "testLocationPermissionUsesDetectedCity()",
+      "failure": "Asynchronous wait failed: Exceeded timeout of 40 seconds, with unfulfilled expectations: \"Expect predicate `BLOCKPREDICATE(0x10991c690)`\"."
+    },
+    {
+      "name": "testManualStandbyWakeNightModeAndSimulatorLimitations()",
+      "failure": "Failed to get matching snapshot: No matches found for Elements matching predicate '\"motionStatus\" IN identifiers' from input {("
+    },
+    {
+      "name": "testPhotoLibraryAlbumDisplayRotationRestoreAndRemoval()",
+      "failure": "XCTAssertTrue failed"
+    },
+    {
+      "name": "testPhotoLibraryDenialKeepsSinglePhotoAvailable()",
+      "failure": "XCTAssertTrue failed"
+    },
+    {
+      "name": "testReadmeDemoJourney()",
+      "failure": "XCTAssertTrue failed"
+    },
+    {
+      "name": "testSystemPickerDismissal()",
+      "failure": "XCTAssertTrue failed"
+    }
+  ],
+  "runtimeWarnings": [
+    "Update the Info.plist: 1) `UIRequiresFullScreen` will soon be ignored. 2) Support for all orientations will soon be required."
+  ],
+  "limitations": [
+    "Simulator results do not verify HomeKit writes, camera feeds, Apple Music account playback, AirPlay or physical sensing.",
+    "Complete run is not all-green. Focused repairs/results are recorded separately.",
+    "Automatic city expectation remains failed; manual city and live weather journey passed."
+  ],
+  "localArtifacts": "release-full-suite.log, release-full-suite.xcresult, release-code-manifest.json and release-shots under .validation/local/real-use-01",
+  "gitCommit": false,
+  "pushOrPublication": false
+}

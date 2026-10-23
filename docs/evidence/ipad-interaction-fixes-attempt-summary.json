@@ -1,0 +1,64 @@
+{
+  "scope": "HomePad interaction fixes 03",
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "sdk": "27.0",
+    "simulator": "Independent iPad Pro 11-inch M5",
+    "runtime": "iPadOS 26.5 (23F73)"
+  },
+  "attempts": [
+    {
+      "name": "focused",
+      "sourceManifestSHA256": "867603a5110a28925623618086463cf0b8bb8e3bd73f32045ed9a3d1bfefc4b6",
+      "stage": "Build failed before tests",
+      "testsExecuted": 0,
+      "exitCode": 65,
+      "failure": "SwiftUI Dashboard modifier expression exceeded compiler type-check budget; split same modifier order into three computed subexpressions"
+    },
+    {
+      "name": "focused-repair",
+      "sourceManifestSHA256": "c0c60014f49b3ae967bb726e1f39abdd536ee39b095e7394a5a278f1519da25b",
+      "total": 136,
+      "passed": 134,
+      "failed": 2,
+      "skipped": 0,
+      "unitPassed": 133,
+      "uiPassed": 1,
+      "uiFailed": 2,
+      "exitCode": 65,
+      "resultBundleReadable": true,
+      "failure": "New outer Overview identifier replaced legacy overviewBoard; UIKit hosted Preview removes supplied preview identifier. Video/AX retained, complete black gutters and climate preview observed."
+    },
+    {
+      "name": "final-focused",
+      "sourceManifestSHA256": "5c4f3c3b45a8f19fc1b9f6fcaf4dc17e859323561c32c42a58f5ed820895466e",
+      "total": 139,
+      "passed": 138,
+      "failed": 1,
+      "skipped": 0,
+      "unitPassed": 135,
+      "uiPassed": 3,
+      "uiFailed": 1,
+      "exitCode": 65,
+      "resultBundleReadable": true,
+      "failure": "Exact edge-card text selector did not match native combined control label; visual inspection separately found white preview host causing poor glyph contrast. Repairs verified in later runs; this failed attempt is retained."
+    },
+    {
+      "name": "preview-fix",
+      "sourceManifestSHA256": "46260ab9f85ac61b00c2777749e90e5ae437cef220bc53fee8623aa265c85a3a",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0,
+      "resultBundleReadable": true,
+      "screenshotsExportedAndInspected": 2,
+      "result": "Full climate and edge card preview fits, original geometry unchanged; temperature and native combined label remain inside bounds, dark backing restored readable glyph contrast"
+    }
+  ],
+  "cameraFixtures": "Metadata-only clock/completion adapters; no synthetic HMCameraSnapshot objects or camera pictures",
+  "independentReview": "Original queued snapshot callback/new completion binding gap repaired with per-request delivery/delegate; two controlled regressions passed in 135-unit focused execution",
+  "finalStatus": "Completed valid full scheme 168/170; test-only music readiness follow-up 4/4, 169 distinct methods passed across runs. Old automatic-city timeout remains; see ipad-interaction-fixes-full-suite-summary.json",
+  "physicalStatus": "Final signed package installed and ordinarily launched; exact app URL/process readback matches. User confirmed music AirPlay page continuity and updating Home static snapshots; other hardware paths remain open.",
+  "commitPushPublication": false
+}

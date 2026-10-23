@@ -1,0 +1,70 @@
+{
+  "scope": "User-authorized installation of unchanged verified music06/weather07 package",
+  "checkedUTC": "2026-10-17T07:54:10.940232+00:00",
+  "device": {
+    "name": "Boom pad",
+    "model": "iPad Pro (11-inch) (4th generation)",
+    "productType": "iPad14,3",
+    "osVersion": "27.0.1",
+    "osBuild": "24A446",
+    "transportReportedByCoreDevice": "wired",
+    "connectionState": "connected",
+    "physicalCableInteractionByAgent": false
+  },
+  "sourceIntegrity": {
+    "fileCount": 48,
+    "manifestSHA256": "14932f7c509d46238c82f5f1d0d6728a44d67ed195f13168191ea7afc97b3347",
+    "sourceUnchangedSinceSimulatorAcceptance": true,
+    "signedBuildManifestSHA256": "59d358f6e2ed4b37ab79a4c44a548fc17d0bc9be9a8ab474119ee54bf3c1e20b",
+    "signedBuildDifference": "Only UI screenshot capture line; other47 files identical. No application behavior changed.",
+    "fiveSignedPackageFilesUnchanged": true,
+    "strictCodesignFreshCheckPassed": true,
+    "profileUnexpiredFreshCheckPassed": true,
+    "profileIncludesTargetFreshCheckPassed": true
+  },
+  "acceptance": {
+    "checkedUTC": "2026-10-17T07:54:10.940232+00:00",
+    "installed": true,
+    "exactBundleAndInstallURLMatched": true,
+    "launched": true,
+    "foregroundActivationRequested": true,
+    "matchingPIDAndExecutableReadback": true,
+    "appArguments": [
+      "--page",
+      "5"
+    ],
+    "environmentKeys": [
+      "TERM"
+    ],
+    "visualScreenObserved": false,
+    "deviceHubOpened": false,
+    "audioRouteOrVolumeChanged": false,
+    "networkSettingsChanged": false,
+    "hardwareFunctionAcceptancePerformed": false
+  },
+  "commands": [
+    "devicectl device info apps --bundle-id cn.vilhil.homeviewpad --include-container-paths",
+    "devicectl device install app <verified app>",
+    "devicectl device info apps --bundle-id cn.vilhil.homeviewpad --include-container-paths",
+    "devicectl device process launch --terminate-existing cn.vilhil.homeviewpad --page 5",
+    "devicectl device info processes --filter processIdentifier==<launched PID>",
+    "devicectl device info details"
+  ],
+  "sourceOrAppSettingsChanged": false,
+  "permissionsGrantedOrRevoked": false,
+  "appDataResetOrAppUninstalled": false,
+  "simulatorOrBrowserOperated": false,
+  "networkProxyChanged": false,
+  "audioRouteOrVolumeChanged": false,
+  "deviceViewerOpened": false,
+  "testsRerun": false,
+  "testsRerunReason": "Installation only, all application/test sources unchanged from recorded simulator acceptance.",
+  "hardwareAcceptanceBoundary": "Installation URL, bundle identity and actual matching PID/executable are verified. No screen pixels, audible music, AirPlay, actual one-shot Apple reverse-geocoding, HomeKit, camera or long-duration display behavior accepted. Prior-version user feedback is not reused.",
+  "transportBoundary": "CoreDevice reported wired in both legacy and current connection properties; earlier commentary calling this wireless was corrected. No claim to have observed or operated the cable.",
+  "priorConnectionFailures": "Prior CoreDevice4016/4000 checkpoints retained; successful retry does not establish their cause.",
+  "git": {
+    "commit": false,
+    "push": false,
+    "publication": false
+  }
+}

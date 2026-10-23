@@ -1,0 +1,32 @@
+{
+  "scope": "Follow-up of both complete-scheme failures plus the settings panel-return regression",
+  "totalTests": 3,
+  "passedTests": 2,
+  "failedTests": 1,
+  "skippedTests": 0,
+  "passed": [
+    "testSystemPickerDismissal",
+    "testSettingsHubNavigationContentCancellationAndScreenBehaviorPersistence"
+  ],
+  "failed": [
+    "testLocationPermissionUsesDetectedCity"
+  ],
+  "sourceManifestSHA256": "a626603005eaa5c11209453daaab4b2d4f2607c94dd4059056928da9f0d2e4f4",
+  "completeSchemeManifestSHA256": "9f16832e2a8efe9c0619db31dec5e09076b24c204e5d9fae115d9e187d78491c",
+  "changedSinceCompleteScheme": [
+    "HomePadUITests/HomePadUITests.swift"
+  ],
+  "applicationSourceUnchanged": true,
+  "sourceDriftDuringFollowup": [],
+  "testRepair": "Wait for the existing Done button to be hittable, then require its disappearance before continuing navigation; no assertions were removed.",
+  "remainingFailure": "First complete run: system reverse geocoding returned GEOErrorDomain -8/no results. Follow-up: system reverse geocoding timed out with NSURLErrorDomain -1001 at its regional dispatcher. Current-city and live-reading assertions remain strict; no fake result or fallback city was inserted.",
+  "geocoderEvidence": [
+    "2026-10-16 10:16:42.598 Df HomePad[25693:b21ce9] [com.apple.locationd.Core:Client] #Warning Geocode error: Error Domain=NSURLErrorDomain Code=-1001 \"The request timed out.\" UserInfo={NSUnderlyingError=0x1172d2550 {Error Domain=kCFErrorDomainCFNetwork Code=-1001 \"(null)\" UserInfo={_kCFStreamErrorCodeKey=-2102, _kCFStreamErrorDomainKey=4}}, NSErrorFailingURLStringKey=https://dispatcher.is.autonavi.com/dispatcher, NSErrorFailingURLKey=https://dispatcher.is.autonavi.com/dispatcher, _kCFStreamErrorDomainKey=4, _kCFStreamErrorCodeKey=-2102, NSLocalizedDescription=The request timed out.}"
+  ],
+  "runtimeWarningCount": 3,
+  "testedDevice": "iPad Pro 11-inch (M5) Simulator / iPadOS 26.5 (23F73)",
+  "rawArtifacts": ".validation/local/settings-v2/followup/",
+  "singleAllGreenCompleteSchemeClaim": false,
+  "distinctMethodsPassedAcrossRuns": 91,
+  "distinctMethodsStillFailing": 1
+}

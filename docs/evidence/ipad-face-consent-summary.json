@@ -1,0 +1,56 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceName": "HomePad Acceptance",
+        "modelName": "iPad Pro 11-inch (M5)",
+        "osBuildNumber": "23F73",
+        "osVersion": "26.5",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "passedTests": 40,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "HomePad \u00b7 Built with macOS 27.0",
+  "expectedFailures": 0,
+  "failedTests": 0,
+  "finishTime": 1792088155.159,
+  "passedTests": 40,
+  "result": "Passed",
+  "runtimeWarnings": [],
+  "skippedTests": 0,
+  "startTime": 1792087846.646,
+  "statistics": [],
+  "testFailures": [],
+  "title": "Test - HomePad",
+  "topInsights": [],
+  "totalTestCount": 40,
+  "sourceState": {
+    "branch": "codex/ipad-display-01",
+    "baseCommit": "3c395111ab2a6c85e62ca763f7c156da4845b49c",
+    "gitStatus": "uncommitted, unpushed",
+    "manifestSHA256": "0d6ee8c70bbe498536a0bf43966e817aedba998d591cc88ca7784ce55013f9db",
+    "frozenFiles": 33,
+    "unchangedDuringSuite": true,
+    "scope": "Final-source focused verification after separate foreground-camera consent migration. The previous 54-test complete candidate result does not cover these changes.",
+    "changedFilesFromCompleteCandidate": [
+      "HomePad/DisplayCoordinator.swift",
+      "HomePad/DisplaySettingsView.swift",
+      "HomePad/Info.plist",
+      "HomePad/Localizable.xcstrings",
+      "HomePad/en.lproj/InfoPlist.strings",
+      "HomePad/zh-Hans.lproj/InfoPlist.strings",
+      "HomePadTests/DisplayCoordinatorTests.swift",
+      "HomePadUITests/HomePadUITests.swift",
+      "scripts/generate_project.py"
+    ]
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "recordedAt": "2026-10-16T14:58:54.400772+08:00",
+  "scope": "physical installation and demo launch only; no app behavior changes",
+  "toolchain": {
+    "xcode": "27.0",
+    "xcodeBuild": "27A266a",
+    "sdk": "iPhoneOS 27.0"
+  },
+  "device": {
+    "model": "iPad Pro (11-inch) (4th generation)",
+    "productType": "iPad14,3",
+    "os": "iPadOS 27.0.1",
+    "osBuild": "24A446",
+    "transport": "local network"
+  },
+  "source": {
+    "manifestFiles": 38,
+    "manifestSHA256": "a626603005eaa5c11209453daaab4b2d4f2607c94dd4059056928da9f0d2e4f4",
+    "allFilesStillMatch": true
+  },
+  "package": {
+    "bundleIdentifier": "cn.vilhil.homeviewpad",
+    "displayName": "HomePad",
+    "version": "1.0",
+    "build": "1",
+    "signedBuildSucceeded": true,
+    "strictSignatureVerificationPassed": true,
+    "profileIncludesTargetDevice": true,
+    "profileExpiresUTC": "2027-10-16T03:24:39Z",
+    "executableSHA256": "9d949296ae2709ef2954783b3f680ef5fa34865534bf58f0fb2c022c07b1bf11",
+    "nativeDebugDylibSHA256": "fd382e338990e448d767a12e259a4da2675b109b4fe92d60933553fd550802db"
+  },
+  "verification": {
+    "installationSucceeded": true,
+    "bundleSpecificAppReadbackSucceeded": true,
+    "launchSucceeded": true,
+    "launchArguments": [
+      "--demo",
+      "--page",
+      "1"
+    ],
+    "runningProcessReadbackMatchedLaunch": true,
+    "deviceHubScreenObserved": "landscape Chinese clock, visible demo badge and demo-time label",
+    "initialHomeScreenVerified": false,
+    "languageOverrideApplied": false
+  },
+  "signingRecovery": {
+    "originalBuildOutputAttribute": "com.apple.FinderInfo",
+    "targetedCleanupAloneResolved": false,
+    "freshPrivateTmpDerivedBuildSucceeded": true,
+    "metadataOriginEstablished": false,
+    "sourceOrQuarantineAttributesChanged": false
+  },
+  "notVerified": [
+    "real HomeKit/HomePod/camera/AirPlay",
+    "physical wallpaper selection",
+    "rotation and window modes",
+    "physical wake sensing and range",
+    "long-duration battery and thermal behavior",
+    "automatic city reverse-geocoding success"
+  ],
+  "testSuiteRerun": false,
+  "priorSuiteResultsUnchanged": {
+    "complete": {
+      "passed": 90,
+      "failed": 2,
+      "skipped": 0
+    },
+    "followup": {
+      "passed": 2,
+      "failed": 1,
+      "skipped": 0
+    }
+  },
+  "gitCommit": false,
+  "gitPush": false,
+  "publicRelease": false,
+  "rawArtifacts": "ignored .validation/local/physical-ipad-*; identifiers and account details omitted here"
+}

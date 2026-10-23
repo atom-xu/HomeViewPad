@@ -1,0 +1,46 @@
+{
+  "scope": "HomePad music page navigation04 subsequent authorized physical update",
+  "userAuthorization": "可以更新",
+  "updatedAt": "2026-10-17T12:12:04+08:00",
+  "timezone": "Asia/Shanghai",
+  "device": {
+    "model": "iPad Pro (11-inch) (4th generation)",
+    "runtime": "iPadOS 27.0.1 (24A446)",
+    "reality": "physical"
+  },
+  "sourceManifestSHA256": "0b9b7c2bdb5b716723f27a69588dc81216db6ed0150d251c81c880cb8d5c5fbf",
+  "finalTestManifestSHA256": "215cb47cb52875c28d33cc075bee73a3767d111b123c6a5823171e452298a488",
+  "sourceFiles": 48,
+  "currentFinalTestManifestMatches": true,
+  "signedPackage5LocalFilesUnchanged": true,
+  "strictSignatureVerifiedAgain": true,
+  "unexpiredProfileIncludesAuthorizedDevice": true,
+  "bundleIdentifier": "cn.vilhil.homeviewpad",
+  "appVersion": "1.0",
+  "appBuild": "1",
+  "installSucceeded": true,
+  "exactAppReadbackSucceeded": true,
+  "installationURLMatchesReadback": true,
+  "ordinaryLaunchSucceeded": true,
+  "launchArguments": [
+    "--page",
+    "5"
+  ],
+  "agentEnvironmentOverrides": false,
+  "toolSuppliedEnvironmentKeys": [
+    "TERM"
+  ],
+  "testDemoLanguageOverrides": false,
+  "exactLaunchedProcessReadbackSucceeded": true,
+  "runningExecutableMatchesInstallationURL": true,
+  "applicationUninstalledOrDataReset": false,
+  "proxyOrNetworkSettingsChanged": false,
+  "screenViewerOpenedByAgent": false,
+  "audioRouteOrVolumeChanged": false,
+  "sourceChangedOrTestsRerunForInstallation": false,
+  "existingSimulatorChecks": "Final application135 unit and13 distinct relatedUI methods passed across3bundles; music6/6. Earlier unfiltered full scheme170/172; original city timeout and other listed limitations retained.",
+  "physicalUIAudioAirPlayAcceptance": "Not performed for this new package; install/launch/process readback do not establish physical gesture or audible-output acceptance.",
+  "networkDiagnosis": "Device now connected and update succeeded with agent leaving proxy settings untouched; earlier proxy-interference inference remains unconfirmed.",
+  "commitPushPublication": false,
+  "rawEvidenceDirectory": ".validation/local/music-page-navigation-04/"
+}

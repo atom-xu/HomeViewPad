@@ -1,0 +1,85 @@
+{
+  "scope": "Playback and display 05",
+  "date": "2026-10-17",
+  "toolchain": "Xcode 27.0 (27A266a), SDK 27.0",
+  "simulator": "Isolated HomePad Acceptance, iPad Pro 11-inch (M5), iPadOS 26.5 (23F73)",
+  "fullCandidate": {
+    "manifestSHA256": "0df40aaa224e5d107457163b602ab9043c7d8892c1d33933f3488816d6cbd34c",
+    "total": 198,
+    "passed": 195,
+    "failed": 3,
+    "unitPassed": 156,
+    "unitTotal": 156,
+    "uiPassed": 39,
+    "uiTotal": 42,
+    "failures": [
+      "testIdleDimmingKeepsPlayingHomeAndConsumesFirstTouch()",
+      "testLocationPermissionUsesDetectedCity()",
+      "testReadmeDemoJourney()"
+    ]
+  },
+  "finalFocused": {
+    "manifestSHA256": "1c9adfae6796a3460e6e286767d18ddaf46997507e09d003b0426a90e35aa3e6",
+    "total": 161,
+    "passed": 161,
+    "failed": 0,
+    "unitPassed": 156,
+    "uiPassed": 5,
+    "sourceFrozenThroughout": true,
+    "changesFromFull": [
+      "HomePad/SettingsHubView.swift: scale icon column with Dynamic Type",
+      "HomePadUITests/HomePadUITests.swift: select idle delay through real Picker; isolate long photo journey with explicit followSystem"
+    ]
+  },
+  "earlierAttempts": {
+    "diagnosticBuild": "Private AmbientWallpaper access failed; internal visibility repaired; next build-for-testing passed",
+    "firstFullAttempt": "UI-test lastMatch query did not compile; zero tests executed",
+    "idleFailure": "CLI UserDefaults delay was String, fell back to 60; test waited 40. Retest selected and asserted real 30-second Picker value; first touch wakes, second pauses.",
+    "photoJourneyFailure": "Two real 30-second rotations crossed persisted idle behavior; final AX was Home after three swipes. Dedicated dim/wake test retained; pure photo/paging journey now explicitly follows system and passes all original assertions.",
+    "screenshotFinding": "Largest Chinese text overlapped icons in fixed-width columns despite hittability assertions; title3 ScaledMetric width repaired and final screenshots inspected."
+  },
+  "screenshots": {
+    "fullExported": 87,
+    "fullInspected": 10,
+    "finalExported": 17,
+    "finalInspected": 17
+  },
+  "physical": {
+    "model": "iPad Pro 11-inch (4th generation)",
+    "runtime": "iPadOS 27.0.1 (24A446)",
+    "signedBuildAndStrictSignaturePassed": true,
+    "profileUnexpiredAndIncludesDevice": true,
+    "installed": true,
+    "exactAppAndProcessReadback": true,
+    "ordinaryArguments": [
+      "--page",
+      "5"
+    ],
+    "toolEnvironmentKeys": [
+      "TERM"
+    ],
+    "deviceViewerOpened": false,
+    "audioRouteOrVolumeChanged": false,
+    "userConfirmedAudibleAlbumAutomaticNext": true,
+    "userConfirmation": "有声音，且自动进入下一首"
+  },
+  "network": {
+    "explicitUserAuthorization": "允许，仅绕过 iPad 本地域名",
+    "onlyApprovedAddition": "+.coredevice.local",
+    "persistentProfileUpdated": true,
+    "generatedConfigAllOtherValuesUnchanged": true,
+    "nativeReactivationConfirmed": true,
+    "proxyMode": "rule",
+    "tunStayedEnabled": true,
+    "before": "CoreDevice4016 / pairing4000 and fake addresses for the paired local hostname",
+    "after": "Connected tunnel and exact app readback, installation and launch succeeded",
+    "causeQualification": "Observed before/after the authorized filter change; do not generalize to every earlier connection failure."
+  },
+  "remaining": [
+    "Original automatic-city reverse-geocoding UI timeout remains unresolved; manual city choice passed.",
+    "No single all-green unfiltered full suite on final candidate; final related suite passed 161/161.",
+    "Native large-playlist paging, duplicate occurrence, real shuffle order, real artwork rendering, calendar Add to Home, HomeKit and long-duration brightness/night/sensors still need hardware acceptance.",
+    "Previous repeated-preview observation remains historical and unaddressed."
+  ],
+  "commitPushPublication": false
+}

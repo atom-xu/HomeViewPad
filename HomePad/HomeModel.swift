@@ -14,6 +14,7 @@ struct HomeTile: Identifiable {
     var kind: HomeValueKind = .power
     var number: Double?
     var adjustment: HomeAdjustment?
+    var serviceID: UUID? = nil
     var isClimate: Bool { kind == .temperature || kind == .humidity || kind == .targetTemperature }
     var dashboardSlot: Int {
         if isClimate { return 0 }
@@ -32,7 +33,7 @@ struct HomeTile: Identifiable {
 }
 
 enum HomeValueKind: CaseIterable {
-    case power, temperature, humidity, brightness, targetTemperature, fanSpeed
+    case power, temperature, humidity, brightness, targetTemperature, fanSpeed, hue, saturation, colorTemperature
     init?(characteristicType: String) {
         switch characteristicType {
         case HMCharacteristicTypePowerState: self = .power
@@ -41,17 +42,23 @@ enum HomeValueKind: CaseIterable {
         case HMCharacteristicTypeBrightness: self = .brightness
         case HMCharacteristicTypeTargetTemperature: self = .targetTemperature
         case HMCharacteristicTypeRotationSpeed: self = .fanSpeed
+        case HMCharacteristicTypeHue: self = .hue
+        case HMCharacteristicTypeSaturation: self = .saturation
+        case HMCharacteristicTypeColorTemperature: self = .colorTemperature
         default: return nil
         }
     }
     var title: String {
         switch self {
-        case .power: return "Power"
-        case .temperature: return "Temperature"
-        case .humidity: return "Humidity"
-        case .brightness: return "Brightness"
-        case .targetTemperature: return "Target temperature"
-        case .fanSpeed: return "Fan speed"
+        case .power: return "Power".tr
+        case .temperature: return "Temperature".tr
+        case .humidity: return "Humidity".tr
+        case .brightness: return "Brightness".tr
+        case .targetTemperature: return "Target temperature".tr
+        case .fanSpeed: return "Fan speed".tr
+        case .hue: return "Hue".tr
+        case .saturation: return "Saturation".tr
+        case .colorTemperature: return "Color temperature".tr
         }
     }
     var symbol: String {
@@ -61,15 +68,41 @@ enum HomeValueKind: CaseIterable {
         case .humidity: return "humidity.fill"
         case .brightness: return "lightbulb.fill"
         case .fanSpeed: return "fan.fill"
+        case .hue, .saturation: return "paintpalette.fill"
+        case .colorTemperature: return "sun.max.fill"
         }
     }
-    var adjustable: Bool { self == .brightness || self == .targetTemperature || self == .fanSpeed }
+    var adjustable: Bool { [.brightness, .targetTemperature, .fanSpeed, .hue, .saturation, .colorTemperature].contains(self) }
     func formatted(_ number: Double) -> String {
         guard number.isFinite else { return "Unavailable" }
         switch self {
         case .power: return number != 0 ? "On" : "Off"
         case .temperature, .targetTemperature: return String(format: "%.1f °C", number)
+        case .hue: return String(format: "%.0f°", number)
+        case .colorTemperature: return number > 0 ? String(format: "%.0f K", 1_000_000 / number) : "Unavailable"
         default: return String(format: "%.0f %%", number)
+        }
+    }
+}
+
+/// A light has one dashboard card; its other characteristics belong in details.
+/// Match the HomeKit service, never the display name or room.
+enum HomeAccessoryPresentation {
+    static func primaryTiles(_ tiles: [HomeTile]) -> [HomeTile] {
+        let poweredServices = Set(tiles.filter { $0.kind == .power }.compactMap(\.serviceID))
+        return tiles.filter { tile in
+            guard tile.kind.adjustable, !tile.isClimate, let service = tile.serviceID else { return true }
+            return !poweredServices.contains(service)
+        }
+    }
+
+    static func details(for id: UUID, in tiles: [HomeTile]) -> [HomeTile] {
+        guard let selected = tiles.first(where: { $0.id == id }) else { return [] }
+        guard let service = selected.serviceID else { return [selected] }
+        return tiles.filter { $0.serviceID == service }.sorted { lhs, rhs in
+            let a = HomeValueKind.allCases.firstIndex(of: lhs.kind) ?? 0
+            let b = HomeValueKind.allCases.firstIndex(of: rhs.kind) ?? 0
+            return a == b ? lhs.id.uuidString < rhs.id.uuidString : a < b
         }
     }
 }
@@ -93,22 +126,22 @@ enum HomeStatus: String, CaseIterable {
     case welcome, loading, ready, denied, empty, offline
     var title: String {
         switch self {
-        case .welcome: return "A little closer to home."
-        case .loading: return "Finding your home…"
-        case .ready: return "Your home, at a glance."
-        case .denied: return "Home access is off"
-        case .empty: return "Your home starts here"
-        case .offline: return "Home is taking a moment"
+        case .welcome: return "A little closer to home.".tr
+        case .loading: return "Finding your home…".tr
+        case .ready: return "Your home, at a glance.".tr
+        case .denied: return "Home access is off".tr
+        case .empty: return "Your home starts here".tr
+        case .offline: return "Home is taking a moment".tr
         }
     }
     var detail: String {
         switch self {
-        case .welcome: return "Connect Apple Home to see your rooms, accessories and scenes. Or explore a clearly labeled demo without sharing anything."
-        case .loading: return "Waiting for Apple Home. You can retry or explore the demo."
-        case .ready: return ""
-        case .denied: return "Allow HomeViewPad in Settings → Privacy & Security → HomeKit, then retry."
-        case .empty: return "Create a home and add accessories in Apple's Home app, then return here."
-        case .offline: return "Check your home Wi-Fi, accessory power and home hub. Retry when you're connected."
+        case .welcome: return "Connect Apple Home to see your rooms, accessories and scenes. Or explore a clearly labeled demo without sharing anything.".tr
+        case .loading: return "Waiting for Apple Home. You can retry or explore the demo.".tr
+        case .ready: return "".tr
+        case .denied: return "Allow HomePad in Settings → Privacy & Security → HomeKit, then retry.".tr
+        case .empty: return "Create a home and add accessories in Apple's Home app, then return here.".tr
+        case .offline: return "Check your home Wi-Fi, accessory power and home hub. Retry when you're connected.".tr
         }
     }
 }
@@ -120,7 +153,7 @@ enum HomeStatus: String, CaseIterable {
     @Published var scenes: [String] = []
     @Published var cameras: [HMAccessory] = []
     @Published var homes: [HMHome] = []
-    @Published var homeName = "HomeViewPad"
+    @Published var homeName = "HomePad"
     @Published private(set) var selectedHomeID: UUID?
     @Published var error: String?
     @Published var busy = Set<UUID>()
@@ -153,7 +186,7 @@ enum HomeStatus: String, CaseIterable {
         home?.delegate = nil; home?.accessories.forEach { $0.delegate = nil }
         home = nil; selectedHomeID = nil; homes = []; characteristics = [:]; failedReads = []
         tiles = []; cameras = []; scenes = []; busy = []; sceneBusy = false
-        notice = nil; error = nil; homeName = "HomeViewPad"; status = newStatus
+        notice = nil; error = nil; homeName = "HomePad"; status = newStatus
     }
     func disconnect() {
         generation = UUID(); timeout?.cancel()
@@ -163,7 +196,7 @@ enum HomeStatus: String, CaseIterable {
         manager = nil; home = nil; selectedHomeID = nil; homes = []; cameras = []; characteristics = [:]; failedReads = []
         busy = []; sceneBusy = false; tiles = []; scenes = []; error = nil; notice = nil
         UserDefaults.standard.set("welcome", forKey: "homeMode")
-        demo = false; status = .welcome; homeName = "HomeViewPad"
+        demo = false; status = .welcome; homeName = "HomePad"
     }
     func connect() {
         disconnect(); status = .loading
@@ -234,7 +267,7 @@ enum HomeStatus: String, CaseIterable {
                     else if service.serviceType == HMServiceTypeFan || service.serviceType == HMServiceTypeVentilationFan { symbol = "fan.fill" }
                     else if service.serviceType == HMServiceTypeOutlet { symbol = "powerplug.fill" }
                 }
-                return HomeTile(id: c.uniqueIdentifier, name: kind == .power ? service.name : "\(service.name) · \(kind.title)", room: accessory.room?.name ?? "Home", symbol: symbol, value: value, isOn: isOn, reachable: accessory.isReachable, writable: canWrite, kind: kind, number: valid ? number : nil, adjustment: adjustment)
+                return HomeTile(id: c.uniqueIdentifier, name: kind == .power ? service.name : "\(service.name) · \(kind.title)", room: accessory.room?.name ?? "Home", symbol: symbol, value: value, isOn: isOn, reachable: accessory.isReachable, writable: canWrite, kind: kind, number: valid ? number : nil, adjustment: adjustment, serviceID: service.uniqueIdentifier)
                 }
             }
         }.sorted { ($0.room, $0.name) < ($1.room, $1.name) }
@@ -275,7 +308,7 @@ enum HomeStatus: String, CaseIterable {
                 self.busy.remove(tile.id)
                 if let readError {
                     self.failedReads.insert(tile.id)
-                    self.error = "The command was sent, but its current state could not be read: \(readError.localizedDescription)"
+                    self.error = L10n.format("The command was sent, but its current state could not be read: %@", readError.localizedDescription)
                 } else { self.failedReads.remove(tile.id) }
                 self.refresh(read: false)
             } }
@@ -287,14 +320,14 @@ enum HomeStatus: String, CaseIterable {
             for index in tiles.indices where tiles[index].writable && tiles[index].kind == .power {
                 tiles[index].isOn = name != "Good night"; tiles[index].value = tiles[index].isOn ? "On" : "Off"
             }
-            notice = "Demo scene: \(name)"; return
+            notice = L10n.format("Demo scene: %@", name.tr); return
         }
         guard manager?.authorizationStatus.contains(.authorized) == true, let scene = home?.actionSets.first(where: { $0.name == name }), let home else { return }
         error = nil; sceneBusy = true; let token = generation
         home.executeActionSet(scene) { [weak self] failure in Task { @MainActor in
             guard let self, self.generation == token else { return }
             self.sceneBusy = false
-            if let failure { self.error = failure.localizedDescription } else { self.notice = "Scene completed: \(name)" }
+            if let failure { self.error = failure.localizedDescription } else { self.notice = L10n.format("Scene completed: %@", name) }
             self.refresh()
         }}
     }
@@ -323,11 +356,14 @@ enum DashboardSwipe {
     }
 }
 enum DashboardPage: Int, CaseIterable {
-    case overview, home, clock, photos, settings
-    var title: String { ["Overview", "Home", "Clock", "Photos", "Settings"][rawValue] }
-    var symbol: String { ["square.grid.2x2.fill", "square.grid.2x2", "clock", "photo.on.rectangle.angled", "slider.horizontal.3"][rawValue] }
+    case overview, home, clock, photos, settings, music
+    // Preserve saved/test page identifiers while placing Music before Settings.
+    static let allCases: [DashboardPage] = [.overview, .home, .clock, .photos, .music, .settings]
+    var position: Int { Self.allCases.firstIndex(of: self) ?? 0 }
+    var title: String { ["Overview", "Home", "Clock", "Photos", "Settings", "Music"][rawValue].tr }
+    var symbol: String { ["square.grid.2x2.fill", "square.grid.2x2", "clock", "photo.on.rectangle.angled", "slider.horizontal.3", "music.note"][rawValue] }
     func adjacent(forward: Bool) -> DashboardPage {
-        DashboardPage(rawValue: min(Self.allCases.count - 1, max(0, rawValue + (forward ? 1 : -1))))!
+        Self.allCases[min(Self.allCases.count - 1, max(0, position + (forward ? 1 : -1)))]
     }
 }
 
@@ -342,7 +378,7 @@ enum DashboardWidget: Hashable {
             let ordered = climate.filter { $0.kind == .targetTemperature } + climate.filter { $0.kind != .targetTemperature }
             return ordered.isEmpty ? [.empty(0)] : ordered.map { .climate($0.id) }
         case 1: return [.clock, .agenda]
-        case 2: return [.photo, .camera]
+        case 2: return [.camera]
         case 3: return scenes.isEmpty ? [.empty(3)] : scenes.map { .scene($0) }
         default:
             let controls = tiles.filter { $0.dashboardSlot == slot }.map { DashboardWidget.accessory($0.id) }

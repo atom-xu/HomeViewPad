@@ -1,0 +1,23 @@
+{
+  "scope": "Focused diagnosis after the complete scheme",
+  "sourceManifestSHA256": "96d16f438798feddd035ccd0c3b0083343c658723e30b3f9fc3de20587d5d844",
+  "sourceUnchangedDuringRun": true,
+  "passed": 1,
+  "failed": 6,
+  "skipped": 0,
+  "failedMethods": [
+    "testLegacyFaceWakeRequiresSeparateForegroundConsentInBothLanguages()",
+    "testManualStandbyWakeNightModeAndSimulatorLimitations()",
+    "testPhotoLibraryAlbumDisplayRotationRestoreAndRemoval()",
+    "testPhotoLibraryDenialKeepsSinglePhotoAvailable()",
+    "testReadmeDemoJourney()",
+    "testSystemPickerDismissal()"
+  ],
+  "interpretation": [
+    "Custom camera title creation, opening, relaunch and deletion passed.",
+    "Trailing-chevron activation expands native disclosure, but its parent accessibility identifier overwrites child identifiers.",
+    "Photo permission sheet resumes before scene active; first grant or denial is not refreshed when no album or observer exists.",
+    "Audio importer opens and cancels in real mode; the final assertion still incorrectly expected a demo camera on the unconnected real Home."
+  ],
+  "followup": "The identified app and test repairs are validated separately; this is not a passing seven-test bundle."
+}

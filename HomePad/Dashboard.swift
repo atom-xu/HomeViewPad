@@ -7,21 +7,71 @@ private let ink = Color(red: 0.36, green: 0.35, blue: 0.39)
 private let lavender = Color(red: 0.78, green: 0.76, blue: 0.88)
 private let paper = Color.white
 
-enum Panel: String, Identifiable { case settings, music, agenda, camera, controls, photos, accessory, weather; var id: String { rawValue } }
+private struct MusicWidgetFrameKey: PreferenceKey {
+    static let defaultValue: [CGRect] = []
+    static func reduce(value: inout [CGRect], nextValue: () -> [CGRect]) { value += nextValue() }
+}
+
+enum Panel: String, Identifiable { case settings, music, agenda, camera, controls, photos, accessory, weather, shortcut, widget; var id: String { rawValue } }
+enum HomeShortcutKind: String, CaseIterable, Codable, Identifiable {
+    case camera, scene, agenda, music, controls
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .camera: "Camera".tr
+        case .scene: "Scene".tr
+        case .agenda: "Today".tr
+        case .music: "Music".tr
+        case .controls: "Controls".tr
+        }
+    }
+    var symbol: String {
+        switch self {
+        case .camera: "video.fill"
+        case .scene: "sun.max.fill"
+        case .agenda: "calendar"
+        case .music: "music.note"
+        case .controls: "switch.2"
+        }
+    }
+}
+struct HomeShortcut: Codable, Identifiable {
+    var id: String
+    var kind: HomeShortcutKind
+    var target: String?
+    var name: String = ""
+    var homeID: String? = nil
+    func belongs(to currentHomeID: String?) -> Bool {
+        let requiresHome = kind == .scene || (kind == .camera && target != nil)
+        if requiresHome { return homeID != nil && currentHomeID != nil && homeID == currentHomeID }
+        return homeID == nil || homeID == currentHomeID
+    }
+    static let defaults = [HomeShortcut(id: "camera", kind: .camera), HomeShortcut(id: "music", kind: .music), HomeShortcut(id: "controls", kind: .controls)]
+}
 struct Dashboard: View {
     @StateObject private var home = HomeStore()
-    @StateObject private var personal = PersonalStore()
+    @StateObject private var display = DisplayCoordinator()
+    @StateObject private var agendaStore = AgendaStore()
+    @StateObject private var music = MusicStore(client: musicValidationClientIfRequested())
     @StateObject private var audio = AudioStore()
+    @StateObject private var cameraSnapshots = CameraSnapshotStore()
+    @State private var musicNavigation = MusicNavigationState()
     @StateObject private var photos = PhotoLibraryStore()
+    @StateObject private var wallpaper = WallpaperStore()
     @StateObject private var weatherLocation = WeatherLocation()
     @StateObject private var weather = WeatherStore(demo: ProcessInfo.processInfo.arguments.contains("--demo") || (!ProcessInfo.processInfo.arguments.contains("--fresh") && UserDefaults.standard.string(forKey: "homeMode") == "demo"))
     @Environment(\.scenePhase) private var phase
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @AppStorage("appLanguage") private var appLanguage = "system"
+    @AppStorage("homeWidgetLayouts") private var widgetLayoutsData = ""
+    @AppStorage("homeShortcuts") private var shortcutsData = ""
+    @AppStorage("musicArtworkBackground") private var musicArtworkBackground = true
     @AppStorage("tealWallpaper") private var tealWallpaper = false
     @AppStorage("keepAwake") private var keepAwake = false
     @AppStorage("showPersonal") private var showPersonal = false
+    @AppStorage("display.standbyContent") private var standbyContent = "clock"
     @State private var didConfigure = false
-    @State private var page = DashboardPage.overview
+    @State private var page = DashboardPage.home
     @State private var navigationVisible = false
     @State private var pageForward = true
     @State private var widgetOffsets = Array(repeating: 0, count: 6)
@@ -30,35 +80,66 @@ struct Dashboard: View {
     @State private var sceneToRun: String?
     @State private var selectedCamera: HMAccessory?
     @State private var selectedAccessoryID: UUID?
-    @State private var importAudio = false
+    @State private var wallpaperPickerPresented = false
+    @State private var musicPickerPresented = false
+    @State private var airPlayPresented = false
+    @State private var homeRefreshOnResume = false
+    @State private var musicWidgetFrames: [CGRect] = []
+    @State private var wallpaperItem: PhotosPickerItem?
     @State private var selectedRoom = "All rooms"
-    private var demoDate: Date { Date(timeIntervalSince1970: 1791981300) }
-    var body: some View {
+    @State private var editingShortcutID: String?
+    @State private var shortcutKind = HomeShortcutKind.camera
+    @State private var shortcutTarget = ""
+    @State private var shortcutName = ""
+    @State private var editingShortcuts = false
+    private var musicDemo: Bool { home.demo && !music.isValidationFixture }
+    private var demoDate: Date {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .current
+        return calendar.date(from: DateComponents(year: 2026, month: 10, day: 14, hour: 10, minute: 9, second: 30))!
+    }
+    private var musicArtworkVisible: Bool {
+        MusicArtworkBackdropPolicy.shows(on: page, enabled: musicArtworkBackground && !musicDemo && music.state == .ready,
+                                         playing: music.nowPlaying?.playing == true,
+                                         hasArtwork: music.nowPlaying?.artwork != nil || (music.isValidationFixture && music.nowPlaying != nil),
+                                         localFileSelected: audio.player.currentItem != nil)
+    }
+    private var dashboardSurface: some View {
         GeometryReader { geometry in
-            let side = max(1, min(geometry.size.width, geometry.size.height) - 16)
             let landscape = geometry.size.width > geometry.size.height
             ZStack {
-                AmbientWallpaper(teal: tealWallpaper).ignoresSafeArea()
+                Group {
+                    if musicArtworkVisible {
+                        MusicPageBackdrop(artwork: music.nowPlaying?.artwork, trackID: music.nowPlaying?.id, fixture: music.isValidationFixture)
+                            .transition(.opacity)
+                    } else if let image = wallpaper.image {
+                        Image(uiImage: image).resizable().scaledToFill()
+                            .frame(width: geometry.size.width, height: geometry.size.height).clipped()
+                            .accessibilityLabel("Wallpaper".tr).accessibilityValue(wallpaper.accessibilityValue)
+                            .accessibilityIdentifier("customWallpaper")
+                    } else { AmbientWallpaper(teal: tealWallpaper) }
+                }.ignoresSafeArea().allowsHitTesting(false)
                     .animation(reduceMotion ? nil : .easeInOut(duration: 0.45), value: tealWallpaper)
-                if page == .overview { Color.black.ignoresSafeArea().allowsHitTesting(false).transition(.opacity) }
+                    .animation(reduceMotion ? nil : .easeInOut(duration: 0.5), value: musicArtworkVisible)
+                Color.black.opacity(display.nightActive ? 0.45 : 0).ignoresSafeArea().allowsHitTesting(false)
                 // Only uncovered wallpaper receives taps. Widget taps retain their own actions.
                 Color.clear.contentShape(Rectangle())
                     .onTapGesture(perform: toggleNavigation)
-                    .accessibilityLabel("Show navigation").accessibilityAddTraits(.isButton)
-                    .accessibilityIdentifier("navigationBackdrop")
+                    .accessibilityLabel("Show navigation".tr).accessibilityAddTraits(.isButton)
+                    .accessibilityIdentifier("navigationBackdrop").accessibilityHidden(display.isStandby)
                 ZStack {
                     Group {
                         if page == .photos {
                             PhotoWall(photos: photos, demoDate: home.demo ? demoDate : nil, navigationVisible: navigationVisible,
                                       chooseAlbum: { panel = .photos }, showNavigation: toggleNavigation)
-                        } else { pageContent(side: side).frame(width: side, height: side) }
+                        } else { pageContent(size: geometry.size) }
                     }.frame(width: geometry.size.width, height: geometry.size.height)
                         .id(page).transition(pageTransition)
-                }.frame(width: geometry.size.width, height: geometry.size.height).clipped()
-                    .accessibilityAction(named: "Show navigation") { withAnimation(navigationAnimation) { navigationVisible = true } }
-                    .accessibilityAction(named: "Next page") { movePage(forward: true) }
-                    .accessibilityAction(named: "Previous page") { movePage(forward: false) }
-                if navigationVisible {
+                }.frame(width: geometry.size.width, height: geometry.size.height).clipped().accessibilityHidden(display.isStandby)
+                    .accessibilityAction(named: "Show navigation".tr) { withAnimation(navigationAnimation) { navigationVisible = true } }
+                    .accessibilityAction(named: "Next page".tr) { movePage(forward: true) }
+                    .accessibilityAction(named: "Previous page".tr) { movePage(forward: false) }
+                if navigationVisible && !display.isStandby {
                     if landscape {
                         HStack {
                             Spacer(minLength: 0)
@@ -72,30 +153,75 @@ struct Dashboard: View {
                         }.transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
                     }
                 }
+                if !navigationVisible && page != .home && page != .settings && page != .music && !display.isStandby {
+                    VStack { HStack { Spacer(); showNavigationButton }; Spacer() }.padding(24)
+                }
+                if display.isStandby {
+                    Group {
+                        if display.standbyKeepsCurrentPage {
+                            // The first touch belongs solely to waking, never
+                            // to a HomeKit or playback control underneath it.
+                            Button { display.noteInteraction() } label: {
+                                Color.black.opacity(display.nightActive ? 0.5 : 0.2)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity).contentShape(Rectangle())
+                            }.buttonStyle(.plain).ignoresSafeArea()
+                                .accessibilityLabel("Touch to restore brightness".tr)
+                                .accessibilityIdentifier("standbyCurrentPageWake")
+                        } else if standbyContent == "photos" {
+                            PhotoWall(photos: photos, demoDate: home.demo ? demoDate : nil, navigationVisible: false,
+                                      chooseAlbum: { display.noteInteraction() }, showNavigation: { display.noteInteraction() }, standby: true)
+                        } else { StandbyDisplayView(coordinator: display, demoDate: home.demo ? demoDate : nil) }
+                    }.transition(.opacity).zIndex(10)
+                }
             }.foregroundStyle(.white)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .simultaneousGesture(DragGesture(minimumDistance: 30).onEnded { value in
+                .simultaneousGesture(TapGesture().onEnded { display.noteInteraction() })
+                .simultaneousGesture(DragGesture(minimumDistance: 30).onEnded { _ in display.noteInteraction() })
+                .simultaneousGesture(DragGesture(minimumDistance: 30, coordinateSpace: .global).onEnded { value in
+                    guard !display.isStandby else { return }
+                    guard music.state != .ready || !musicWidgetFrames.contains(where: { $0.contains(value.startLocation) }) else { return }
+                    guard page != .music, panel != .music else { return }
                     switch DashboardSwipe.classify(x: value.translation.width, y: value.translation.height) {
                     case .left: movePage(forward: true)
                     case .right: movePage(forward: false)
                     default: break
                     }
-                })
+                // Music owns its gesture sequence. Disabling root paging at
+                // recognition avoids a second page change after Music's onEnded.
+                // A standby drag only wakes; activity tracking remains separate.
+                }, including: page == .music || panel == .music || display.isStandby ? .subviews : .all)
         }
         .ignoresSafeArea()
         .statusBarHidden(true)
         .persistentSystemOverlays(.hidden)
-        .overlay { if phase != .active { paper.ignoresSafeArea().overlay { Label("HomeViewPad", systemImage: "house.fill").font(.largeTitle).foregroundStyle(ink) } } }
-        .preferredColorScheme(.light)
+        .task { await wallpaper.restore() }
+        .onPreferenceChange(MusicWidgetFrameKey.self) { musicWidgetFrames = $0 }
+        .overlay { if phase == .background || (phase == .inactive && !airPlayPresented) { paper.ignoresSafeArea().overlay { Label("HomePad".tr, systemImage: "house.fill").font(.largeTitle).foregroundStyle(ink) } } }
+        .preferredColorScheme(display.nightActive ? .dark : .light)
+        .environment(\.locale, AppLanguage(rawValue: appLanguage)?.locale ?? .current)
+        .onDisappear { display.setActive(false); cameraSnapshots.setAccess(allowed: false) }
+    }
+    private var presentedDashboard: some View {
+        dashboardSurface
+        .photosPicker(isPresented: $wallpaperPickerPresented, selection: $wallpaperItem, matching: .images)
+        .task(id: wallpaperItem) {
+            guard let wallpaperItem else { return }
+            await wallpaper.importPhoto(wallpaperItem)
+            if !Task.isCancelled { self.wallpaperItem = nil }
+        }
         .sheet(item: $panel) { panel in
             NavigationStack {
-                panelContent(panel).navigationTitle(panel.rawValue.capitalized)
-                    .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { self.panel = nil }.accessibilityIdentifier("dismissPanel") } }
-            }.modifier(SceneConfirmation(name: $sceneToRun, enabled: true, run: home.runScene))
-                .overlay { if phase != .active { paper.ignoresSafeArea().overlay { Text("HomeViewPad").font(.largeTitle) } } }.presentationDetents([.large])
+                panelContent(panel).navigationTitle(panel.rawValue.capitalized.tr)
+                    .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done".tr) { self.panel = nil }.accessibilityIdentifier("dismissPanel") } }
+            }.foregroundStyle(Color.primary)
+                .modifier(SceneConfirmation(name: $sceneToRun, enabled: true, demo: home.demo, run: home.runScene))
+                .overlay { if phase == .background || (phase == .inactive && !airPlayPresented) { paper.ignoresSafeArea().overlay { Text("HomePad".tr).font(.largeTitle) } } }.presentationDetents([.large])
         }
-        .modifier(SceneConfirmation(name: $sceneToRun, enabled: panel == nil, run: home.runScene))
-        .alert("Home needs attention", isPresented: Binding(get: { home.error != nil }, set: { if !$0 { home.error = nil } })) { Button("OK") { home.error = nil } } message: { Text(home.error ?? "") }
+        .modifier(SceneConfirmation(name: $sceneToRun, enabled: panel == nil, demo: home.demo, run: home.runScene))
+        .alert("Home needs attention".tr, isPresented: Binding(get: { home.error != nil }, set: { if !$0 { home.error = nil } })) { Button("OK".tr) { home.error = nil } } message: { Text(home.error ?? "") }
+    }
+    private var configuredDashboard: some View {
+        presentedDashboard
         .task {
             guard !didConfigure else { return }
             didConfigure = true
@@ -109,99 +235,282 @@ struct Dashboard: View {
                 let mode = UserDefaults.standard.string(forKey: "homeMode")
                 if mode == "demo" { home.startDemo() } else if mode == "live" { home.connect() }
             }
-            UIApplication.shared.isIdleTimerDisabled = keepAwake && phase == .active
+            updateCameraAccess()
+            display.setKeepAwake(keepAwake)
+            display.setActive(phase == .active)
             weather.setDemo(home.demo)
+            music.setDemo(musicDemo); music.setActive(phase == .active)
+            music.open()
+            agendaStore.setDemo(home.demo); agendaStore.setEnabled(showPersonal); agendaStore.setActive(phase == .active)
             if ProcessInfo.processInfo.arguments.contains("--far") { page = .clock }
+            let args = ProcessInfo.processInfo.arguments
+            if let index = args.firstIndex(of: "--page"), index + 1 < args.count,
+               let raw = Int(args[index + 1]), let requested = DashboardPage(rawValue: raw) { page = requested }
+            if args.contains("--standby-preview") { display.previewStandby() }
         }
-        .task(id: phase == .active && (page == .home || page == .overview || page == .photos) && panel == nil && photos.slideshow) {
-            guard phase == .active, page == .home || page == .overview || page == .photos, panel == nil, photos.slideshow else { return }
+        .task(id: phase == .active && photoPresentationVisible && panel == nil && photos.slideshow) {
+            guard phase == .active, photoPresentationVisible, panel == nil, photos.slideshow else { return }
             while !Task.isCancelled {
                 do { try await Task.sleep(for: .seconds(30)) } catch { return }
                 photos.next()
             }
         }
-        .task(id: "\(phase == .active)-\(home.demo)-\(page == .overview || panel == .weather)-\(weather.city?.latitude ?? 0)-\(weather.city?.longitude ?? 0)-\(weather.followsLocation)") {
+        .task(id: "\(phase == .active)-\(home.demo)-\(page == .overview || panel == .weather)-\(weather.city?.latitude ?? 0)-\(weather.city?.longitude ?? 0)") {
             guard phase == .active, !home.demo, page == .overview || panel == .weather else { return }
             while !Task.isCancelled {
-                weatherLocation.update(weather)
                 await weather.refresh()
                 do { try await Task.sleep(for: .seconds(60)) } catch { return }
             }
         }
-        .onChange(of: keepAwake) { _, value in UIApplication.shared.isIdleTimerDisabled = value && phase == .active }
+    }
+    var body: some View {
+        configuredDashboard
+        .onChange(of: showPersonal) { _, value in agendaStore.setEnabled(value) }
+        .onChange(of: appLanguage) { _, _ in
+            if !home.demo && home.status == .ready { home.refresh(read: false) }
+        }
+        .onChange(of: keepAwake) { _, value in display.setKeepAwake(value) }
+        .onChange(of: wallpaperPickerPresented) { _, value in
+            display.noteInteraction()
+            updatePresentationSuspension()
+        }
+        .onChange(of: panel) { _, value in
+            display.noteInteraction()
+            updatePresentationSuspension()
+        }
+        .onChange(of: navigationVisible) { _, value in
+            display.noteInteraction()
+            updatePresentationSuspension()
+        }
+        .onChange(of: sceneToRun) { _, value in
+            display.noteInteraction()
+            updatePresentationSuspension()
+        }
+        .onChange(of: home.error) { _, value in
+            display.noteInteraction()
+            updatePresentationSuspension()
+        }
+        .onChange(of: musicPickerPresented) { _, _ in display.noteInteraction(); updatePresentationSuspension() }
+        .onChange(of: airPlayPresented) { _, _ in display.noteInteraction(); updatePresentationSuspension() }
         .onChange(of: phase) { _, value in
-            UIApplication.shared.isIdleTimerDisabled = keepAwake && value == .active
+            weatherLocation.setScenePhase(value)
+            display.setActive(value == .active)
             photos.setActive(value == .active)
+            agendaStore.setActive(value == .active)
+            music.setScenePhase(value, routePickerPresented: airPlayPresented)
+            updateCameraAccess()
             if value == .active {
-                home.refresh()
-                if showPersonal && !home.demo { Task { await personal.loadCalendar(); await personal.loadReminders() } }
-            } else { weatherLocation.stop(); personal.clear(); audio.player.pause(); navigationVisible = false }
+                if homeRefreshOnResume { home.refresh() }
+                homeRefreshOnResume = false
+            } else if value == .background || !airPlayPresented {
+                homeRefreshOnResume = true
+                musicNavigation.reset(); audio.player.pause(); navigationVisible = false
+            }
         }
         .onChange(of: home.status) { _, value in
+            updateCameraAccess()
             if !home.demo && value != .ready && panel == .camera { panel = nil; selectedCamera = nil }
         }
         .onChange(of: home.homeName) { _, _ in selectedRoom = "All rooms"; widgetOffsets = Array(repeating: 0, count: 6) }
         .onChange(of: home.selectedHomeID) { _, _ in
+            cameraSnapshots.clear(); updateCameraAccess()
             selectedRoom = "All rooms"; widgetOffsets = Array(repeating: 0, count: 6); selectedAccessoryID = nil; sceneToRun = nil
             if panel == .accessory || panel == .camera { panel = nil; selectedCamera = nil }
         }
-        .onChange(of: home.demo) { _, value in weather.setDemo(value); if value { weatherLocation.stop() }; selectedRoom = "All rooms"; widgetOffsets = Array(repeating: 0, count: 6); personal.clear(); audio.stop() }
+        .onChange(of: music.state) { _, state in
+            if state == .disconnected || state == .denied || state == .restricted { musicNavigation.reset() }
+        }
+        .onChange(of: home.demo) { _, value in
+            updateCameraAccess()
+            musicNavigation.reset()
+            weather.setDemo(value); music.setDemo(musicDemo); agendaStore.setDemo(value)
+            if value { weatherLocation.stop() }
+            selectedRoom = "All rooms"; widgetOffsets = Array(repeating: 0, count: 6); audio.stop()
+        }
+    }
+    private var photoPresentationVisible: Bool {
+        if display.isStandby && !display.standbyKeepsCurrentPage { return standbyContent == "photos" }
+        return page == .overview || page == .photos
+    }
+    private func updatePresentationSuspension() {
+        display.setPresentationSuspended(panel != nil || wallpaperPickerPresented || musicPickerPresented || airPlayPresented || navigationVisible || sceneToRun != nil || home.error != nil)
+    }
+    private func updateCameraAccess() {
+        cameraSnapshots.setAccess(allowed: phase == .active && !home.demo && home.status == .ready)
     }
     private func activate(_ tile: HomeTile) {
         if tile.kind == .power { home.toggle(tile) }
         else if tile.writable { selectedAccessoryID = tile.id; panel = .accessory }
     }
-    private var visibleTiles: [HomeTile] { home.tiles.filter { selectedRoom == "All rooms" || $0.room == selectedRoom } }
+    private var visibleTiles: [HomeTile] { HomeAccessoryPresentation.primaryTiles(home.tiles).filter { selectedRoom == "All rooms" || $0.room == selectedRoom } }
     private var navigationAnimation: Animation { reduceMotion ? .easeOut(duration: 0.15) : .spring(duration: 0.46, bounce: 0.06) }
     private var pageTransition: AnyTransition {
         if reduceMotion { return .opacity }
         return .asymmetric(insertion: .move(edge: pageForward ? .trailing : .leading).combined(with: .opacity),
                            removal: .move(edge: pageForward ? .leading : .trailing).combined(with: .opacity))
     }
-    private func toggleNavigation() { withAnimation(navigationAnimation) { navigationVisible.toggle() } }
+    private func toggleNavigation() { display.noteInteraction(); withAnimation(navigationAnimation) { navigationVisible.toggle() } }
+    private func showMusicPageNavigation() {
+        panel = nil
+        display.noteInteraction()
+        withAnimation(navigationAnimation) { navigationVisible = true }
+    }
+    private func moveMusicPage(forward: Bool) {
+        guard page == .music, panel == nil, !display.isStandby, !navigationVisible,
+              !musicPickerPresented, !airPlayPresented else { return }
+        movePage(forward: forward)
+    }
     private func selectPage(_ destination: DashboardPage) {
-        pageForward = destination.rawValue >= page.rawValue
+        display.noteInteraction()
+        pageForward = destination.position >= page.position
         withAnimation(navigationAnimation) { page = destination; navigationVisible = false }
     }
     private func movePage(forward: Bool) { selectPage(page.adjacent(forward: forward)) }
-    @ViewBuilder private func pageContent(side: CGFloat) -> some View {
+    @ViewBuilder private func pageContent(size: CGSize) -> some View {
+        let side = max(1, min(size.width, size.height) - 16)
         switch page {
         case .home:
-            if home.status == .ready {
-                if dynamicTypeSize.isAccessibilitySize {
-                    ScrollView {
-                        VStack(spacing: 16) {
-                            ForEach(0..<6) { slot in widgetSlot(slot, size: side - 24) }
-                        }.padding(12)
+            ZStack {
+                if home.status == .ready { homeDashboard(size: size) }
+                else {
+                    VStack(spacing: 0) {
+                        dashboardHeader(title: "Home", subtitle: "Your home, at a glance")
+                        ScrollView {
+                            VStack {
+                                if home.status == .welcome { welcome } else { stateCard }
+                            }.padding(24).frame(maxWidth: 900)
+                        }
                     }
-                } else { glassBoard(side: side) }
-            } else {
-                ScrollView {
-                    VStack {
-                        if home.demo { demoMark }
-                        if home.status == .welcome { welcome } else { stateCard }
-                    }.padding(20)
                 }
-            }
+            }.frame(width: size.width, height: size.height)
+                .accessibilityElement(children: .contain).accessibilityIdentifier("homePage")
         case .overview:
             OverviewBoard(photos: photos, weather: weather, demoDate: home.demo ? demoDate : nil, side: side, chooseAlbum: { panel = .photos }, configureWeather: { panel = .weather })
+                // The black gutters and square board are one opaque page. A
+                // separate backdrop can fade independently during a page swipe.
+                .frame(width: size.width, height: size.height)
+                .background { Color.black.allowsHitTesting(false) }
+                .compositingGroup()
+                .accessibilityElement(children: .contain).accessibilityIdentifier("overviewBoard")
         case .clock:
-            AnalogHomeClock(date: home.demo ? demoDate : nil, numbered: false)
-                .padding(side * 0.07).frame(width: side, height: side)
-                .modifier(GlassSurface(radius: side * 0.1))
-                .accessibilityIdentifier("fullClock")
-                .overlay(alignment: .topLeading) { if home.demo { demoMark.padding(20) } }
-        case .photos: EmptyView() // Full-screen composition lives outside the square widget board.
+            fullScreenClock(size: size)
+        case .photos: EmptyView()
+        case .music:
+            MusicPage(store: music, audio: audio, demo: musicDemo, navigation: $musicNavigation, showPageNavigation: showMusicPageNavigation, changePage: moveMusicPage, presentationChanged: { musicPickerPresented = $0 }, airPlayPresentationChanged: { airPlayPresented = $0 })
+                .foregroundStyle(Color.primary).background(.regularMaterial)
         case .settings:
-            NavigationStack {
-                settings.foregroundStyle(ink).background(.regularMaterial)
-                    .toolbar(.hidden, for: .navigationBar)
-            }.clipShape(RoundedRectangle(cornerRadius: side * 0.035))
-                .overlay(alignment: .topTrailing) { if home.demo { demoMark.foregroundStyle(ink).padding(12).allowsHitTesting(false) } }
+            settings.frame(width: size.width, height: size.height).foregroundStyle(Color.primary)
+                .background(Color(uiColor: .systemGroupedBackground))
+                .accessibilityElement(children: .contain).accessibilityIdentifier("settingsPage")
+        }
+    }
+    private var showNavigationButton: some View {
+        Button { toggleNavigation() } label: {
+            Image(systemName: "square.grid.2x2").font(.title3.weight(.medium))
+                .frame(width: 48, height: 48).background(.white.opacity(0.08), in: Circle())
+        }.buttonStyle(.plain).accessibilityLabel("Show navigation".tr).accessibilityIdentifier("showNavigationButton")
+    }
+    private func dashboardHeader(title: String, subtitle: String, localizeTitle: Bool = true) -> some View {
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(localizeTitle ? title.tr : title).font(.system(.title, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.7)
+                Text(subtitle.tr).font(.subheadline).opacity(0.9).lineLimit(1)
+            }
+            Spacer(minLength: 8)
+            if home.demo { demoMark }
+            if page == .home && home.status == .ready && !dynamicTypeSize.isAccessibilitySize {
+                Menu {
+                    ForEach(["All rooms"] + Array(Set(home.tiles.map(\.room))).sorted(), id: \.self) { room in
+                        Button(room == "All rooms" || home.demo ? room.tr : room) { selectedRoom = room; widgetOffsets = Array(repeating: 0, count: 6) }
+                    }
+                } label: { Label(selectedRoom == "All rooms" || home.demo ? selectedRoom.tr : selectedRoom, systemImage: "door.left.hand.open").font(.callout.weight(.medium)).padding(.horizontal, 14).padding(.vertical, 12).background(.white.opacity(0.07), in: Capsule()) }
+                .accessibilityIdentifier("homeRoomPicker")
+            }
+            showNavigationButton
+        }.padding(.horizontal, 28).padding(.top, 24).padding(.bottom, 20).frame(height: dynamicTypeSize.isAccessibilitySize ? 180 : 104)
+            .accessibilityElement(children: .contain).accessibilityIdentifier("dashboardHeader")
+    }
+    private func homeDashboard(size: CGSize) -> some View {
+        let gap: CGFloat = 12
+        let outer: CGFloat = 12
+        let landscape = size.width > size.height
+        let geometry = HomeDashboardGeometry(width: size.width, height: size.height)
+        let widthSide = (size.width - outer * 2 - gap * 2) / 3
+        let cellSide = max(1, landscape ? geometry.cellSide : widthSide)
+        let boardWidth = cellSide * 3 + gap * 2
+        let contentWidth = landscape ? size.width - outer * 2 : boardWidth
+        let viewportHeight = max(1, size.height - outer * 2)
+        return ZStack(alignment: .topLeading) {
+            if dynamicTypeSize.isAccessibilitySize {
+                ScrollView {
+                    VStack(spacing: gap) {
+                        editableBoard(width: size.width - outer * 2, height: size.height - outer * 2)
+                        shortcutColumn(width: size.width - outer * 2, cellHeight: 320)
+                    }.padding(outer)
+                }
+            } else if landscape {
+                HStack(alignment: .top, spacing: gap) {
+                    editableBoard(width: boardWidth, height: viewportHeight, cellHeight: cellSide)
+                    shortcutColumn(width: geometry.sidebarWidth, cellHeight: geometry.sidebarCardHeight)
+                        .frame(width: geometry.sidebarWidth, height: viewportHeight)
+                }.frame(width: contentWidth, height: viewportHeight)
+                    .padding(outer).frame(width: size.width)
+            } else {
+                ScrollView {
+                    VStack(spacing: gap) {
+                        editableBoard(width: boardWidth, height: nil, cellHeight: cellSide, scrolls: false)
+                        LazyVGrid(columns: Array(repeating: GridItem(.fixed(cellSide), spacing: gap), count: 3), spacing: gap) {
+                            shortcutTiles(width: cellSide, cellHeight: cellSide)
+                        }.frame(width: boardWidth)
+                            .accessibilityElement(children: .contain).accessibilityIdentifier("shortcutColumn")
+                    }.frame(width: boardWidth).padding(outer).frame(width: size.width)
+                }.scrollIndicators(.hidden)
+                    .accessibilityIdentifier("homePortraitScroll")
+            }
+            if home.demo {
+                demoMark.padding(.leading, dynamicTypeSize.isAccessibilitySize ? 24 : (size.width - contentWidth) / 2 + 12)
+                    .padding(.top, 24).allowsHitTesting(false)
+            }
+        }.frame(width: size.width, height: size.height)
+            .accessibilityElement(children: .contain).accessibilityIdentifier("homeDashboard")
+    }
+    private func fullScreenClock(size: CGSize) -> some View {
+        let landscape = size.width > size.height
+        let diameter = min(landscape ? size.width * 0.58 : size.width * 0.9, size.height * (landscape ? 0.84 : 0.63))
+        return ZStack {
+            if landscape {
+                HStack(spacing: 24) {
+                    AnalogHomeClock(date: home.demo ? demoDate : nil, numbered: true, monochrome: true)
+                        .frame(width: diameter, height: diameter).accessibilityIdentifier("fullClockDial")
+                    clockInformation.padding(.trailing, 40)
+                }.padding(32)
+            } else {
+                VStack(spacing: 24) {
+                    AnalogHomeClock(date: home.demo ? demoDate : nil, numbered: true, monochrome: true)
+                        .frame(width: diameter, height: diameter).accessibilityIdentifier("fullClockDial")
+                    clockInformation
+                }.padding(32)
+            }
+        }.frame(width: size.width, height: size.height)
+            .accessibilityElement(children: .contain).accessibilityIdentifier("fullClock")
+            .overlay(alignment: .topLeading) { if home.demo { demoMark.padding(28) } }
+    }
+    private var clockInformation: some View {
+        TimelineView(.periodic(from: .now, by: 1)) { context in
+            let date = home.demo ? demoDate : context.date
+            VStack(spacing: 14) {
+                Text(date.formatted(.dateTime.hour().minute().locale(L10n.locale)))
+                    .font(.system(size: dynamicTypeSize.isAccessibilitySize ? 56 : 76, weight: .light, design: .rounded))
+                    .lineLimit(1).minimumScaleFactor(0.5)
+                Text(date.formatted(.dateTime.weekday(.wide).locale(L10n.locale))).font(.title2.weight(.medium))
+                Text(date.formatted(.dateTime.month(.wide).day().locale(L10n.locale))).font(.title3).opacity(0.7)
+                if home.demo { Text("Demo time".tr).font(.caption).opacity(0.6) }
+            }.frame(maxWidth: .infinity)
+                .accessibilityElement(children: .contain).accessibilityIdentifier("fullClockInformation")
         }
     }
     private var demoMark: some View {
-        Text("DEMO").font(.system(size: 11, weight: .semibold)).tracking(1)
+        Text("DEMO".tr).font(.system(size: 11, weight: .semibold)).tracking(1)
             .padding(.horizontal, 8).padding(.vertical, 5)
             .background(.black.opacity(0.12), in: Capsule())
             .accessibilityIdentifier("demoBadge")
@@ -220,6 +529,7 @@ struct Dashboard: View {
                         .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading).padding(.horizontal, 12)
                 }
             }.background(page == destination ? .white.opacity(0.24) : .clear, in: RoundedRectangle(cornerRadius: 15))
+                .contentShape(Rectangle())
         }.accessibilityIdentifier("tab-\(destination.rawValue)")
             .accessibilityAddTraits(page == destination ? .isSelected : [])
     }
@@ -247,8 +557,11 @@ struct Dashboard: View {
         navigationAction("Today", "calendar", id: "agendaCard", horizontal: horizontal) { panel = .agenda }
         navigationAction("Camera", "video", id: "cameraCard", horizontal: horizontal) { selectedCamera = home.cameras.first; panel = .camera }
         navigationAction("Controls", "switch.2", id: "allControls", horizontal: horizontal) { panel = .controls }
-        navigationAction("Music", "music.note", id: "musicCard", horizontal: horizontal) { panel = .music }
+        navigationAction("Music", "music.note", id: "musicCard", horizontal: horizontal) { selectPage(.music) }
         navigationAction("Albums", "photo.stack", id: "wallAlbums", horizontal: horizontal) { panel = .photos }
+        navigationAction("Add widget", "plus.square", id: "addHomeWidget", horizontal: horizontal) { panel = .widget }
+        navigationAction("Add shortcut", "plus", id: "addShortcut", horizontal: horizontal) { editShortcut(nil) }
+        navigationAction("Restore default widgets", "arrow.counterclockwise", id: "restoreHomeWidgets", horizontal: horizontal) { saveWidgets(HomeWidgetConfiguration.defaults) }
         navigationAction("Hide", horizontal ? "chevron.down" : "chevron.right", id: "hideNavigation", horizontal: horizontal) {}
     }
     private func navigationAction(_ title: String, _ symbol: String, id: String, horizontal: Bool, action: @escaping () -> Void) -> some View {
@@ -258,9 +571,9 @@ struct Dashboard: View {
         } label: {
             Group {
                 if horizontal { Image(systemName: symbol).font(.system(size: 19)).frame(maxWidth: .infinity, minHeight: 44) }
-                else { Label(title, systemImage: symbol).font(.system(size: 15, weight: .medium)).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).padding(.horizontal, 12) }
+                else { Label(title.tr, systemImage: symbol).font(.system(size: 15, weight: .medium)).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).padding(.horizontal, 12) }
             }.contentShape(Rectangle())
-        }.accessibilityLabel(title).accessibilityIdentifier(id)
+        }.accessibilityLabel(title.tr).accessibilityIdentifier(id)
     }
     private var roomChoices: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -269,7 +582,7 @@ struct Dashboard: View {
                     Button {
                         withAnimation(navigationAnimation) { selectedRoom = room; widgetOffsets = Array(repeating: 0, count: 6) }
                     } label: {
-                        Text(room).padding(.horizontal, 16).padding(.vertical, 12)
+                        Text(room == "All rooms" || home.demo ? room.tr : room).padding(.horizontal, 16).padding(.vertical, 12)
                             .background(selectedRoom == room ? Color.purple.opacity(0.15) : Color.gray.opacity(0.08), in: Capsule())
                     }.buttonStyle(.plain).accessibilityIdentifier("room-\(room)")
                         .accessibilityAddTraits(selectedRoom == room ? .isSelected : [])
@@ -277,146 +590,427 @@ struct Dashboard: View {
             }
         }
     }
-    private func glassBoard(side: CGFloat) -> some View {
-        let gap = side * 0.018
-        let cell = (side - gap * 2) / 3
-        return VStack(spacing: gap) {
-            HStack(spacing: gap) {
-                widgetSlot(0, size: cell * 2 + gap)
-                VStack(spacing: gap) {
-                    widgetSlot(1, size: cell)
-                    widgetSlot(2, size: cell)
+    private var widgetNamespace: String { home.demo ? "demo" : home.selectedHomeID?.uuidString ?? "unconnected" }
+    private var widgetLayouts: [String: [HomeWidgetConfiguration]] {
+        guard let data = widgetLayoutsData.data(using: .utf8),
+              let decoded = try? JSONDecoder().decode([String: [HomeWidgetConfiguration]].self, from: data) else { return [:] }
+        return decoded
+    }
+    private var configuredWidgets: [HomeWidgetConfiguration] { widgetLayouts[widgetNamespace] ?? HomeWidgetConfiguration.defaults }
+    private func saveWidgets(_ widgets: [HomeWidgetConfiguration]) {
+        var layouts = widgetLayouts
+        layouts[widgetNamespace] = widgets
+        guard let data = try? JSONEncoder().encode(layouts), let string = String(data: data, encoding: .utf8) else { return }
+        widgetLayoutsData = string
+    }
+    private func editableBoard(width: CGFloat, height: CGFloat?, cellHeight: CGFloat = 320, scrolls: Bool = true) -> some View {
+        let gap: CGFloat = 12
+        let columns = dynamicTypeSize.isAccessibilitySize ? 1 : 3
+        let cellWidth = max(1, (width - gap * CGFloat(columns - 1)) / CGFloat(columns))
+        let placements = HomeWidgetPacking.place(configuredWidgets, columns: columns)
+        let rowCount = placements.map { $0.row + $0.rows }.max() ?? 0
+        let contentHeight = max(1, CGFloat(rowCount) * (cellHeight + gap) - gap)
+        return ScrollView {
+            if configuredWidgets.isEmpty {
+                Button { panel = .widget } label: {
+                    boardTile("plus", "Add widget", "Choose controls for this home".tr, width: width, height: cellHeight)
+                }.buttonStyle(.plain).accessibilityIdentifier("addHomeWidget")
+            } else {
+                ZStack(alignment: .topLeading) {
+                    ForEach(placements, id: \.id) { placement in
+                        if let configuration = configuredWidgets.first(where: { $0.id == placement.id }) {
+                            let widgetWidth = CGFloat(placement.columns) * (cellWidth + gap) - gap
+                            let widgetHeight = CGFloat(placement.rows) * (cellHeight + gap) - gap
+                            ZStack { configuredWidget(configuration, width: widgetWidth, height: widgetHeight) }
+                                .frame(width: widgetWidth, height: widgetHeight)
+                                .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: 30, style: .continuous))
+                                .contextMenu {
+                                    widgetContextMenu(configuration)
+                                } preview: {
+                                    widgetMenuPreview(configuration, width: widgetWidth, height: widgetHeight)
+                                }
+                                .accessibilityElement(children: .contain)
+                                .accessibilityIdentifier("homeWidget-\(configuration.id)")
+                                .accessibilityValue(configuration.size.title)
+                                .offset(x: CGFloat(placement.column) * (cellWidth + gap), y: CGFloat(placement.row) * (cellHeight + gap))
+                        }
+                    }
+                }.frame(width: width, height: contentHeight, alignment: .topLeading)
+                    .accessibilityElement(children: .contain).accessibilityIdentifier("homeWidgetCanvas")
+            }
+        }.scrollIndicators(.hidden).scrollDisabled(!scrolls)
+            .frame(width: width, height: height ?? max(cellHeight, contentHeight))
+            .accessibilityElement(children: .contain).accessibilityIdentifier("homeControlGrid")
+    }
+    private func widgetMenuPreview(_ configuration: HomeWidgetConfiguration, width: CGFloat, height: CGFloat) -> some View {
+        // Lift an independent full card, not the ScrollView's clipped source
+        // snapshot. A bounded preview also leaves room for the native menu.
+        let scale = min(1, 320 / max(1, width), 320 / max(1, height))
+        return configuredWidget(configuration, width: width, height: height)
+            .frame(width: width, height: height)
+            .foregroundStyle(.white)
+            .environment(\.colorScheme, .dark)
+            .allowsHitTesting(false)
+            .disabled(true)
+            .scaleEffect(scale)
+            .frame(width: width * scale, height: height * scale)
+            .padding(12)
+            // The UIKit preview host is otherwise opaque white; give the
+            // lifted glass the same readable dark backing as the dashboard.
+            .background(Color(white: 0.12), in: RoundedRectangle(cornerRadius: 32, style: .continuous))
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("homeWidgetPreview-\(configuration.id)")
+    }
+    @ViewBuilder private func widgetContextMenu(_ configuration: HomeWidgetConfiguration) -> some View {
+        Button("Show navigation".tr) { withAnimation(navigationAnimation) { navigationVisible = true } }.accessibilityIdentifier("contextShowNavigation")
+        Divider()
+        if configuration.kind == .stack, let raw = configuration.target, let slot = Int(raw), (0..<6).contains(slot), options(for: slot).count > 1 {
+            Button("Next widget".tr) { widgetOffsets[slot] = (widgetOffsets[slot] + 1) % options(for: slot).count }
+                .accessibilityIdentifier("contextNextWidget-\(configuration.id)")
+            Button("Previous widget".tr) { widgetOffsets[slot] = (widgetOffsets[slot] + options(for: slot).count - 1) % options(for: slot).count }
+                .accessibilityIdentifier("contextPreviousWidget-\(configuration.id)")
+            Divider()
+        }
+        ForEach(HomeWidgetSize.allCases) { size in
+            Button { resizeWidget(configuration.id, size: size) } label: {
+                Label(size.title, systemImage: size == configuration.size ? "checkmark" : "rectangle")
+            }.accessibilityIdentifier("widgetSize-\(configuration.id)-\(size.rawValue)")
+        }
+        Divider()
+        Button("Add widget".tr) { panel = .widget }.accessibilityIdentifier("addHomeWidget")
+        Button("Restore default widgets".tr) { saveWidgets(HomeWidgetConfiguration.defaults) }.accessibilityIdentifier("restoreHomeWidgets")
+        Divider()
+        Button("Remove widget".tr, role: .destructive) { saveWidgets(configuredWidgets.filter { $0.id != configuration.id }) }
+            .accessibilityIdentifier("removeWidget-\(configuration.id)")
+    }
+    private func resizeWidget(_ id: String, size: HomeWidgetSize) {
+        var widgets = configuredWidgets
+        guard let index = widgets.firstIndex(where: { $0.id == id }) else { return }
+        widgets[index].size = size; saveWidgets(widgets)
+    }
+    @ViewBuilder private func configuredWidget(_ configuration: HomeWidgetConfiguration, width: CGFloat, height: CGFloat) -> some View {
+        if configuration.kind == .stack, let raw = configuration.target, let slot = Int(raw), (0..<6).contains(slot) {
+            widgetSlot(slot, width: width, height: height)
+        } else {
+            switch configuration.kind {
+            case .accessory:
+                if let tile = home.tiles.first(where: { $0.id.uuidString == configuration.target }) {
+                    if tile.isClimate { climateTile(tile, width: width, height: height) }
+                    else { accessoryWidget(tile, width: width, height: height) }
+                } else { boardTile("exclamationmark.triangle", "Accessory unavailable", "Choose again for this home".tr, width: width, height: height) }
+            case .scene:
+                if let name = configuration.target, home.scenes.contains(name) { widgetContent(.scene(name), width: width, height: height) }
+                else { boardTile("exclamationmark.triangle", "Scene unavailable", "Choose again for this home".tr, width: width, height: height) }
+            case .camera:
+                if let target = configuration.target {
+                    let camera = home.cameras.first { $0.uniqueIdentifier.uuidString == target }
+                    Button { selectedCamera = camera; panel = .camera } label: {
+                        boardTile("video.fill", camera?.name ?? "Camera unavailable".tr,
+                                  home.demo ? "Demo · no live feed".tr : "Open camera".tr,
+                                  width: width, height: height, localizeTitle: false)
+                    }.buttonStyle(.plain).accessibilityIdentifier("cameraWidget")
+                } else { widgetContent(.camera, width: width, height: height) }
+            case .clock: widgetContent(.clock, width: width, height: height)
+            case .agenda: widgetContent(.agenda, width: width, height: height)
+            case .stack: EmptyView()
+            }
+        }
+    }
+    private func addWidget(_ kind: HomeWidgetKind, target: String? = nil) {
+        let widget = HomeWidgetConfiguration(id: UUID().uuidString, kind: kind, target: target, size: .small)
+        saveWidgets(configuredWidgets + [widget]); panel = nil
+    }
+    private var widgetPicker: some View {
+        List {
+            Section("Display widgets".tr) {
+                Button { addWidget(.camera) } label: { Label("Camera".tr, systemImage: "video") }.accessibilityIdentifier("widgetOption-camera")
+                ForEach(home.cameras, id: \.uniqueIdentifier) { camera in
+                    Button { addWidget(.camera, target: camera.uniqueIdentifier.uuidString) } label: { Label(camera.name, systemImage: "video.fill") }
+                        .accessibilityIdentifier("widgetOption-camera-\(camera.uniqueIdentifier.uuidString)")
+                }
+                Button { addWidget(.clock) } label: { Label("Clock".tr, systemImage: "clock") }.accessibilityIdentifier("widgetOption-clock")
+                Button { addWidget(.agenda) } label: { Label("Today".tr, systemImage: "calendar") }.accessibilityIdentifier("widgetOption-agenda")
+            }
+            Section("Accessories".tr) {
+                ForEach(HomeAccessoryPresentation.primaryTiles(home.tiles)) { tile in
+                    Button { addWidget(.accessory, target: tile.id.uuidString) } label: {
+                        Label("\(home.demo ? tile.name.tr : tile.name) · \(home.demo ? tile.room.tr : tile.room)", systemImage: tile.symbol)
+                    }.accessibilityIdentifier("widgetOption-accessory-\(tile.id.uuidString)")
+                }
+                if home.tiles.isEmpty { Text("No supported accessories in this home.".tr).foregroundStyle(.secondary) }
+            }
+            Section("Scenes".tr) {
+                ForEach(home.scenes, id: \.self) { name in
+                    Button { addWidget(.scene, target: name) } label: { Label(home.demo ? name.tr : name, systemImage: "sun.max") }
+                        .accessibilityIdentifier("widgetOption-scene-\(name)")
                 }
             }
-            HStack(spacing: gap) {
-                widgetSlot(3, size: cell)
-                widgetSlot(4, size: cell)
-                widgetSlot(5, size: cell)
+            Section { Text("Touch and hold a widget to change its size or remove it. Extra widgets scroll vertically.".tr).font(.footnote) }
+        }.accessibilityElement(children: .contain).accessibilityIdentifier("widgetPicker")
+    }
+    private var shortcuts: [HomeShortcut] {
+        guard let data = shortcutsData.data(using: .utf8), let saved = try? JSONDecoder().decode([HomeShortcut].self, from: data) else { return HomeShortcut.defaults }
+        return saved
+    }
+    private func saveShortcuts(_ items: [HomeShortcut]) {
+        guard let data = try? JSONEncoder().encode(items), let string = String(data: data, encoding: .utf8) else { return }
+        shortcutsData = string
+    }
+    private func shortcutColumn(width: CGFloat, cellHeight: CGFloat) -> some View {
+        ScrollView {
+            VStack(spacing: 12) { shortcutTiles(width: width, cellHeight: cellHeight) }
+        }.scrollIndicators(.hidden).frame(width: width)
+            .accessibilityElement(children: .contain).accessibilityIdentifier("shortcutColumn")
+    }
+    @ViewBuilder private func shortcutTiles(width: CGFloat, cellHeight: CGFloat) -> some View {
+        ForEach(shortcuts) { shortcut in
+            Group {
+                if shortcut.kind == .camera {
+                    SidebarCameraCard(accessory: camera(for: shortcut), snapshots: cameraSnapshots,
+                                      title: shortcut.name.isEmpty ? (camera(for: shortcut)?.name ?? "Camera".tr) : shortcut.name,
+                                      demo: home.demo,
+                                      active: phase == .active && !display.isStandby && panel == nil && !navigationVisible && sceneToRun == nil,
+                                      width: width, height: cellHeight, open: { runShortcut(shortcut) })
+                        .id("\(home.selectedHomeID?.uuidString ?? "none")-\(shortcut.id)")
+                } else if shortcut.kind == .music {
+                    MusicHomeWidget(store: music, audio: audio, demo: musicDemo,
+                                    width: width, height: cellHeight, airPlayPresentationChanged: { airPlayPresented = $0 }, open: { runShortcut(shortcut) })
+                        .background { GeometryReader { geometry in
+                            Color.clear.preference(key: MusicWidgetFrameKey.self, value: [geometry.frame(in: .global)])
+                        } }
+                } else { Button { runShortcut(shortcut) } label: {
+                HStack(spacing: 16) {
+                    Image(systemName: shortcut.kind.symbol).font(.system(size: 28, weight: .regular)).frame(width: 48, height: 56)
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(shortcut.name.isEmpty ? shortcut.kind.title : shortcut.name).font(.title3.weight(.semibold)).lineLimit(2)
+                        Text(shortcutDetail(shortcut)).font(.subheadline).opacity(0.75).lineLimit(2)
+                    }.frame(maxWidth: .infinity, alignment: .leading)
+                    Image(systemName: "chevron.right").font(.caption.weight(.semibold)).opacity(0.5)
+                }.padding(.horizontal, 20).padding(.vertical, 12).frame(width: width, height: cellHeight).contentShape(Rectangle())
+                    .modifier(GlassSurface(radius: 30))
+                }.buttonStyle(.plain) }
+            }.accessibilityIdentifier("shortcut-\(shortcut.id)")
+                .disabled(shortcut.kind == .scene && (home.sceneBusy || !shortcutBelongsToCurrentHome(shortcut) || !home.scenes.contains(shortcut.target ?? "")))
+                .contextMenu {
+                    Button("Show navigation".tr) { withAnimation(navigationAnimation) { navigationVisible = true } }.accessibilityIdentifier("contextShowNavigation")
+                    Button("Edit".tr) { editShortcut(shortcut) }.accessibilityIdentifier("editShortcut-\(shortcut.id)")
+                    Button("Add shortcut".tr) { editShortcut(nil) }.accessibilityIdentifier("addShortcut")
+                    Button("Remove".tr, role: .destructive) { saveShortcuts(shortcuts.filter { $0.id != shortcut.id }) }.accessibilityIdentifier("removeShortcut-\(shortcut.id)")
+                }
+        }
+        if shortcuts.isEmpty {
+            Button { editShortcut(nil) } label: { boardTile("plus", "Add shortcut", "", width: width, height: cellHeight) }
+                .buttonStyle(.plain).accessibilityIdentifier("addShortcut")
+                .contextMenu {
+                    Button("Show navigation".tr) { withAnimation(navigationAnimation) { navigationVisible = true } }.accessibilityIdentifier("contextShowNavigation")
+                }
+        }
+    }
+    private func shortcutBelongsToCurrentHome(_ shortcut: HomeShortcut) -> Bool {
+        shortcut.belongs(to: home.demo ? "demo" : home.selectedHomeID?.uuidString)
+    }
+    private func camera(for shortcut: HomeShortcut) -> HMAccessory? {
+        guard shortcutBelongsToCurrentHome(shortcut), let target = shortcut.target else { return nil }
+        return home.cameras.first { $0.uniqueIdentifier.uuidString == target }
+    }
+    private func shortcutDetail(_ shortcut: HomeShortcut) -> String {
+        if !shortcutBelongsToCurrentHome(shortcut) { return "Choose again for this home".tr }
+        switch shortcut.kind {
+        case .camera:
+            if home.demo { return "Demo · no live feed".tr }
+            if let target = shortcut.target { return home.cameras.first(where: { $0.uniqueIdentifier.uuidString == target })?.name ?? "Camera unavailable".tr }
+            return home.cameras.first?.name ?? "No camera".tr
+        case .scene: return shortcut.target.map { home.demo ? $0.tr : $0 } ?? "Choose a scene".tr
+        case .agenda: return showPersonal ? (agendaStore.eventLines.first ?? agendaStore.statusTitle) : "Calendar is hidden".tr
+        case .music: return "Apple Music and AirPlay".tr
+        case .controls: return "All accessories and rooms".tr
+        }
+    }
+    private func runShortcut(_ shortcut: HomeShortcut) {
+        display.noteInteraction()
+        switch shortcut.kind {
+        case .camera:
+            guard shortcutBelongsToCurrentHome(shortcut) else { editShortcut(shortcut); return }
+            selectedCamera = shortcutBelongsToCurrentHome(shortcut) ? (shortcut.target == nil ? home.cameras.first : home.cameras.first { $0.uniqueIdentifier.uuidString == shortcut.target }) : nil
+            panel = .camera
+        case .scene:
+            if shortcutBelongsToCurrentHome(shortcut), let target = shortcut.target, home.scenes.contains(target) { sceneToRun = target }
+        case .agenda: panel = .agenda
+        case .music: musicNavigation.show(.player); selectPage(.music)
+        case .controls: panel = .controls
+        }
+    }
+    private func editShortcut(_ shortcut: HomeShortcut?) {
+        editingShortcutID = shortcut?.id
+        shortcutKind = shortcut?.kind ?? .camera
+        shortcutTarget = shortcut?.target ?? ""
+        shortcutName = shortcut?.name ?? ""
+        panel = .shortcut
+    }
+    private var shortcutEditor: some View {
+        Form {
+            Section("Customize shortcut".tr) {
+                TextField("Name (optional)".tr, text: $shortcutName).accessibilityIdentifier("shortcutName")
+                Picker("Function".tr, selection: $shortcutKind) {
+                    ForEach(HomeShortcutKind.allCases) { kind in Text(kind.title).tag(kind).accessibilityIdentifier("shortcutKind-\(kind.rawValue)") }
+                }.accessibilityIdentifier("shortcutKind")
+                if shortcutKind == .camera {
+                    Picker("Camera".tr, selection: $shortcutTarget) {
+                        Text("First available camera".tr).tag("")
+                        ForEach(home.cameras, id: \.uniqueIdentifier) { camera in Text(camera.name).tag(camera.uniqueIdentifier.uuidString) }
+                    }.accessibilityIdentifier("shortcutCameraPicker")
+                    if home.cameras.isEmpty { Text((home.demo ? "Demo mode has no camera stream. Connect Apple Home to choose a camera." : "No compatible HomeKit cameras in this home.").tr).font(.footnote).foregroundStyle(.secondary) }
+                }
+                if shortcutKind == .scene {
+                    Picker("Scene".tr, selection: $shortcutTarget) {
+                        Text("Choose a scene".tr).tag("")
+                        ForEach(home.scenes, id: \.self) { scene in Text(home.demo ? scene.tr : scene).tag(scene) }
+                    }.accessibilityIdentifier("shortcutScenePicker")
+                    Text("Scenes always ask for confirmation before running.".tr).font(.footnote).foregroundStyle(.secondary)
+                }
             }
-        }.buttonStyle(.plain).frame(width: side, height: side)
+            Section {
+                Button("Save shortcut".tr) {
+                    let shortcut = HomeShortcut(id: editingShortcutID ?? UUID().uuidString, kind: shortcutKind,
+                        target: shortcutKind == .camera || shortcutKind == .scene ? (shortcutTarget.isEmpty ? nil : shortcutTarget) : nil,
+                        name: String(shortcutName.trimmingCharacters(in: .whitespacesAndNewlines).prefix(60)),
+                        homeID: shortcutKind == .scene || shortcutKind == .camera ? (home.demo ? "demo" : home.selectedHomeID?.uuidString) : nil)
+                    var saved = shortcuts
+                    if let index = saved.firstIndex(where: { $0.id == shortcut.id }) { saved[index] = shortcut } else { saved.append(shortcut) }
+                    saveShortcuts(saved); panel = nil
+                }.disabled((shortcutKind == .scene && !home.scenes.contains(shortcutTarget)) ||
+                           (shortcutKind == .camera && !shortcutTarget.isEmpty && !home.cameras.contains { $0.uniqueIdentifier.uuidString == shortcutTarget }))
+                    .accessibilityIdentifier("saveShortcut")
+                Button("Cancel".tr, role: .cancel) { panel = nil }.accessibilityIdentifier("cancelShortcut")
+            }
+        }.onChange(of: shortcutKind) { _, _ in shortcutTarget = "" }
     }
     private func options(for slot: Int) -> [DashboardWidget] {
-        DashboardWidget.options(for: slot, tiles: visibleTiles, scenes: home.scenes)
+        DashboardWidget.options(for: slot, tiles: visibleTiles, scenes: home.scenes).filter { $0 != .photo }
     }
-    private func widgetSlot(_ slot: Int, size: CGFloat) -> some View {
-        WidgetCarousel(items: options(for: slot), selection: $widgetOffsets[slot], size: size,
-                       radius: size * (slot == 0 ? 0.09 : 0.19), slot: slot,
+    private func widgetSlot(_ slot: Int, width: CGFloat, height: CGFloat) -> some View {
+        return WidgetCarousel(items: options(for: slot), selection: $widgetOffsets[slot], size: width, height: height, allowsVerticalSwipe: false,
+                       radius: 30, slot: slot,
                        showNavigation: { withAnimation(navigationAnimation) { navigationVisible = true } }) { widget in
-            widgetContent(widget, size: size)
-        }.overlay(alignment: .topLeading) { if slot == 0 && home.demo { demoMark.padding(size * 0.035).allowsHitTesting(false) } }
+            widgetContent(widget, width: width, height: height)
+        }
     }
-    @ViewBuilder private func widgetContent(_ widget: DashboardWidget, size: CGFloat) -> some View {
+    @ViewBuilder private func widgetContent(_ widget: DashboardWidget, width: CGFloat, height: CGFloat) -> some View {
         switch widget {
         case .climate(let id):
-            if let tile = visibleTiles.first(where: { $0.id == id }) { climateTile(tile, size: size) }
+            if let tile = visibleTiles.first(where: { $0.id == id }) { climateTile(tile, width: width, height: height) }
         case .clock:
             AnalogHomeClock(date: home.demo ? demoDate : nil, numbered: false)
-                .padding(size * 0.05).frame(width: size, height: size)
-                .modifier(GlassSurface(radius: size * 0.5))
+                .padding(24).frame(width: width, height: height)
+                .modifier(GlassSurface(radius: 30))
                 .accessibilityIdentifier("clockWidget")
-        case .photo:
-            Button { panel = .photos } label: {
-                ZStack {
-                    FadingPhoto(frame: photos.frame)
-                    if photos.image == nil {
-                        Color.clear
-                        Image(systemName: photos.message == nil ? "photo" : "photo.badge.exclamationmark").font(.system(size: size * 0.25, weight: .ultraLight)).opacity(0.9)
-                    }
-                }.frame(width: size, height: size).clipped().clipShape(RoundedRectangle(cornerRadius: size * 0.19))
-                    .modifier(GlassSurface(radius: size * 0.19))
-            }.accessibilityLabel("Photos, \(photos.albumTitle)").accessibilityIdentifier("photoWidget")
-                .accessibilityAction(named: "Next photo") { photos.next() }
+        case .photo: EmptyView()
         case .scene(let name):
             Button { sceneToRun = name } label: {
-                boardTile("sun.max.fill", name, home.notice?.contains(name) == true ? "Done" : "Scene", size: size)
+                boardTile("sun.max.fill", name, home.notice?.contains(name) == true ? "Done".tr : "Scene".tr, width: width, height: height, localizeTitle: home.demo)
             }.disabled(home.sceneBusy).accessibilityIdentifier("scene-\(name)")
         case .accessory(let id):
-            if let tile = visibleTiles.first(where: { $0.id == id }) {
-                Button { activate(tile) } label: {
-                    boardTile(tile.symbol, tile.name, "\(tile.room) · \(tile.value)", size: size, active: tile.isOn)
-                        .overlay(alignment: .topTrailing) { if home.busy.contains(id) { ProgressView().padding(16) } }
-                }.disabled(!tile.writable || !tile.reachable || home.busy.contains(id))
-                    .accessibilityLabel("\(tile.name), \(tile.room), \(tile.value)").accessibilityIdentifier("accessory-\(tile.name)")
-            }
+            if let tile = visibleTiles.first(where: { $0.id == id }) { accessoryWidget(tile, width: width, height: height) }
         case .camera:
             Button { selectedCamera = home.cameras.first; panel = .camera } label: {
-                boardTile("video.fill", "Camera", home.demo ? "Demo · no live feed" : (home.cameras.first?.name ?? "No camera"), size: size)
+                boardTile("video.fill", "Camera", home.demo ? "Demo · no live feed".tr : (home.cameras.first?.name ?? "No camera".tr), width: width, height: height)
             }.accessibilityIdentifier("cameraWidget")
         case .agenda:
-            Button { panel = .agenda } label: { boardTile("calendar", "Today", "Calendar", size: size) }.accessibilityIdentifier("agendaWidget")
+            Button { panel = .agenda } label: { boardTile("calendar", "Today", agendaStore.eventLines.first ?? agendaStore.statusTitle, width: width, height: height) }.accessibilityIdentifier("agendaWidget")
         case .empty(let slot):
             let title = slot == 0 ? "Climate" : slot == 3 ? "Scenes" : slot == 5 ? "Lights" : "Devices"
             boardTile(slot == 0 ? "thermometer.medium" : slot == 3 ? "sun.max.fill" : slot == 5 ? "lightbulb.fill" : "switch.2",
-                      title, "None in this room", size: size)
+                      title, "None in this room".tr, width: width, height: height)
 
         }
     }
-    private func climateTile(_ tile: HomeTile, size: CGFloat) -> some View {
-        VStack(spacing: 0) {
-            // Reserve the complete font line box and side bearings before scaling.
+    private func accessoryWidget(_ tile: HomeTile, width: CGFloat, height: CGFloat) -> some View {
+        let power = HomePowerState.resolve(value: tile.value, reachable: tile.reachable)
+        let state = tile.kind == .power ? power.title : (tile.reachable ? tile.value.tr : "Offline".tr)
+        let active = tile.kind == .power && power == .on
+        let size = min(width, height)
+        return VStack(spacing: 0) {
+            Button { activate(tile) } label: {
+                Image(systemName: tile.symbol).font(.system(size: min(64, max(48, size * 0.22)), weight: .regular))
+                    .foregroundStyle(active ? Color.yellow : Color.white.opacity(0.7))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity).contentShape(Rectangle())
+                    .overlay { if home.busy.contains(tile.id) { ProgressView().tint(.white) } }
+            }.buttonStyle(.plain)
+                .disabled(tile.kind == .power && (!tile.writable || !tile.reachable || home.busy.contains(tile.id)))
+                .accessibilityLabel("\(home.demo ? tile.name.tr : tile.name), \(home.demo ? tile.room.tr : tile.room), \(home.busy.contains(tile.id) ? "Updating…".tr : state)")
+                .accessibilityValue(home.busy.contains(tile.id) ? "Updating…".tr : state)
+                .accessibilityHint((tile.kind == .power ? "Tap to switch. Tap the name for more controls." : "Open accessory controls").tr)
+                .accessibilityIdentifier("accessory-\(tile.name)")
+            Button { selectedAccessoryID = tile.id; panel = .accessory } label: {
+                VStack(spacing: 8) {
+                    Text(home.demo ? tile.name.tr : tile.name).font(widgetLabelFont(size, weight: .semibold)).lineLimit(2)
+                    Text(home.demo ? tile.room.tr : tile.room).font(widgetLabelFont(size)).opacity(0.9).lineLimit(2)
+                    if power == .offline || power == .unavailable || tile.kind != .power { Text(state).font(.caption).opacity(0.7) }
+                }.multilineTextAlignment(.center).minimumScaleFactor(0.8)
+                    .frame(maxWidth: .infinity, minHeight: 64).padding(.horizontal, 12).padding(.bottom, 20).contentShape(Rectangle())
+            }.buttonStyle(.plain).accessibilityLabel("\(home.demo ? tile.name.tr : tile.name), \("More controls".tr)")
+                .accessibilityIdentifier("accessoryDetails-\(tile.name)")
+        }.frame(width: width, height: height).modifier(GlassSurface(radius: 30, active: active))
+    }
+    private func climateTile(_ tile: HomeTile, width: CGFloat, height: CGFloat) -> some View {
+        let size = min(width, height)
+        return VStack(spacing: 0) {
+            Spacer(minLength: 12)
             Text(tile.number.map { String(format: "%.1f", $0) } ?? "—")
-                .font(.system(size: size * 0.40, weight: .regular))
-                .lineLimit(1).minimumScaleFactor(0.35)
-                .frame(width: size * 0.82, height: size * 0.61)
-                .padding(.top, size * 0.08)
-                .contentTransition(.numericText())
-                .animation(reduceMotion ? nil : .smooth(duration: 0.35), value: tile.number)
+                .font(.system(size: min(220, max(120, size * 0.42)), weight: .regular))
+                .lineLimit(1).minimumScaleFactor(0.6)
+                .frame(maxWidth: .infinity).contentTransition(.numericText())
                 .accessibilityIdentifier("temperatureValue")
-            Spacer(minLength: 0)
-            HStack(spacing: size * 0.015) {
-                temperatureArrow(tile, increase: false, size: size)
-                VStack(spacing: size * 0.008) {
-                    Text(tile.kind == .targetTemperature ? "Thermostat" : tile.name)
-                        .font(widgetFont(size * 0.051, weight: .semibold))
-                    Text("\(tile.room) · \(tile.value)")
-                        .font(widgetFont(size * 0.05)).opacity(0.88)
-                }.lineLimit(2).minimumScaleFactor(0.65).multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-                temperatureArrow(tile, increase: true, size: size)
-            }.padding(.horizontal, size * 0.06).padding(.bottom, size * 0.07)
-        }.frame(width: size, height: size).modifier(GlassSurface(radius: size * 0.09))
+            Spacer(minLength: 12)
+            HStack(spacing: 12) {
+                temperatureArrow(tile, increase: false, size: 44)
+                VStack(spacing: 8) {
+                    Text(tile.kind == .targetTemperature ? "Thermostat".tr : (home.demo ? tile.name.tr : tile.name))
+                        .font(widgetLabelFont(size, weight: .semibold))
+                    Text("\(home.demo ? tile.room.tr : tile.room) · \(tile.value.tr)")
+                        .font(widgetLabelFont(size)).opacity(0.9)
+                }.multilineTextAlignment(.center).lineLimit(2).minimumScaleFactor(0.7).frame(maxWidth: .infinity)
+                temperatureArrow(tile, increase: true, size: 44)
+            }.padding(.bottom, 12)
+        }.padding(24).frame(width: width, height: height).modifier(GlassSurface(radius: 30))
             .accessibilityElement(children: .contain).accessibilityIdentifier("climateWidget")
     }
     private func temperatureArrow(_ tile: HomeTile, increase: Bool, size: CGFloat) -> some View {
         let next = tile.temperatureStep(increase: increase)
-        return Button {
-            if let next { home.adjust(tile.id, to: next) }
-        } label: {
-            Image(systemName: increase ? "chevron.up" : "chevron.down")
-                .font(.system(size: size * 0.065, weight: .semibold))
-                .frame(width: max(44, size * 0.15), height: max(44, size * 0.15))
-                .contentShape(Rectangle())
-        }.buttonStyle(.plain)
-            .disabled(next == nil || home.busy.contains(tile.id))
-            .opacity(next == nil || home.busy.contains(tile.id) ? 0.3 : 1)
-            .accessibilityLabel(increase ? "Increase temperature" : "Decrease temperature")
+        return Button { if let next { home.adjust(tile.id, to: next) } } label: {
+            Image(systemName: increase ? "chevron.up" : "chevron.down").font(.system(size: 28, weight: .semibold))
+                .frame(width: 44, height: 44).contentShape(Rectangle())
+        }.buttonStyle(.plain).disabled(next == nil || home.busy.contains(tile.id))
+            .opacity(next == nil || home.busy.contains(tile.id) ? 0.28 : 1)
+            .accessibilityLabel((increase ? "Increase temperature" : "Decrease temperature").tr)
             .accessibilityValue(tile.value)
-            .accessibilityHint(tile.kind == .targetTemperature ? "Adjust target temperature" : "Read-only sensor")
+            .accessibilityHint((tile.kind == .targetTemperature ? "Adjust target temperature" : "Read-only sensor").tr)
             .accessibilityIdentifier(increase ? "temperatureUp" : "temperatureDown")
     }
-    private func widgetFont(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        dynamicTypeSize.isAccessibilitySize ? .system(.title2, weight: weight) : .system(size: size, weight: weight)
+    private func widgetLabelFont(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        dynamicTypeSize.isAccessibilitySize ? .system(.title2, weight: weight) : .system(size: min(26, max(20, size * 0.08)), weight: weight)
     }
-    private func boardTile(_ symbol: String, _ title: String, _ subtitle: String, size: CGFloat, active: Bool = false) -> some View {
-        VStack(spacing: size * 0.025) {
+    private func boardTile(_ symbol: String, _ title: String, _ subtitle: String, width: CGFloat, height: CGFloat, active: Bool = false, localizeTitle: Bool = true) -> some View {
+        let size = min(width, height)
+        return VStack(spacing: 10) {
             Spacer(minLength: 0)
-            Image(systemName: symbol).font(.system(size: size * 0.28, weight: .regular)).frame(height: size * 0.33)
+            Image(systemName: symbol).font(.system(size: min(64, max(48, size * 0.22)), weight: .regular))
+                .frame(height: max(68, size * 0.32))
             Spacer(minLength: 0)
-            Text(title).font(widgetFont(size * 0.102, weight: .medium)).lineLimit(2)
-            Text(subtitle).font(widgetFont(size * 0.102)).opacity(0.85).lineLimit(2)
-        }.multilineTextAlignment(.center).padding(.horizontal, size * 0.06).padding(.top, size * 0.14).padding(.bottom, size * 0.14)
-            .frame(width: size, height: size).modifier(GlassSurface(radius: size * 0.19, active: active))
-            .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: active)
+            Text(localizeTitle ? title.tr : title).font(widgetLabelFont(size, weight: .semibold)).lineLimit(2)
+            Text(subtitle).font(widgetLabelFont(size)).opacity(0.9).lineLimit(2)
+        }.multilineTextAlignment(.center).minimumScaleFactor(0.8).padding(20)
+            .frame(width: width, height: height).modifier(GlassSurface(radius: 30, active: active))
     }
     private var welcome: some View {
         VStack(alignment: .leading, spacing: 24) {
             Image(systemName: "house.and.flag.fill").font(.system(size: 72)).foregroundStyle(Color.purple.opacity(0.6))
             Text(HomeStatus.welcome.title).font(.system(size: 42, weight: .medium, design: .rounded))
             Text(HomeStatus.welcome.detail).font(.title3).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-            Button("Connect Apple Home") { home.connect() }.buttonStyle(.borderedProminent).controlSize(.large).accessibilityIdentifier("connectHome")
-            Button("Explore demo") { home.startDemo() }.buttonStyle(.bordered).controlSize(.large).accessibilityIdentifier("exploreDemo")
-            Text("HomeViewPad is a foreground iPad dashboard. Your HomePod mini remains your home hub and Siri speaker.").font(.callout).foregroundStyle(.secondary)
-        }.padding(32).frame(maxWidth: .infinity, alignment: .leading).background(.white, in: RoundedRectangle(cornerRadius: 32)).foregroundStyle(ink)
+            Button("Connect Apple Home".tr) { home.connect() }.buttonStyle(.borderedProminent).controlSize(.large).accessibilityIdentifier("connectHome")
+            Button("Explore demo".tr) { home.startDemo() }.buttonStyle(.bordered).controlSize(.large).accessibilityIdentifier("exploreDemo")
+            Text("HomePad is a foreground iPad dashboard. Your HomePod mini remains your home hub and Siri speaker.".tr).font(.callout).foregroundStyle(.secondary)
+        }.padding(32).frame(maxWidth: .infinity, alignment: .leading).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 32)).foregroundStyle(Color.primary)
     }
     private var stateCard: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -424,15 +1018,17 @@ struct Dashboard: View {
             Text(home.status.title).font(.largeTitle.bold()).accessibilityIdentifier("homeStateTitle")
             Text(home.status.detail).font(.title3)
             if home.status == .loading { ProgressView() }
-            Button("Retry connection") { home.demo ? home.startDemo() : home.connect() }.buttonStyle(.borderedProminent)
-            Button("Explore demo") { home.startDemo() }.buttonStyle(.bordered)
-            if home.status == .denied { Button("Open Settings") { UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!) } }
-        }.padding(32).frame(maxWidth: .infinity, alignment: .leading).background(.white, in: RoundedRectangle(cornerRadius: 30)).foregroundStyle(ink)
+            Button("Retry connection".tr) { home.demo ? home.startDemo() : home.connect() }.buttonStyle(.borderedProminent)
+            Button("Explore demo".tr) { home.startDemo() }.buttonStyle(.bordered)
+            if home.status == .denied { Button("Open Settings".tr) { UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!) } }
+        }.padding(32).frame(maxWidth: .infinity, alignment: .leading).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 30)).foregroundStyle(Color.primary)
     }
     @ViewBuilder private func panelContent(_ selected: Panel) -> some View {
         switch selected {
+        case .widget: widgetPicker
+        case .shortcut: shortcutEditor
         case .camera:
-            VStack { if home.cameras.count > 1 { Picker("Camera", selection: $selectedCamera) { ForEach(home.cameras, id: \.uniqueIdentifier) { Text($0.name).tag(Optional($0)) } }.padding() }; CameraSheet(accessory: selectedCamera, demo: home.demo).id(selectedCamera?.uniqueIdentifier) }
+            CameraConnectionView(home: home, selection: $selectedCamera)
         case .photos: PhotosPanel(photos: photos)
         case .weather: WeatherPanel(weather: weather, location: weatherLocation)
         case .accessory:
@@ -442,100 +1038,67 @@ struct Dashboard: View {
             List {
                 if !home.demo {
                     Section(home.homeName) {
-                        Text("Live Apple Home · \(home.tiles.count) supported values")
-                        Button("Refresh home status") { home.refresh() }
+                        Text(L10n.format("Live Apple Home · %lld supported values", home.tiles.count))
+                        Button("Refresh home status".tr) { home.refresh() }
                         if let error = home.error { Text(error).foregroundStyle(.red) }
                     }
                 }
-                Section("Rooms") { roomChoices }
-                Section("Accessories") {
+                Section("Rooms".tr) { roomChoices }
+                Section("Accessories".tr) {
                     ForEach(visibleTiles) { tile in
-                        Button { activate(tile) } label: { Label("\(tile.name) · \(tile.value)", systemImage: tile.symbol) }
-                            .disabled(!tile.writable || !tile.reachable || home.busy.contains(tile.id))
-                            .accessibilityIdentifier("accessory-\(tile.name)")
+                        HStack(spacing: 16) {
+                            Button { activate(tile) } label: { Image(systemName: tile.symbol).frame(width: 52, height: 52).contentShape(Rectangle()) }
+                                .disabled(tile.kind == .power && (!tile.writable || !tile.reachable || home.busy.contains(tile.id)))
+                                .accessibilityLabel("\(home.demo ? tile.name.tr : tile.name), \(tile.value.tr)")
+                                .accessibilityValue(tile.value.tr).accessibilityIdentifier("accessory-\(tile.name)")
+                            Button { selectedAccessoryID = tile.id; panel = .accessory } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(home.demo ? tile.name.tr : tile.name)
+                                    Text(tile.value.tr).font(.subheadline).foregroundStyle(.secondary)
+                                }.frame(maxWidth: .infinity, minHeight: 52, alignment: .leading).contentShape(Rectangle())
+                            }.accessibilityIdentifier("accessoryDetails-\(tile.name)")
+                        }.buttonStyle(.plain)
                     }
                 }
-                Section("Scenes") {
-                    ForEach(home.scenes, id: \.self) { scene in Button(scene) { sceneToRun = scene }.disabled(home.sceneBusy).accessibilityIdentifier("scene-\(scene)") }
+                Section("Scenes".tr) {
+                    ForEach(home.scenes, id: \.self) { scene in Button(home.demo ? scene.tr : scene) { sceneToRun = scene }.disabled(home.sceneBusy).accessibilityIdentifier("scene-\(scene)") }
                     if let notice = home.notice { Text(notice).accessibilityIdentifier("sceneNotice") }
                 }
-            }.foregroundStyle(ink)
+            }.foregroundStyle(Color.primary)
         case .agenda: agenda
-        case .music:
-            VStack(spacing: 28) {
-                Image(systemName: "hifispeaker.fill").font(.system(size: 80)).foregroundStyle(Color.purple)
-                Text(audio.title).font(.title).multilineTextAlignment(.center)
-                Text(audio.message).foregroundStyle(.secondary).multilineTextAlignment(.center)
-                Button("Choose audio file") { importAudio = true }.buttonStyle(.borderedProminent)
-                HStack(spacing: 32) {
-                    Button(audio.playing ? "Pause" : "Play") { audio.toggle() }.disabled(audio.player.currentItem == nil).buttonStyle(.bordered)
-                    AirPlayPicker().frame(width: 60, height: 60)
-                }
-                Text("Plays files you select. Apple Music catalog, HomePod playback history and Siri are not accessible here. You can also use Music and Control Center for AirPlay.").font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center)
-            }.padding(36)
-            .fileImporter(isPresented: $importAudio, allowedContentTypes: [.audio]) { result in
-                switch result { case .success(let url): audio.load(url); case .failure(let error): audio.message = error.localizedDescription }
-            }
+        case .music: MusicPage(store: music, audio: audio, demo: musicDemo, navigation: $musicNavigation, showPageNavigation: showMusicPageNavigation, changePage: moveMusicPage, presentationChanged: { musicPickerPresented = $0 }, airPlayPresentationChanged: { airPlayPresented = $0 })
 
         }
     }
     private var settings: some View {
-        Form {
-            Section("Home connection") {
-                Text(home.demo ? "Demo mode — sample data only" : "Apple Home · \(home.status.rawValue)")
-                if !home.demo && !home.homes.isEmpty {
-                    ForEach(home.homes, id: \.uniqueIdentifier) { item in
-                        Button { home.select(item) } label: {
-                            HStack { Text(item.name); Spacer(); if home.selectedHomeID == item.uniqueIdentifier { Image(systemName: "checkmark") } }
-                        }
-                    }
-                    Text("\(home.tiles.count) supported values · \(home.scenes.count) scenes").font(.footnote)
-                }
-                Button("Connect Apple Home") { home.connect(); panel = nil; selectPage(.home) }
-                Button("Explore demo") { home.startDemo(); panel = nil; selectPage(.home) }
-                Button("Disconnect home", role: .destructive) { home.disconnect(); panel = nil; selectPage(.home) }
-            }
-            Section("Display") {
-                Toggle("Teal background", isOn: $tealWallpaper).accessibilityIdentifier("tealWallpaper")
-                Text("Tap the background to show navigation: below in portrait, on the right in landscape. Position dots show the current widget. Swipe left or right to change pages. Swipe up or down inside a widget to change it. VoiceOver offers the same actions.").font(.footnote)
-                Toggle("Keep display awake in foreground", isOn: $keepAwake)
-                Text("Does not replace the lock screen or reopen the app after reboot. Use Guided Access in iPad Settings if appropriate. Far view is manual; no camera tracks you.").font(.footnote)
-                Button("Weather city and units") { panel = .weather }.accessibilityIdentifier("weatherSettings")
-                Button("Photo widget and albums") { panel = .photos }.accessibilityIdentifier("photoSettings")
-            }
-            Section("Personal content") {
-                Toggle("Show calendar and reminders on this shared screen", isOn: $showPersonal)
-                Text("Anyone looking at this iPad can see enabled personal content. HomeViewPad does not identify household members. Disable to hide; revoke permissions in Settings.").font(.footnote)
-            }
-            Section("HomePod mini") {
-                Text("Add HomePod mini to the same home in Apple's Home app. It provides supported home hub, Thread and Siri functions independently. Choose it through AirPlay for audio. HomeViewPad cannot access its microphone, host Siri, or send Intercom messages.")
-            }
-            if home.demo {
-                Section("Demo diagnostics") {
-                    ForEach([HomeStatus.ready, .loading, .denied, .empty, .offline], id: \.self) { state in Button("Simulate \(state.rawValue)") { home.startDemo(state: state); panel = nil; selectPage(.home) } }
-                }
-            }
-            Section("About") { Text("HomeViewPad · Independent open-source iPad dashboard\nNo analytics. No accounts. No server.\nNot affiliated with Apple.") }
-        }.onChange(of: showPersonal) { _, value in if !value { personal.clear() } }
+        SettingsHubView(home: home, display: display, wallpaper: wallpaper, photos: photos,
+                        weather: weather, location: weatherLocation,
+                        appLanguage: $appLanguage, tealWallpaper: $tealWallpaper,
+                        showPersonal: $showPersonal, wallpaperPickerPresented: $wallpaperPickerPresented,
+                        connectHome: { home.connect(); panel = nil; selectPage(.home) },
+                        exploreDemo: { home.startDemo(); panel = nil; selectPage(.home) },
+                        disconnectHome: { home.disconnect(); panel = nil; selectPage(.home) },
+                        simulateState: { state in home.startDemo(state: state); panel = nil; selectPage(.home) },
+                        openPhotos: { panel = .photos }, openWeather: { panel = .weather },
+                        openMusic: { panel = nil; selectPage(.music) }, openAgenda: { panel = .agenda },
+                        openCameras: { selectedCamera = home.cameras.first; panel = .camera },
+                        musicConnectionStatus: music.statusTitle, calendarConnectionStatus: agendaStore.statusTitle,
+                        showPageNavigation: toggleNavigation)
+    }
+    private func settingsButtonLabel(_ title: String) -> some View {
+        Text(title).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
     }
     private var agenda: some View {
-        List {
-            if home.demo {
-                Section("DEMO · Sample day") { Label("17:30 · Water the plants", systemImage: "leaf"); Label("Pick up fresh bread", systemImage: "checklist") }
-            } else if !showPersonal {
-                Section { Text("Personal content is hidden on this shared screen."); Button("Enable in Settings") { panel = .settings } }
-            } else {
-                Section("Calendar · \(personal.calendarStatus)") {
-                    ForEach(Array(personal.events.enumerated()), id: \.offset) { Text($0.element) }
-                    Button("Connect / refresh calendar") { Task { await personal.loadCalendar(request: true) } }
-                }
-                Section("Reminders · \(personal.reminderStatus)") {
-                    ForEach(Array(personal.reminders.enumerated()), id: \.offset) { Label($0.element, systemImage: "circle") }
-                    Button("Connect / refresh reminders") { Task { await personal.loadReminders(request: true) } }
-                }
-            }
-        }.task { if showPersonal && !home.demo { await personal.loadCalendar(); await personal.loadReminders() } }
+        AgendaView(store: agendaStore, demo: home.demo, enabled: $showPersonal,
+                   canAddToHome: !shortcuts.contains(where: { $0.kind == .agenda && shortcutBelongsToCurrentHome($0) }),
+                   addToHome: {
+                       var items = shortcuts
+                       guard !items.contains(where: { $0.kind == .agenda && shortcutBelongsToCurrentHome($0) }) else { return }
+                       items.append(HomeShortcut(id: UUID().uuidString, kind: .agenda))
+                       saveShortcuts(items); panel = nil; selectPage(.home)
+                   })
     }
+
 }
 
 /// Original vector clock drawn with system typography; no promotional assets.
@@ -571,12 +1134,12 @@ struct AnalogHomeClock: View {
                 }
                 graphics.fill(Path(ellipseIn: CGRect(x: center.x-d*0.018, y: center.y-d*0.018, width: d*0.036, height: d*0.036)), with: .color(numbered ? accent : .white))
             }
-        }.accessibilityElement(children: .ignore).accessibilityLabel("Analog clock").accessibilityValue(date == nil ? Date.now.formatted(date: .omitted, time: .shortened) : "10:09 demo time")
+        }.accessibilityElement(children: .ignore).accessibilityLabel("Analog clock".tr).accessibilityValue(date == nil ? Date.now.formatted(date: .omitted, time: .shortened) : "10:09 demo time".tr)
     }
 }
 
 /// Original, resolution-independent wallpaper shared behind every translucent widget.
-private struct AmbientWallpaper: View {
+struct AmbientWallpaper: View {
     let teal: Bool
     var body: some View {
         GeometryReader { geometry in
@@ -596,25 +1159,17 @@ private struct AmbientWallpaper: View {
     }
 }
 
-private struct GlassSurface: ViewModifier {
+struct GlassSurface: ViewModifier {
     let radius: CGFloat
     var enabled = true
     var active = false
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
-    func body(content: Content) -> some View {
+    @ViewBuilder func body(content: Content) -> some View {
         if enabled {
-            content.background {
-                let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
-                ZStack {
-                    if reduceTransparency { shape.fill(Color(white: 0.32)) }
-                    else {
-                        shape.fill(.ultraThinMaterial).environment(\.colorScheme, .light).opacity(0.42)
-                        shape.fill(LinearGradient(colors: [.white.opacity(active ? 0.23 : 0.15), .white.opacity(0.015), .white.opacity(0.10)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    }
-                }
-                .overlay(shape.strokeBorder(LinearGradient(stops: [.init(color: .white.opacity(0.85), location: 0), .init(color: .white.opacity(0.22), location: 0.4), .init(color: .white.opacity(0.12), location: 0.6), .init(color: .white.opacity(0.6), location: 1)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1.2))
-                .overlay(shape.inset(by: 2).strokeBorder(.white.opacity(0.08), lineWidth: 0.6))
-                .shadow(color: .black.opacity(0.16), radius: 5, x: 0, y: 2)
+            let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
+            if #available(iOS 26.0, *) {
+                content.contentShape(shape).glassEffect(active ? .clear.tint(.green.opacity(0.12)) : .clear, in: shape)
+            } else {
+                content.contentShape(shape).background(.regularMaterial, in: shape)
             }
         } else { content }
     }
@@ -625,16 +1180,17 @@ private struct GlassSurface: ViewModifier {
 private struct SceneConfirmation: ViewModifier {
     @Binding var name: String?
     let enabled: Bool
+    var demo = false
     let run: (String) -> Void
     func body(content: Content) -> some View {
-        content.alert("Run \(name ?? "scene")?", isPresented: Binding(
+        content.alert(L10n.format("Run %@?", name.map { demo ? $0.tr : $0 } ?? "Scene".tr), isPresented: Binding(
             get: { enabled && name != nil },
             set: { if enabled && !$0 { name = nil } }
         )) {
-            if let selected = name { Button("Run scene") { run(selected); name = nil } }
-            Button("Cancel", role: .cancel) { name = nil }
+            if let selected = name { Button("Run scene".tr) { run(selected); name = nil } }
+            Button("Cancel".tr, role: .cancel) { name = nil }
         } message: {
-            Text("Scenes can change multiple accessories, including locks or doors. Review the scene in Apple Home before running it.")
+            Text("Scenes can change multiple accessories, including locks or doors. Review the scene in Apple Home before running it.".tr)
         }
     }
 }

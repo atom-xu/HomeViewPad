@@ -1,0 +1,41 @@
+{
+  "scope": "HomePad interaction fixes 03",
+  "sourceManifestSHA256": "7068126a79d7d8ea6de33dbe7674e514e5e81686cad6185c44ae7eee9e2dc049",
+  "sourceFiles": 48,
+  "device": {
+    "model": "iPad Pro 11-inch (4th generation)",
+    "runtime": "iPadOS 27.0.1 (24A446)"
+  },
+  "strictSignatureVerified": true,
+  "profileIncludesDevice": true,
+  "installSucceeded": true,
+  "exactAppReadbackSucceeded": true,
+  "installationURLMatchesReadback": true,
+  "appVersion": "1.0",
+  "appBuild": "1",
+  "ordinaryLaunchSucceeded": true,
+  "launchArguments": [
+    "--page",
+    "5"
+  ],
+  "testDemoLanguageOverrides": false,
+  "screenViewerEnabled": false,
+  "physicalUIAirPlayCameraAndAudioAcceptance": "User confirmed music AirPlay keeps page and Home static snapshots update. Audibility, measured timing and other hardware paths are not inferred.",
+  "simulatorFullRegression": "Completed valid unfiltered bundle: 168/170 (135 unit, 33/35 UI); test-only music UI follow-up 4/4. Old automatic-city timeout remains.",
+  "commitPushPublication": false,
+  "exactLaunchedProcessReadbackSucceeded": true,
+  "testOnlyFollowUpManifestSHA256": "57df524b02a1abe3902ab3b012216068e18516533040b9d25dee3ba0dc6ab3b2",
+  "applicationUnchangedAfterBuild": true,
+  "physicalUserFeedback": {
+    "source": "User replies in this conversation after final physical update on 2026-10-17 Asia/Shanghai",
+    "airPlayMusicPageRemainsVisible": {
+      "confirmed": true,
+      "userReply": "页面保持不变，不再跳加载"
+    },
+    "homeCameraStaticSnapshotsUpdate": {
+      "confirmed": true,
+      "userReply": "能看到静态快照更新"
+    },
+    "limits": "No measured capture interval, remote audio, Home-widget route picker, lock/background privacy, offline recovery, live-stream teardown or physical Overview/preview acceptance inferred from these two answers"
+  }
+}

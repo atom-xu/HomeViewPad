@@ -1,0 +1,219 @@
+{
+  "scope": "HomePad music page navigation 04",
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "sdk": "27.0",
+    "simulator": "Independent iPad Pro 11-inch M5",
+    "runtime": "iPadOS 26.5 (23F73)"
+  },
+  "attempts": [
+    {
+      "attempt": "repro",
+      "result": "Failed",
+      "passedTests": 0,
+      "failedTests": 1,
+      "skippedTests": 0,
+      "sourceManifestSHA256": "04542e34b9c2a54d8149ce0a45184b199438d16a6cd4fd8f7b7735013edf940a"
+    },
+    {
+      "attempt": "focused",
+      "result": "Failed",
+      "passedTests": 2,
+      "failedTests": 1,
+      "skippedTests": 0,
+      "sourceManifestSHA256": "26a1cb021ec836f7744d86e5bc191fa8fc6da75dbbb2bfea6fcc014861dd6e0f"
+    },
+    {
+      "attempt": "repair",
+      "result": "Passed",
+      "passedTests": 1,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "sourceManifestSHA256": "e42288c4a345ef2a6eb9a68f35f85409c0a35c9701a87092843680f00f683256"
+    },
+    {
+      "attempt": "full",
+      "result": "Failed",
+      "passedTests": 170,
+      "failedTests": 2,
+      "skippedTests": 0,
+      "sourceManifestSHA256": "057e60b341335b457cdccfa9b4ce6631a45e5bd336776d0835da016ef2161207"
+    },
+    {
+      "attempt": "ownership",
+      "result": "Passed",
+      "passedTests": 141,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "sourceManifestSHA256": "3a22854ba2a0e19416010b0789b98681973e4a85a3a1098537f83a72f2c5ace4"
+    },
+    {
+      "attempt": "final",
+      "result": "Failed",
+      "passedTests": 146,
+      "failedTests": 1,
+      "skippedTests": 0,
+      "sourceManifestSHA256": "0b9b7c2bdb5b716723f27a69588dc81216db6ed0150d251c81c880cb8d5c5fbf",
+      "exitCode": 65,
+      "runtimeWarningCount": 12
+    },
+    {
+      "attempt": "wake-followup",
+      "result": "Passed",
+      "passedTests": 1,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "sourceManifestSHA256": "215cb47cb52875c28d33cc075bee73a3767d111b123c6a5823171e452298a488",
+      "exitCode": 0,
+      "runtimeWarningCount": 1
+    },
+    {
+      "attempt": "wake-fresh",
+      "result": "Passed",
+      "passedTests": 1,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "sourceManifestSHA256": "215cb47cb52875c28d33cc075bee73a3767d111b123c6a5823171e452298a488",
+      "exitCode": 0,
+      "runtimeWarningCount": 1
+    }
+  ],
+  "firstFullScheme": {
+    "unfiltered": true,
+    "sourceFiles": 48,
+    "sourceManifestSHA256": "057e60b341335b457cdccfa9b4ce6631a45e5bd336776d0835da016ef2161207",
+    "passed": 170,
+    "failed": 2,
+    "skipped": 0,
+    "unitPassed": 135,
+    "unitTotal": 135,
+    "uiPassed": 35,
+    "uiTotal": 37,
+    "resultBundleReadable": true,
+    "failedMethods": [
+      "testLocationPermissionUsesDetectedCity",
+      "testMusicBackNavigationRetainsLibraryAndExplicitHomePlayer"
+    ],
+    "currentFinalApplicationNotYetInThisFullRun": true
+  },
+  "finalApplicationChecks": {
+    "sourceManifestSHA256": "0b9b7c2bdb5b716723f27a69588dc81216db6ed0150d251c81c880cb8d5c5fbf",
+    "sourceFiles": 48,
+    "sourceUnchangedThroughout147TestExecution": true,
+    "passed": 146,
+    "failed": 1,
+    "skipped": 0,
+    "unitPassed": 135,
+    "unitTotal": 135,
+    "uiPassed": 11,
+    "uiTotal": 12,
+    "musicUIJourneyPassed": 6,
+    "musicUIJourneyTotal": 6,
+    "failure": "Added consecutive-preview probe failed on the second preview before reaching its drag assertion. Original failure AX/video/events preserved. This repeated-preview path is not claimed fixed."
+  },
+  "testOnlyWakeFollowUp": {
+    "sourceManifestSHA256": "215cb47cb52875c28d33cc075bee73a3767d111b123c6a5823171e452298a488",
+    "onlyChangedFileAfter147TestRun": "HomePadUITests/HomePadUITests.swift",
+    "other47FilesUnchanged": true,
+    "originalManualStandbyMethodRestoredVerbatim": true,
+    "change": "Split click-wake and drag-wake into independent launches; retain the unaccepted repeated-preview probe failure separately",
+    "manualWakePassed": 1,
+    "newDragWakePassed": 1,
+    "firstFollowUpOnlyExecutedOneOfTwoRequestedTests": true,
+    "newDragNotCountedUntilFreshRunnerActuallyExecutedIt": true,
+    "freshRunnerRecovery": "Read exact built runner bundle identity, remove only isolated UI test runner, use fresh external derived data; app sandbox and preview simulator untouched",
+    "freshResultReadable": true
+  },
+  "coverageAcrossFinalApplicationChecks": {
+    "unitMethodsPassed": 135,
+    "uiMethodsPassed": 13,
+    "uiMethods": [
+      "HomePadUITests.HomePadUITests testGlassThemePersistsAfterNavigation",
+      "HomePadUITests.HomePadUITests testHomeLongPressPreviewFitsViewportAndPreservesControls",
+      "HomePadUITests.HomePadUITests testManualStandbyWakeNightModeAndSimulatorLimitations",
+      "HomePadUITests.HomePadUITests testMusicAccessibleChinesePlayerAndAlbumList",
+      "HomePadUITests.HomePadUITests testMusicBackNavigationRetainsLibraryAndExplicitHomePlayer",
+      "HomePadUITests.HomePadUITests testMusicFailedSelectionStaysInAlbumWithRealFailureFeedback",
+      "HomePadUITests.HomePadUITests testMusicHomeWidgetAndCoverFlowSharePlaybackWithoutPageSwipe",
+      "HomePadUITests.HomePadUITests testMusicPageEntryLeavesEveryBrowsingScreenAndRestoresItsSource",
+      "HomePadUITests.HomePadUITests testMusicPlayerPageSwipeLeavesAndReturnsWithoutChangingPlayback",
+      "HomePadUITests.HomePadUITests testOverviewPagingKeepsFullViewportBlack",
+      "HomePadUITests.HomePadUITests testRealMusicCalendarAndCameraConnectionEntrypoints",
+      "HomePadUITests.HomePadUITests testSettingsHubNavigationContentCancellationAndScreenBehaviorPersistence",
+      "HomePadUITests.HomePadUITests testStandbyDragWakesWithoutChangingDashboardPage"
+    ],
+    "applicationSourceSameAcrossTheseChecks": true,
+    "singleAllGreenFullSuite": false,
+    "doesNotClaimRepeatedPreviewFixed": true
+  },
+  "screenshots": {
+    "finalExported": 23,
+    "finalInspected": [
+      "music-player-single-finger-page-navigation-and-explicit-page-entry-test-data.png",
+      "music-cover-flow-with-explicit-page-entry-and-outside-swipe-test-data.png",
+      "music-search-page-with-explicit-page-entry-and-retained-draft-test-data.png",
+      "music-chinese-accessibility-player-test-data.png",
+      "music-chinese-accessibility-album-tracks-test-data.png",
+      "music-restored-cover-flow-after-search-and-edge-drag-test-data.png",
+      "music-failed-selection-stays-in-album-test-data.png",
+      "music-cover-flow-native-test-albums.png",
+      "music-immersive-native-player-test-data.png",
+      "music-home-widget-shared-test-playback.png",
+      "real-apple-music-page-before-connecting.png",
+      "overview-repeated-paging-full-black-landscape-left.png",
+      "overview-full-black-landscape-right.png",
+      "home-full-climate-long-press-preview.png",
+      "home-edge-control-complete-long-press-preview.png"
+    ],
+    "wakeFollowUpExported": 2,
+    "wakeFollowUpInspected": [
+      "night-standby-preview.png",
+      "night-mode-preference-restored.png"
+    ],
+    "freshWakeExported": 1,
+    "freshWakeInspected": [
+      "standby-drag-wakes-the-original-page-without-navigating.png"
+    ],
+    "syntheticLabelsRetained": true,
+    "privateHardwareImagesExported": false
+  },
+  "remainingItems": [
+    "Existing automatic-city reverse-geocoding timeout from the unfiltered full run",
+    "Second immediate preview after tap-wake did not appear; no app preview-policy repair in this scope",
+    "Settings list-row horizontal swipe can also open the row; music navigation return test uses the page header",
+    "Hardware music gestures, real audibility and AirPlay acceptance for this new package not performed",
+    "Very long accessibility-size title vertical scrolling from the artwork not specifically exercised; fixture controls and page exit fit at largest tested size"
+  ],
+  "physicalUpdate": "Subsequently user-authorized and completed: exact signed package installed, ordinarily launched and exact installationURL/process readbacks succeeded; see ipad-music-navigation-physical-update-summary.json.",
+  "localEvidenceDirectory": ".validation/local/music-page-navigation-04/",
+  "commitPushPublication": false,
+  "finalIntegrity": {
+    "current48FilesMatchFinalTestManifest": true,
+    "changedIterationSourceFiles": [
+      "HomePad/Dashboard.swift",
+      "HomePad/Localizable.xcstrings",
+      "HomePad/MusicPage.swift",
+      "HomePadUITests/HomePadUITests.swift"
+    ],
+    "devicePackage5FileHashesMatch": true,
+    "strictSignatureRecheckPassed": true,
+    "bilingualEntries": 647,
+    "evidenceJSONParsePassed": true,
+    "updatedDocumentationLinksPassed": true,
+    "finalApplicationSourceUnchangedAfterTestsAndBuild": true,
+    "commitMade": false,
+    "pushedPublishedOrInstalled": false,
+    "diffCheckPassed": true,
+    "commitGuardNewYork": "2026-10-16 23:54 -04:00: commits allowed",
+    "recordedBeforeSubsequentPhysicalUpdate": true
+  },
+  "subsequentPhysicalUpdate": {
+    "userAuthorized": true,
+    "installedAndOrdinarilyLaunched": true,
+    "exactAppURLAndProcessReadback": true,
+    "summary": "ipad-music-navigation-physical-update-summary.json",
+    "updatedAt": "2026-10-17T12:12:04+08:00",
+    "earlierLocalCheckpointRetained": true
+  },
+  "localOnlyCheckpointPhysicalUpdate": "Not installed this iteration; user requested keep proxy on and finish tests first. Device viewer and network settings remain unchanged."
+}

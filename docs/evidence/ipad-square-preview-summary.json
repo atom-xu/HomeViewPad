@@ -1,0 +1,20 @@
+{
+  "verifiedAtUTC": "2026-10-15T19:17:16.264841+00:00",
+  "device": "iPad Pro 13-inch (M5) Simulator",
+  "runtime": "iPadOS 26.5",
+  "finalSourceManifestSHA256": "48eeec39aea673bdad0f1d0beba55a97038d57cbebabcac88e799b9b7a2f1ffa",
+  "installedFilesMatchFinalBuild": {
+    "HomePad": true,
+    "Info.plist": true,
+    "en.lproj/InfoPlist.strings": true,
+    "zh-Hans.lproj/InfoPlist.strings": true,
+    "zh-Hans.lproj/Localizable.strings": true,
+    "en.lproj/Localizable.strings": true
+  },
+  "launchSucceeded": true,
+  "faceWakePreference": false,
+  "expandedCameraConsent": false,
+  "screenshot": ".validation/local/screenshots/homepad-square-final-preview.png",
+  "screenshotModifiedUTC": "2026-10-15T19:17:16.014155+00:00",
+  "screenshotSHA256": "a08536670290fb57f8145d51f02e682561a106b4a8788febc77b5907a8eee437"
+}

@@ -1,0 +1,7 @@
+"NSCameraUsageDescription" = "人脸唤醒仅在待机时使用前置相机。另行开启持续前台检测后，也会在非待机页面使用相机保持亮屏。画面只在本机处理，不录像、不保存、不上传。";
+"NSMotionUsageDescription" = "检测 iPad 的竖立姿态和移动，用于进入或退出应用内展示待机。";
+"NSHomeKitUsageDescription" = "HomePad 用于展示家庭设备、运行你选择的场景。仅在你打开摄像机或将其选入首页卡片后显示视频。";
+"NSPhotoLibraryUsageDescription" = "展示你选择的 iPad 相册照片，不更改图库。";
+"NSLocationWhenInUseUsageDescription" = "获取当前城市以显示天气。经过取整的粗略坐标会发送到 Open-Meteo 获取天气。";
+"NSCalendarsFullAccessUsageDescription" = "仅在你主动开启后，在这台共享 iPad 上显示即将到来的日程。";
+"NSAppleMusicUsageDescription" = "浏览你的音乐资料库和 Apple Music，并在 HomePad 播放你选择的歌曲。音乐请求和播放由 Apple 服务提供。";
