@@ -1,0 +1,156 @@
+{
+  "iteration": "dynamic-screensaver-10",
+  "date": "2026-10-23",
+  "branch": "codex/dynamic-screensaver",
+  "scope": [
+    "Independent macOS-style thumbnail wallpaper gallery",
+    "Unified photo and color selection",
+    "12 Apple-hosted aerials with explicit download, silent loop and cached shuffle",
+    "Shared Home / Clock / clock standby background"
+  ],
+  "source_manifest": {
+    "inputs": 50,
+    "sha256": "be0dd245501cca41de582d4ca4633a9461c883cc70495d1ab7d12a210660f426",
+    "unchanged_through_simulator_tests_and_signed_device_build": true
+  },
+  "environment": {
+    "simulator": {
+      "name": "HomePad Aerial Acceptance 10",
+      "udid": "7C906824-FB8B-4EE2-9234-9F5E9A86B2BF",
+      "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-11-inch-M5-12GB"
+    },
+    "runtime": {
+      "name": "iOS 26.5",
+      "version": "26.5",
+      "buildversion": "23F73",
+      "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-26-5"
+    },
+    "xcode": "Xcode 27.0\nBuild version 27A266a",
+    "simulator_sdk": "27.0",
+    "system_test_locale": "en_US; app also tested zh-Hans",
+    "baseline_source_manifest": "mac-final-source-sha256.json",
+    "official_hawaii_download": {
+      "bytes": 124303104,
+      "sha256": "74109ef61e6faaea2530c78ffc62b9c157155f24fd28dc8ef7c0bce6dee033d9",
+      "url": "https://sylvan.apple.com/Aerials/2x/Videos/comp_H007_C003_PS_v01_SDR_PS_20180925_SDR_2K_HEVC.mov",
+      "location": "Only in the independent simulator; not in the Git checkout or app bundle"
+    }
+  },
+  "validation": {
+    "new_aerial_unit_tests_passed": 11,
+    "new_aerial_ui_methods_passed_across_related_result_bundles": 5,
+    "new_ui_boundary": "Four passed in mac-full.xcresult; gallery geometry passed in mac-layout-final.xcresult. These are related runs, not one complete all-green result.",
+    "unfiltered_scheme": {
+      "status": "interrupted_at_user_request_to_prioritize_device_update",
+      "exit_code": 75,
+      "result_bundle_reported_total": 212,
+      "passed": 209,
+      "reported_failed_including_cancellation": 3,
+      "skipped": 0,
+      "units_passed": 181,
+      "units_total": 182,
+      "ui_passed": 28,
+      "ui_assertion_or_automation_failures": 1,
+      "ui_canceled": 1,
+      "ui_not_started": 22,
+      "failures": [
+        {
+          "method": "DisplayCoordinatorTests/testPresence09UsesThirtySecondsWithoutRewritingTheConfiguredIdleDelay()",
+          "reason": "XCTAssertTrue failed - Explicit App-managed mode and independently consented presence must use 30 seconds, not the saved 300-second idle delay"
+        },
+        {
+          "method": "HomePadUITests/testMultipleSelectedPhotosWallPersistenceCancellationAndStandby()",
+          "reason": "Failed to determine hittability of \"Photo wall\" StaticText: Activation point invalid and no suggested hit points based on element frame"
+        },
+        {
+          "method": "HomePadUITests/testMusicInitiallyEmptyQueueCanPlayWholeAlbumAndReturnToCards()",
+          "reason": "Testing was canceled"
+        }
+      ]
+    },
+    "signed_release_build": {
+      "build_success": true,
+      "strict_signature": true,
+      "profile_unexpired": true,
+      "includes_authorized_device": true,
+      "application_identifier_matches": true,
+      "homekit_entitlement": true,
+      "snapshot_inputs": 50,
+      "snapshot_matches_tested_inputs": true,
+      "bundle_identifier": "cn.vilhil.homeviewpad",
+      "configuration": "Release",
+      "bundled_movies": []
+    },
+    "source_project_settings_preserved": {
+      "frozen_inputs": 50,
+      "changed_inputs": [],
+      "generator_preserved_files": {
+        "HomePad/Info.plist": true,
+        "HomePad/HomePad.entitlements": true,
+        "HomePad.xcodeproj/xcshareddata/xcschemes/HomePad.xcscheme": true
+      },
+      "generator_preserved_build_configurations": true,
+      "bundled_movies": []
+    },
+    "native_screenshots": {
+      "mac_full_exported_pngs": 73,
+      "inspected_final": [
+        "apple-official-hawaii-aerial-playing-behind-home.png",
+        "apple-official-hawaii-aerial-visible-behind-clock-standby.png",
+        "chinese-largest-text-aerial-gallery.png"
+      ],
+      "inspected_preflight": [
+        "mac-style-wallpaper-gallery-compact-preview-and-photo-color-thumbnails.png",
+        "mac-style-apple-aerial-gallery-fixed-ratio-thumbnail-cards.png",
+        "chinese-largest-text-aerial-gallery.png",
+        "chinese-largest-text-aerial-gallery-opposite-landscape.png"
+      ],
+      "findings": "Compact preview and thumbnail grid; largest Chinese text scrolls; actual Hawaii visible behind Home and standby with no opaque Settings bleed. Landscape-only app."
+    }
+  },
+  "physical_update": {
+    "installed": true,
+    "exact_bundle_url_readback": true,
+    "ordinary_foreground_launch": true,
+    "matching_pid_and_executable_readback": true,
+    "launch_arguments": [
+      "--page",
+      "4"
+    ],
+    "fixture_demo_or_language_overrides": false,
+    "package_unchanged_after_install": true,
+    "source_inputs_unchanged": 50,
+    "transport": "wired",
+    "device": "Boom pad",
+    "model": "iPad Pro 11-inch (4th generation)",
+    "runtime": "iPadOS 27.0.1 (24A446)",
+    "checked_utc": "2026-10-23T05:35:34.550672+00:00"
+  },
+  "home_control_scope": "HomeModel, OverviewBoard, AccessoryAdjustmentView, HomeDashboardGeometry, HomeWidgetLayout and WidgetCarousel match the music08 source baseline; new Home control redesign/review fixes deferred.",
+  "limitations": [
+    "Full scheme was intentionally stopped and is not all green",
+    "Photo-wall automation failed on restoring the menu after successful photo selection, persistence and standby; no repair claimed",
+    "Existing Presence09 thirty-second policy assertion remains failed",
+    "Physical wallpaper selection, decoding, long-duration power/thermal behavior and real hardware interaction are not accepted by an installation/PID readback",
+    "No portrait support claim",
+    "Device installation preceded Git commits; subsequent GitHub source push separately authorized with a one-time commit-time exception"
+  ],
+  "raw_artifacts": ".validation/local/dynamic-screensaver-10/",
+  "github_authorization": {
+    "repository": "atom-xu/HomeViewPad",
+    "branch": "codex/dynamic-screensaver",
+    "explicit_commit_time_exception": true,
+    "scope": [
+      "existing required app foundation",
+      "wallpaper gallery and Apple Aerials"
+    ],
+    "excluded": [
+      "Home control redesign 11",
+      "Apple movie files",
+      "personal signing configuration",
+      "design assets",
+      "raw validation artifacts"
+    ],
+    "authorization_recorded_utc": "2026-10-23T05:43:03.829943+00:00"
+  }
+}

@@ -39,7 +39,7 @@ struct StandbyDisplayView: View {
                     .accessibilityValue((demoDate != nil ? "DEMO".tr + " · " : "") + date.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute().locale(L10n.locale)))
                     .accessibilityIdentifier("standbyWake")
             }
-        }.background(Color.black).ignoresSafeArea()
+        }.background(Color.black.opacity(coordinator.nightActive ? 0.74 : 0.32)).ignoresSafeArea()
             .accessibilityElement(children: .contain).accessibilityIdentifier("standbyDisplay")
             .accessibilityAction(named: "Wake display".tr) { coordinator.noteInteraction() }
     }

@@ -58,6 +58,7 @@ struct Dashboard: View {
     @State private var musicNavigation = MusicNavigationState()
     @StateObject private var photos = PhotoLibraryStore()
     @StateObject private var wallpaper = WallpaperStore()
+    @StateObject private var aerial = makeAerialStore()
     @StateObject private var weatherLocation = WeatherLocation()
     @StateObject private var weather = WeatherStore(demo: ProcessInfo.processInfo.arguments.contains("--demo") || (!ProcessInfo.processInfo.arguments.contains("--fresh") && UserDefaults.standard.string(forKey: "homeMode") == "demo"))
     @Environment(\.scenePhase) private var phase
@@ -104,6 +105,15 @@ struct Dashboard: View {
                                          hasArtwork: music.nowPlaying?.artwork != nil || (music.isValidationFixture && music.nowPlaying != nil),
                                          localFileSelected: audio.player.currentItem != nil)
     }
+    private var aerialVisible: Bool {
+        let clockStandby = display.isStandby && !display.standbyKeepsCurrentPage && standbyContent != "photos"
+        let pageShowsBackground = (!display.isStandby || display.standbyKeepsCurrentPage) && (page == .home || page == .clock)
+        return phase == .active && panel == nil && !wallpaperPickerPresented && !navigationVisible && !musicArtworkVisible
+            && (clockStandby || pageShowsBackground)
+    }
+    private func updateAerialPresentation() {
+        aerial.setPresentation(visible: aerialVisible, reducedMotion: reduceMotion, deterministic: home.demo)
+    }
     private var dashboardSurface: some View {
         GeometryReader { geometry in
             let landscape = geometry.size.width > geometry.size.height
@@ -112,6 +122,8 @@ struct Dashboard: View {
                     if musicArtworkVisible {
                         MusicPageBackdrop(artwork: music.nowPlaying?.artwork, trackID: music.nowPlaying?.id, fixture: music.isValidationFixture)
                             .transition(.opacity)
+                    } else if aerial.enabled {
+                        AerialWallpaperView(aerial: aerial)
                     } else if let image = wallpaper.image {
                         Image(uiImage: image).resizable().scaledToFill()
                             .frame(width: geometry.size.width, height: geometry.size.height).clipped()
@@ -135,7 +147,9 @@ struct Dashboard: View {
                         } else { pageContent(size: geometry.size) }
                     }.frame(width: geometry.size.width, height: geometry.size.height)
                         .id(page).transition(pageTransition)
-                }.frame(width: geometry.size.width, height: geometry.size.height).clipped().accessibilityHidden(display.isStandby)
+                }.frame(width: geometry.size.width, height: geometry.size.height).clipped()
+                    .opacity(display.isStandby && !display.standbyKeepsCurrentPage ? 0 : 1)
+                    .accessibilityHidden(display.isStandby)
                     .accessibilityAction(named: "Show navigation".tr) { withAnimation(navigationAnimation) { navigationVisible = true } }
                     .accessibilityAction(named: "Next page".tr) { movePage(forward: true) }
                     .accessibilityAction(named: "Previous page".tr) { movePage(forward: false) }
@@ -195,18 +209,20 @@ struct Dashboard: View {
         .statusBarHidden(true)
         .persistentSystemOverlays(.hidden)
         .task { await wallpaper.restore() }
+        .onChange(of: aerialVisible, initial: true) { _, _ in updateAerialPresentation() }
+        .onChange(of: reduceMotion) { _, _ in updateAerialPresentation() }
         .onPreferenceChange(MusicWidgetFrameKey.self) { musicWidgetFrames = $0 }
         .overlay { if phase == .background || (phase == .inactive && !airPlayPresented) { paper.ignoresSafeArea().overlay { Label("HomePad".tr, systemImage: "house.fill").font(.largeTitle).foregroundStyle(ink) } } }
         .preferredColorScheme(display.nightActive ? .dark : .light)
         .environment(\.locale, AppLanguage(rawValue: appLanguage)?.locale ?? .current)
-        .onDisappear { display.setActive(false); cameraSnapshots.setAccess(allowed: false) }
+        .onDisappear { display.setActive(false); cameraSnapshots.setAccess(allowed: false); aerial.setForeground(false) }
     }
     private var presentedDashboard: some View {
         dashboardSurface
         .photosPicker(isPresented: $wallpaperPickerPresented, selection: $wallpaperItem, matching: .images)
         .task(id: wallpaperItem) {
             guard let wallpaperItem else { return }
-            await wallpaper.importPhoto(wallpaperItem)
+            if await wallpaper.importPhoto(wallpaperItem) { aerial.useStaticBackground() }
             if !Task.isCancelled { self.wallpaperItem = nil }
         }
         .sheet(item: $panel) { panel in
@@ -238,6 +254,7 @@ struct Dashboard: View {
             updateCameraAccess()
             display.setKeepAwake(keepAwake)
             display.setActive(phase == .active)
+            aerial.setForeground(phase == .active)
             weather.setDemo(home.demo)
             music.setDemo(musicDemo); music.setActive(phase == .active)
             music.open()
@@ -293,6 +310,7 @@ struct Dashboard: View {
         .onChange(of: musicPickerPresented) { _, _ in display.noteInteraction(); updatePresentationSuspension() }
         .onChange(of: airPlayPresented) { _, _ in display.noteInteraction(); updatePresentationSuspension() }
         .onChange(of: phase) { _, value in
+            aerial.setForeground(value == .active)
             weatherLocation.setScenePhase(value)
             display.setActive(value == .active)
             photos.setActive(value == .active)
@@ -321,6 +339,7 @@ struct Dashboard: View {
             if state == .disconnected || state == .denied || state == .restricted { musicNavigation.reset() }
         }
         .onChange(of: home.demo) { _, value in
+            updateAerialPresentation()
             updateCameraAccess()
             musicNavigation.reset()
             weather.setDemo(value); music.setDemo(musicDemo); agendaStore.setDemo(value)
@@ -1071,7 +1090,7 @@ struct Dashboard: View {
         }
     }
     private var settings: some View {
-        SettingsHubView(home: home, display: display, wallpaper: wallpaper, photos: photos,
+        SettingsHubView(home: home, display: display, wallpaper: wallpaper, aerial: aerial, photos: photos,
                         weather: weather, location: weatherLocation,
                         appLanguage: $appLanguage, tealWallpaper: $tealWallpaper,
                         showPersonal: $showPersonal, wallpaperPickerPresented: $wallpaperPickerPresented,

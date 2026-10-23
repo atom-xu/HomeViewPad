@@ -32,13 +32,13 @@ import CryptoKit
         imageID = Self.identifier(restored.jpeg)
     }
 
-    func importPhoto(_ item: PhotosPickerItem) async {
+    @discardableResult func importPhoto(_ item: PhotosPickerItem) async -> Bool {
         await importImage { try await item.loadTransferable(type: Data.self) }
     }
 
     // Loading is injectable so late responses, cancellation and file errors can
     // be checked without granting a test access to the user's photo library.
-    func importImage(loadData: () async throws -> Data?) async {
+    @discardableResult func importImage(loadData: () async throws -> Data?) async -> Bool {
         let token = UUID(); generation = token; loading = true; message = nil
         do {
             guard let data = try await loadData() else { throw CocoaError(.fileReadCorruptFile) }
@@ -48,15 +48,23 @@ import CryptoKit
                 return Decoded(image: image, jpeg: jpeg)
             }.value
             try Task.checkCancellation()
-            guard generation == token else { return }
+            guard generation == token else { return false }
             guard let decoded else { throw CocoaError(.fileReadCorruptFile) }
             try decoded.jpeg.write(to: fileURL, options: .atomic)
             image = decoded.image; imageID = Self.identifier(decoded.jpeg); loading = false
+            return true
         } catch {
-            guard generation == token else { return }
+            guard generation == token else { return false }
             loading = false
             if !Task.isCancelled { message = "This wallpaper could not be loaded or saved. Your previous background is unchanged. Please try another photo." }
+            return false
         }
+    }
+
+    /// A newer background choice abandons an import without deleting the saved photo.
+    func cancelImport() {
+        guard loading else { return }
+        generation = UUID(); loading = false; message = nil
     }
 
     func clear() {
@@ -88,32 +96,3 @@ import CryptoKit
     }
 }
 
-struct WallpaperSettings: View {
-    @ObservedObject var wallpaper: WallpaperStore
-    @Binding var isPresented: Bool
-    var body: some View {
-        Section("Home & Clock background photo".tr) {
-            if let image = wallpaper.image {
-                Image(uiImage: image).resizable().scaledToFill()
-                    .frame(height: 100).frame(maxWidth: .infinity).clipped()
-                    .accessibilityLabel("Selected wallpaper".tr)
-                    .accessibilityValue(wallpaper.accessibilityValue).accessibilityIdentifier("wallpaperPreview")
-            }
-            Text((wallpaper.image == nil ? "Using a default background color" : "Using your background photo").tr)
-                .foregroundStyle(.secondary).accessibilityIdentifier("wallpaperStatus")
-            Button { isPresented = true } label: {
-                Label("Choose a background photo".tr, systemImage: "photo")
-                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
-            }.buttonStyle(.plain).foregroundStyle(Color.accentColor).accessibilityIdentifier("chooseWallpaper")
-            if wallpaper.loading { ProgressView("Loading wallpaper…".tr).accessibilityIdentifier("wallpaperLoading") }
-            if let message = wallpaper.message { Text(message.tr).foregroundStyle(.secondary).accessibilityIdentifier("wallpaperError") }
-            if wallpaper.image != nil || wallpaper.loading {
-                Button(role: .destructive) { wallpaper.clear() } label: {
-                    Text("Remove background photo".tr).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
-                }.buttonStyle(.plain).foregroundStyle(.red).accessibilityIdentifier("removeWallpaper")
-            }
-            Text("Fills Home and Clock and may crop the edges. A copy stays on this iPad. The independent Photos page and photo wall keep their own selection. This does not change or follow iPad's system wallpaper.".tr)
-                .font(.footnote).foregroundStyle(.secondary)
-        }
-    }
-}

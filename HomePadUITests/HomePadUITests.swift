@@ -5,7 +5,7 @@ final class HomePadUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         XCUIDevice.shared.orientation = .landscapeLeft
-        app = XCUIApplication(); app.launchArguments = ["--demo", "--uitesting", "-homeWidgetLayouts", "", "-homeShortcuts", "", "-appLanguage", "en", "-display.nightMode", "off"]; launchHome()
+        app = XCUIApplication(); app.launchArguments = ["--demo", "--uitesting", "-homeWidgetLayouts", "", "-homeShortcuts", "", "-appLanguage", "en", "-display.nightMode", "off", "-background.aerialSelectionV1", ""]; launchHome()
         XCTAssertTrue(app.staticTexts["demoBadge"].waitForExistence(timeout: 10))
     }
     func dismissLocationPrompt() {
@@ -254,7 +254,10 @@ final class HomePadUITests: XCTestCase {
     func reveal(_ element: XCUIElement, towardTop: Bool = false) {
         for _ in 0..<8 {
             if element.isHittable { return }
-            if let form = app.collectionViews.allElementsBoundByIndex.last {
+            let gallery = app.descendants(matching: .any)["wallpaperGalleryScroll"]
+            if gallery.exists {
+                if towardTop { gallery.swipeDown() } else { gallery.swipeUp() }
+            } else if let form = app.collectionViews.allElementsBoundByIndex.last {
                 if towardTop { form.swipeDown() } else { form.swipeUp() }
             } else if towardTop { app.swipeDown() } else { app.swipeUp() }
         }
@@ -1020,9 +1023,10 @@ final class HomePadUITests: XCTestCase {
     func testWallpaperSelectionCancelReplacementRestoreAndRemoval() throws {
         let originalFrames = (0..<6).map { app.descendants(matching: .any)["homeWidget-slot-\($0)"].frame }
         tab(4); settingsCategory("settingsDisplay")
+        chooseBackgroundSource("photo")
         let choose = app.buttons["chooseWallpaper"]
         let remove = app.buttons["removeWallpaper"]
-        let preview = app.images["wallpaperPreview"]
+        let preview = app.buttons["wallpaperPhotoSaved"]
         let background = app.images["customWallpaper"]
         let status = app.staticTexts["wallpaperStatus"]
         reveal(choose)
@@ -1092,7 +1096,7 @@ final class HomePadUITests: XCTestCase {
 
         app.terminate(); launchHome()
         assertFullscreenWallpaper(firstID)
-        tab(4); settingsCategory("settingsDisplay"); reveal(preview)
+        tab(4); settingsCategory("settingsDisplay"); chooseBackgroundSource("photo"); reveal(preview)
         XCTAssertEqual(try selectedWallpaperID(), firstID, "Relaunch must restore the same saved image")
         chooseSeedPhoto(at: 1)
         expectation(for: NSPredicate { _, _ in preview.value as? String != firstID }, evaluatedWith: nil)
@@ -1103,7 +1107,7 @@ final class HomePadUITests: XCTestCase {
         XCTAssertTrue(app.descendants(matching: .any)["fullClockDial"].exists)
         shot("Replacement wallpaper fullscreen Clock")
 
-        tab(4); settingsCategory("settingsDisplay"); reveal(remove); XCTAssertTrue(remove.isHittable); remove.tap()
+        tab(4); settingsCategory("settingsDisplay"); chooseBackgroundSource("photo"); reveal(remove); XCTAssertTrue(remove.isHittable); remove.tap()
         reveal(status, towardTop: true)
         XCTAssertEqual(status.label, "Using a default background color")
         XCTAssertFalse(preview.exists)
@@ -1111,7 +1115,7 @@ final class HomePadUITests: XCTestCase {
         tab(1); XCTAssertFalse(background.exists)
         app.terminate(); launchHome()
         XCTAssertFalse(background.exists)
-        tab(4); settingsCategory("settingsDisplay"); reveal(status)
+        tab(4); settingsCategory("settingsDisplay"); chooseBackgroundSource("photo"); reveal(status)
         XCTAssertEqual(status.label, "Using a default background color")
         XCTAssertFalse(preview.exists)
         XCTAssertFalse(remove.exists)
@@ -1375,13 +1379,14 @@ final class HomePadUITests: XCTestCase {
     }
     func testGlassThemePersistsAfterNavigation() {
         tab(4); settingsCategory("settingsDisplay")
+        chooseBackgroundSource("colors")
         let teal = app.buttons["wallpaperDefault-teal"]
         reveal(teal)
         XCTAssertTrue(teal.isHittable); teal.tap()
         XCTAssertTrue(teal.isSelected)
         XCTAssertFalse(app.buttons["wallpaperDefault-warmGray"].isSelected)
         tab(1); shot("Teal dashboard")
-        tab(4); settingsCategory("settingsDisplay"); reveal(teal); XCTAssertTrue(teal.isSelected)
+        tab(4); settingsCategory("settingsDisplay"); chooseBackgroundSource("colors"); reveal(teal); XCTAssertTrue(teal.isSelected)
         tab(1); XCTAssertTrue(app.descendants(matching: .any)["homeWidget-slot-0"].exists)
     }
     func testAccessoryIconTogglesAndNameOpensDetailsWithoutChangingPower() {
@@ -1676,11 +1681,14 @@ final class HomePadUITests: XCTestCase {
         let preview = app.buttons["standbyPreview"]
         reveal(preview); XCTAssertTrue(preview.isHittable); XCTAssertEqual(preview.label, "预览时钟或照片")
         let photo = app.buttons["chooseWallpaper"]
+        chooseBackgroundSource("photo")
         reveal(photo); XCTAssertTrue(photo.isHittable); XCTAssertEqual(photo.label, "选择背景照片")
-        XCTAssertTrue(app.staticTexts["家庭控制与时钟背景照片"].exists)
+        XCTAssertTrue(app.navigationBars.matching(NSPredicate(format: "identifier IN %@", ["墙纸", "壁纸"])).firstMatch.exists)
         let warm = app.buttons["wallpaperDefault-warmGray"], teal = app.buttons["wallpaperDefault-teal"]
+        chooseBackgroundSource("colors", towardTop: true)
         reveal(warm); XCTAssertTrue(warm.isHittable); XCTAssertTrue(teal.isHittable)
         warm.tap(); XCTAssertTrue(warm.isSelected); XCTAssertFalse(teal.isSelected)
+        leaveWallpaperGallery()
         let artwork = app.switches["musicArtworkBackground"]
         reveal(artwork); XCTAssertTrue(artwork.isHittable)
         assertHeader("显示与待机")

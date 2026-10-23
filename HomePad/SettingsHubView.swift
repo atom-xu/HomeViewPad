@@ -14,6 +14,7 @@ struct SettingsHubView: View {
     @ObservedObject var home: HomeStore
     @ObservedObject var display: DisplayCoordinator
     @ObservedObject var wallpaper: WallpaperStore
+    @ObservedObject var aerial: AerialStore
     @ObservedObject var photos: PhotoLibraryStore
     @ObservedObject var weather: WeatherStore
     @ObservedObject var location: WeatherLocation
@@ -43,12 +44,13 @@ struct SettingsHubView: View {
     @ScaledMetric(relativeTo: .title3) private var entryIconWidth: CGFloat = 28
 
     private enum Destination: Hashable {
-        case home, display, contentPrivacy, permissions, general, help, about, diagnostics, wake, guidedAccess
+        case home, display, wallpaper, contentPrivacy, permissions, general, help, about, diagnostics, wake, guidedAccess
 
         var title: String {
             switch self {
             case .home: "Home".tr
             case .display: "Display & standby".tr
+            case .wallpaper: "Wallpaper".tr
             case .contentPrivacy: "Content & permissions".tr
             case .permissions: "Permissions".tr
             case .general: "General".tr
@@ -187,6 +189,9 @@ struct SettingsHubView: View {
         switch destination {
         case .home: homeSettings
         case .display: displaySettings
+        case .wallpaper:
+            BackgroundSettingsView(wallpaper: wallpaper, aerial: aerial, teal: $tealWallpaper,
+                                   photoPickerPresented: $wallpaperPickerPresented, previewStandby: { display.previewStandby() })
         case .contentPrivacy: contentPrivacySettings
         case .permissions: permissionSettings
         case .general: generalSettings
@@ -267,22 +272,10 @@ struct SettingsHubView: View {
 
     private var displaySettings: some View {
         Form {
+            Section { destinationRow(.wallpaper, title: "Wallpaper", symbol: "photo", id: "settingsWallpaper") }
             DisplaySettingsView(coordinator: display, openPhotos: openPhotos)
             Section {
                 destinationRow(.wake, title: "Return from standby", symbol: "hand.tap", id: "settingsWake")
-            }
-            WallpaperSettings(wallpaper: wallpaper, isPresented: $wallpaperPickerPresented)
-            Section("Default background".tr) {
-                HStack(alignment: .top, spacing: 16) {
-                    defaultBackgroundChoice(teal: false, title: "Warm gray", id: "wallpaperDefault-warmGray")
-                    defaultBackgroundChoice(teal: true, title: "Teal", id: "wallpaperDefault-teal")
-                }
-                    .accessibilityElement(children: .contain)
-                    .accessibilityIdentifier("tealWallpaper")
-                if wallpaper.image != nil {
-                    Text("Your photo is the current background. Choosing a color replaces the background photo.".tr)
-                        .font(.footnote).foregroundStyle(.secondary)
-                }
             }
             Section("Music artwork".tr) {
                 Toggle("Use playing artwork as the background".tr, isOn: $musicArtworkBackground)
@@ -293,33 +286,6 @@ struct SettingsHubView: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("settingsDisplayPage")
-    }
-
-    private func defaultBackgroundChoice(teal: Bool, title: String, id: String) -> some View {
-        let selected = wallpaper.image == nil && tealWallpaper == teal
-        return Button {
-            tealWallpaper = teal
-            wallpaper.clear()
-        } label: {
-            VStack(alignment: .leading, spacing: 10) {
-                AmbientWallpaper(teal: teal)
-                    .frame(height: 90).clipShape(RoundedRectangle(cornerRadius: 12))
-                    .accessibilityHidden(true)
-                HStack {
-                    Text(title.tr)
-                    Spacer()
-                    if selected { Image(systemName: "checkmark.circle.fill").foregroundStyle(Color.accentColor) }
-                }
-            }
-            .padding(10).frame(maxWidth: .infinity, minHeight: 140, alignment: .leading)
-            .background(selected ? Color.accentColor.opacity(0.08) : Color.secondary.opacity(0.04), in: RoundedRectangle(cornerRadius: 16))
-            .overlay { RoundedRectangle(cornerRadius: 16).stroke(selected ? Color.accentColor : Color.clear, lineWidth: 2) }
-            .contentShape(RoundedRectangle(cornerRadius: 16))
-        }
-        .buttonStyle(.plain)
-        .accessibilityValue(selected ? "Selected".tr : "")
-        .accessibilityAddTraits(selected ? .isSelected : [])
-        .accessibilityIdentifier(id)
     }
 
     private var contentPrivacySettings: some View {
