@@ -1,5 +1,13 @@
 # Validation
 
+## HomePad project identity and README — 2026-10-23
+
+The user requested an independent HomePad project presentation and explicitly selected `main` as the GitHub landing branch, including the previously installed wallpaper version. Rewrote English/Chinese READMEs and setup; refreshed architecture/development entry points, added Credits, and retained the original MIT notice and source lineage. The current app icon replaces the historical README logo. Three native screenshots use DEMO accessories, synthetic music and original wallpaper colors; no personal data, commercial album artwork or Apple Aerial imagery is introduced. [Summary](evidence/homepad-project-readme-summary.json), [media provenance](evidence/homepad-readme-media.json).
+
+Checked72 local links/images in seven primary documents, no missing targets; inspected the English desktop1280×720 preview and Chinese390px iframe preview. The initial Chinese feature table squeezed labels vertically; flowing paragraphs resolved it in the final preview. Icon bytes match the application asset; screenshot changes are limited to recorded EXIF orientation and proportional1440px resizing. No UI elements were retouched.
+
+All57 captured app/project/test/asset/license inputs remain identical to the starting version. No native suite or physical installation was repeated for this documentation change. Existing application failures and interrupted-suite boundaries below remain unchanged. Raw documentation previews and checks: `.validation/local/project-readme-20261023/`. The user-approved commit-time exception applies to this GitHub publication session only; the standing rule in AGENTS.md remains.
+
 ## Dynamic wallpaper and Mac-style gallery 10 — 2026-10-23
 
 [Scope and source verification](DYNAMIC-SCREENSAVER-10.md), [sanitized evidence](evidence/ipad-dynamic-screensaver-summary.json). Branch `codex/dynamic-screensaver`, preserving all earlier uncommitted work. Settings → Display & standby → Wallpaper opens an independent macOS-style gallery: compact current preview, photo / color / Apple Aerial groups, fixed 16:10 thumbnail cards and a blue selection border. Twelve official Apple clips download on selection; cached clips support a single silent player and 1 / 5 / 15 minute shuffle shared by Home, Clock and clock standby. Clock standby hides the underlying opaque page; current-page dim mode retains its content.

@@ -1,59 +1,36 @@
-# HomePad 本地开发
+# HomePad 开发与构建
 
-本仓库是 `kuscholar/HomeViewPad` 的个人 fork。应用显示名为 HomePad，Xcode 工程、scheme 和源码目录仍叫 HomePad。项目统一描述为 homepad。项目使用 SwiftUI 和 Apple 系统框架，没有第三方包或自建后端。
+HomePad 是独立维护的原生 iPad 家庭面板，使用 SwiftUI 与 Apple 公共框架，无第三方包或自建后端。应用、工程、scheme 和源码目录统一使用 **HomePad**。源码沿革与许可归属见 [CREDITS.md](CREDITS.md)。
 
-## 开发入口
+## 环境与首次运行
 
-- [开发规则](AGENTS.md)
-- [开发经验与迭代方式](docs/DEVELOPMENT.md)
-- [本地初始化记录](docs/INITIALIZATION.md)
-- [现有架构和数据生命周期](docs/ARCHITECTURE.md)
-- [测试记录](docs/VALIDATION.md)
-- [iPad 待机与专用面板参考](docs/IPAD-KIOSK-RESEARCH.md)
-- [真机验收清单](docs/HARDWARE_CHECKLIST.md)
-
-## 检查环境
-
-需要 macOS、完整 Xcode、Python 3 和已安装的 iPad Simulator runtime。最低应用部署目标为 iPadOS 17。
+需要 macOS、完整 Xcode、Python3，以及与 Xcode 匹配的 iPad Simulator runtime。应用最低部署目标为 iPadOS17；当前具体测试工具链见 [VALIDATION](docs/VALIDATION.md)。
 
 ```sh
+git clone https://github.com/atom-xu/HomeViewPad.git homepad
+cd homepad
 xcode-select -p
 xcodebuild -version
-xcodebuild -showsdks
 xcrun simctl list runtimes
-xcrun simctl list devices available
 xcodebuild -project HomePad.xcodeproj -scheme HomePad -showdestinations
-```
-
-必须在最后一条命令中看到可用 iPad 目标。仅有 SDK 列表或 `simctl` 的设备列表不能证明 Xcode 可以构建并运行。
-
-若提示 `iOS 26.5 is not installed`，在 Xcode → Settings → Components 安装当前 Xcode 要求的 iOS 平台支持，也可使用下面的命令。版本取自本机提示，不应固定照搬其他电脑的版本。
-
-```sh
-xcodebuild -downloadPlatform iOS -buildVersion 26.5 -architectureVariant arm64
-```
-
-组件管理流程见 [Apple 官方文档](https://developer.apple.com/documentation/xcode/downloading-and-installing-additional-xcode-components)。下载完成后重新检查 destinations。
-
-## 使用本次创建的独立模拟器
-
-本机 UUID 保存在忽略目录 `.validation/local/simulator-id`。初始化时只加入两张脚本生成的渐变照片，位置为模拟注入的 San Francisco。
-
-```sh
-mkdir -p .validation/local/tmp
-homepad_simulator_id=$(cat .validation/local/simulator-id)
-xcrun simctl list devices available
 open HomePad.xcodeproj
 ```
 
-在 Xcode 中选择 HomePad scheme 和 HomePad Development 模拟器运行。首屏为 Home，点击 Explore demo。演示模式不会创建真实 HomeKit 管理器。
+在 Xcode 选择 **HomePad** scheme 和可用 iPad 模拟器运行，点击 **Explore demo**。也可在 Scheme → Run → Arguments 加入 `--demo`。演示家庭、时间和天气是固定样本，界面显示 DEMO，不创建 HMHomeManager，不连接真实家庭。
 
-其他电脑首次使用时，用 `xcrun simctl list devicetypes` 和 `xcrun simctl list runtimes` 选择已安装的 iPad 和 runtime，再创建独立模拟器；不要复用含个人照片的模拟器。以下命令中的两个标识应替换为本机列表里的实际值。
+当前应用仅声明左右横屏。更换模拟器或升级 Xcode 后，以 `-showdestinations` 的实际可用目标为准；只看到 SDK 名称或设备列表，不代表平台组件已经完整安装。
+
+如果提示缺少 iOS 平台，在 Xcode → Settings → Components 安装对应版本，或使用 `xcodebuild -downloadPlatform iOS -buildVersion VERSION -architectureVariant arm64`，将 VERSION 换成本机要求的版本。完成后重新检查 destinations。
+
+## 准备独立测试模拟器
+
+普通功能开发使用独立模拟器和合成照片。先查可用的设备类型与 runtime，再替换下面两个标识：
 
 ```sh
-mkdir -p .validation/local/tmp
-xcrun simctl create 'HomePad Development' \
-  DEVICE_TYPE_IDENTIFIER RUNTIME_IDENTIFIER > .validation/local/simulator-id
+xcrun simctl list devicetypes
+xcrun simctl list runtimes
+mkdir -p .validation/local
+xcrun simctl create 'HomePad Development'   DEVICE_TYPE_IDENTIFIER RUNTIME_IDENTIFIER > .validation/local/simulator-id
 homepad_simulator_id=$(cat .validation/local/simulator-id)
 xcrun simctl boot "$homepad_simulator_id"
 xcrun simctl bootstatus "$homepad_simulator_id" -b
@@ -61,40 +38,65 @@ python3 scripts/seed_test_photos.py "$homepad_simulator_id"
 xcrun simctl location "$homepad_simulator_id" set 37.7749,-122.4194
 ```
 
-合成照片只需加入一次，重复运行会产生重复照片。位置注入用于定位测试，不能视为真机 GPS 验证。
+合成照片只加入一次；重复执行会增加重复照片。模拟器位置注入只用于测试，不是设备定位验收。`.validation/` 被 Git 忽略，用于本地日志、截图、结果包和快照。
 
-## 运行现有测试
-
-在可用目标和测试照片准备好之后执行：
+## 运行测试与检查截图
 
 ```sh
 homepad_simulator_id=$(cat .validation/local/simulator-id)
-TMPDIR="$PWD/.validation/local/tmp/" \
-  sh scripts/test.sh "$homepad_simulator_id" > .validation/local/baseline-test.log 2>&1
+homepad_test_root=$(mktemp -d /private/tmp/homepad-tests.XXXXXX)
+TMPDIR="$homepad_test_root/" sh scripts/test.sh "$homepad_simulator_id"
 ```
 
-这里为上游脚本指定项目内的临时目录，避免与其他 checkout 共用 `HomePadDerived`。构建缓存和结果包位于 `.validation/local/tmp/`，日志位于 `.validation/local/baseline-test.log`。UI 套件包含真实天气请求、系统权限弹窗和实际 30 秒照片轮播，需要网络与完整模拟器环境。
+脚本运行 HomePad scheme 的 XCTest／XCUITest，使用未签名模拟器构建，并在日志打印 `.xcresult` 路径。每次使用独立临时目录，避免复用其他开发任务的测试缓存。
 
-从日志取得实际 `.xcresult` 路径，再运行 `python3 scripts/export_screenshots.py RESULT_BUNDLE .validation/local/screenshots` 导出截图并逐张检查。上游历史测试通过情况不能代替本机结果。
+UI 套件涉及系统照片选择器、权限弹窗、实际照片轮播和网络集成。准备合成照片与可用网络；部分方法会请求 Open-Meteo 或下载 Apple 官方航拍。可控的音乐／航拍测试数据有独立启动参数和明显标记，不代表真实账号播放或硬件结果。
 
-## 真机和签名
+导出并检查原生截图：
+
+```sh
+python3 scripts/export_screenshots.py RESULT_BUNDLE .validation/local/screenshots
+```
+
+将 RESULT_BUNDLE 换成实际结果包路径。记录设备、运行时、命令、通过、失败和未测项；不为变绿而放宽断言。当前完整记录见 [VALIDATION](docs/VALIDATION.md)。
+
+## 安装到自己的 iPad
 
 ```sh
 cp Config/Local.xcconfig.example Config/Local.xcconfig
 ```
 
-填入自己的唯一 bundle identifier 和 development team。该文件被 Git 忽略；不要提交个人签名配置、证书、家庭标识或照片。真机安装和家庭设备操作按 [硬件清单](docs/HARDWARE_CHECKLIST.md) 单独验收。
+在 Local.xcconfig 中填写自己的唯一 Bundle ID 与 development team。完成 Xcode 账号、设备配对、信任和 Developer Mode 设置，再选择 iPad 运行。Local.xcconfig、签名证书及 provisioning profile 不提交到 Git。
 
-## 工程和 Git
+按需启用对应能力和权限：
 
-新增 Swift 文件后运行 `python3 scripts/generate_project.py`，再检查生成差异。生成器会覆盖工程、scheme、Info.plist 和 entitlements，个人配置留在 `Config/Local.xcconfig`。
+- **HomeKit：**先在 Apple「家庭」App 配置家庭与配件，再在 HomePad 主动连接家庭。
+- **MusicKit：**在开发者 App ID 配置 MusicKit，并由用户授权音乐账号。曲库播放取决于账号资格及内容可用性；文件播放使用系统文件选择器。
+- **照片：**手选图片使用系统 PhotosPicker；相册／个人收藏模式按需申请照片库访问。
+- **日历：**主动连接后申请系统权限，读取未来七天日程。
+- **航拍壁纸：**在「显示与待机 → 壁纸」选中片段并通过 Wi-Fi 下载，不需要将视频放进工程。
 
-```sh
-git remote -v
-git fetch upstream
-git log --oneline HEAD..upstream/main
-git diff --check
-python3 scripts/commit_guard.py
-```
+应用安装、画面显示、音频播放、真实家庭写入、AirPlay、摄像头和长期待机分别验证。真机清单见 [HARDWARE_CHECKLIST](docs/HARDWARE_CHECKLIST.md)。
 
-上游规则限制实际提交时间：America/New_York 工作日 22:00 之后或周末。遵守真实时间，不改写时间戳；窗口外保留本地改动。远端推送、发布及设备操作遵循当次授权范围。
+## 项目结构与生成器
+
+| 路径 | 作用 |
+| :--- | :--- |
+| `HomePad/` | SwiftUI 界面、原生服务、资源和本地化。 |
+| `HomePadTests/` | XCTest 单元测试。 |
+| `HomePadUITests/` | XCUITest 界面与集成流程。 |
+| `scripts/` | 工程生成、测试、合成照片和截图导出。 |
+| `docs/` | 架构、验证、开发经验与素材来源。 |
+| `Config/` | 共享签名默认值与个人配置示例。 |
+
+新增 Swift 文件后运行 `python3 scripts/generate_project.py`。它会重写工程、scheme、Info.plist 和 entitlements，重生成前后应核对并保留既有设置。个人值放在被忽略的 Local.xcconfig。
+
+## 开发与 Git
+
+从 [AGENTS.md](AGENTS.md)、[开发经验](docs/DEVELOPMENT.md)、[当前交接](docs/INITIALIZATION.md)和[架构](docs/ARCHITECTURE.md)开始。每次先明确用户场景、范围与验收，再做最小可验证修改。设备控制经 HomeStore，成功反馈以写入和回读为准。
+
+`origin` 是 HomePad 的发布仓库 `atom-xu/HomeViewPad`；`main` 为项目首页与默认获取入口。`upstream` 保留对 `kuscholar/HomeViewPad` 的源码沿革引用。上游同步按需要单独进行，使用 fetch 与普通合并／变基，保留已有工作与历史。
+
+常规实际 Git 提交限定为 America/New_York 工作日22:00后或周末，执行前运行 `python3 scripts/commit_guard.py`；不得伪造或回填时间。推送、发布和设备安装遵循当次授权范围与目标。任何用户明确给出的单次例外只适用于对应任务，不修改后续规则。
+
+项目来源和许可见 [CREDITS](CREDITS.md)；MIT 版权声明保留在 [LICENSE](LICENSE)。

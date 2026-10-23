@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-23",
+  "source_code_commit": "63bf387bb27e8dd6d762669a75ce5cc1167ee05d",
+  "runtime": "iPad Pro 11-inch M5 simulator, iPadOS26.5 (23F73), Xcode27.0 (27A266a)",
+  "assets": [
+    {
+      "path": "docs/media/homepad-icon.png",
+      "source": "HomePad/Assets.xcassets/AppIcon.appiconset/AppIcon.png",
+      "description": "Current original HomePad app icon; exact bytes copied",
+      "operation": "Exact copy",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "source_sha256": "491690da02105802543230fbf8eb18645df98e12033b15e12f9b0eec25f57947",
+      "sha256": "491690da02105802543230fbf8eb18645df98e12033b15e12f9b0eec25f57947"
+    },
+    {
+      "path": "docs/media/homepad-home.png",
+      "source": ".validation/local/dynamic-screensaver-10/mac-full-shots/home-same-height-rectangular-right-column-and-split-control-actions.png",
+      "description": "Native simulator screenshot; deterministic Home DEMO; warm gray background",
+      "operation": "Apply recorded EXIF orientation, resize proportionally to maximum1440px, encode PNG. No UI edits or cropping.",
+      "dimensions": [
+        1440,
+        993
+      ],
+      "source_sha256": "728185474b390409fba9e5ca9151f3d5b7d7fc4e9a6e65ce6d2e27881a825ef2",
+      "sha256": "23825464635508926ec5fddcfdbe315acec3acceb8b063cff9e3e8692ed33eed"
+    },
+    {
+      "path": "docs/media/homepad-music.png",
+      "source": ".validation/local/dynamic-screensaver-10/mac-full-shots/music-cover-flow-native-test-albums.png",
+      "description": "Native simulator screenshot; synthetic music with visible TEST DATA",
+      "operation": "Apply recorded EXIF orientation, resize proportionally to maximum1440px, encode PNG. No UI edits or cropping.",
+      "dimensions": [
+        1440,
+        993
+      ],
+      "source_sha256": "396f95f7331c5769b9b878fd966948e94577ef1e5649502ee2016916cfcbfbe8",
+      "sha256": "973f435db365f7c57e7e4466b287156adb2c783b73aa90df2964fa7872bbc8ad"
+    },
+    {
+      "path": "docs/media/homepad-wallpaper.png",
+      "source": ".validation/local/dynamic-screensaver-10/mac-layout-final-shots/mac-style-wallpaper-gallery-compact-preview-and-photo-color-thumbnails.png",
+      "description": "Native simulator screenshot; photo and original color choices; no Apple video imagery",
+      "operation": "Apply recorded EXIF orientation, resize proportionally to maximum1440px, encode PNG. No UI edits or cropping.",
+      "dimensions": [
+        1440,
+        993
+      ],
+      "source_sha256": "93f998503d41ce796eaefc9e0c2bf05fddfce5277b8949f9733db2f372013413",
+      "sha256": "3bbdd232229b04185db7b04230f65cc41c27735939834dfe7f329ea1f8a6ae55"
+    }
+  ]
+}

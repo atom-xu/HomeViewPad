@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-23",
+  "scope": "HomePad independent project identity and GitHub landing documentation",
+  "application_source_baseline": "63bf387bb27e8dd6d762669a75ce5cc1167ee05d",
+  "application_project_test_asset_and_license_inputs": 57,
+  "changed_application_inputs": [],
+  "primary_documents_checked": 7,
+  "local_links_and_images_checked": 72,
+  "missing_local_targets": [],
+  "visual_checks": [
+    "English desktop1280x720 local Markdown preview",
+    "Chinese390px local Markdown iframe preview",
+    "Current native app icon and three source screenshots inspected",
+    "Chinese feature columns changed to flowing paragraphs after narrow preview"
+  ],
+  "media_manifest": "homepad-readme-media.json",
+  "license_unchanged": true,
+  "publication": {
+    "repository": "atom-xu/HomeViewPad",
+    "default_branch": "main",
+    "development_branch": "codex/dynamic-screensaver",
+    "main_update_explicitly_authorized": true,
+    "commit_time_exception": "Existing explicit exception for this GitHub publication session; not a permanent rule change"
+  },
+  "boundaries": [
+    "Documentation and README media only; no app code or project setting changes",
+    "No new XCTest/XCUITest run or physical installation for this documentation change",
+    "Existing application failures and incomplete tests remain in VALIDATION.md",
+    "Repository lineage and original MIT notice retained; no repository rename or fork detachment"
+  ],
+  "raw_evidence": ".validation/local/project-readme-20261023/"
+}

@@ -1,5 +1,12 @@
 # HomePad 本地初始化与交接
 
+## 当前交接：2026-10-23，HomePad 独立项目首页
+
+- 用户要求项目介绍按独立 HomePad 重写，并明确选择把已安装的壁纸版本与新文档一起同步到 `origin/main`，作为 GitHub 默认首页。开发分支仍为 `codex/dynamic-screensaver`，上游历史、MIT 版权和仓库 URL 保留。
+- 中英文 README 现在以产品用途、家庭控制／音乐／照片／壁纸／时钟待机、上手与隐私为主；换用当前 HomePad 图标和三张原生实截，保留 DEMO／TEST DATA。旧 logo／演示不再作为当前预览；来源放在文末及新 [CREDITS](../CREDITS.md)。SETUP、素材说明和架构／开发入口已同步，移除过时的音乐搜索等介绍。
+- 七份主文档72项本地链接／图片目标检查通过；英文桌面和中文390px预览已查看，修复中文功能表竖排挤压。57个应用／工程／测试／资源／许可证文件与本轮开始一致；文档修改未重跑原生套件、未重装真机。之前的失败与未测项保留，不能将文档检查当作应用全绿。[文档验证摘要](evidence/homepad-project-readme-summary.json)。
+- GitHub 收尾沿用用户刚才明确批准的本次提交时间例外；后续常规规则不变。主分支与开发分支以实际 Git 记录及远端回读为准，原始证据在 `.validation/local/project-readme-20261023/`。Home 控制页新改版仍另行处理，未纳入本次文档更新。
+
 ## 当前交接：2026-10-23，壁纸版已更新 Boom pad
 
 - 分支 `codex/dynamic-screensaver` 从 `codex/ipad-display-01` 建立，原有未提交工作保留。用户要求合并照片／默认背景，加入 Apple 官方航拍的指定／随机，并追加“不能长条，要像 Mac 墙纸选择器”。已实现独立的缩略图库、12段官方片源、按需缓存、静音循环，以及 Home／Clock／时钟待机共享背景。入口为「显示与待机 → 壁纸」。见 [范围](DYNAMIC-SCREENSAVER-10.md)与[验证／安装摘要](evidence/ipad-dynamic-screensaver-summary.json)。

@@ -1,8 +1,27 @@
-# README media
+# HomePad media
+
+## Current project identity and screenshots
+
+The README uses the current HomePad app icon and three native simulator screenshots:
+
+| Asset | Source |
+| :--- | :--- |
+| `media/homepad-icon.png` | Exact copy of the original HomePad app icon; no shape, color or corner changes. |
+| `media/homepad-home.png` | Home dashboard with deterministic DEMO accessories and the original warm-gray background. |
+| `media/homepad-music.png` | Native Cover Flow with synthetic albums and a visible TEST DATA label. |
+| `media/homepad-wallpaper.png` | Compact wallpaper preview, photo entry and original color thumbnails. |
+
+Screenshots were captured from the current wallpaper implementation on an iPad Pro 11-inch M5 simulator / iPadOS 26.5 (23F73), Xcode 27.0 (27A266a). The source application inputs match commit `63bf387`. For README display, EXIF orientation was applied and each image was proportionally resized to a 1440-pixel maximum edge. No controls, labels, device state or artwork were retouched; no UI was reconstructed.
+
+The screenshots contain no personal photos, real homes, commercial album covers or Apple Aerial footage/previews. The icon remains byte-identical to the application asset. Original source paths, image sizes and before/after checksums are in the [current media manifest](evidence/homepad-readme-media.json). The screenshots demonstrate interface appearance, not physical device or accessory acceptance.
+
+## Historical assets
+
+The assets below retain their original provenance. They are no longer used as the current README presentation.
 
 ## HomeViewPad logo
 
-`media/homeviewpad-logo.png` is an original logo concept generated with the built-in imagegen tool on 2026-10-14: an evergreen glass tile, ivory house/window outline, modular panes and a small amber light. The transparent PNG is used in both README headers. No Apple logo or third-party brand artwork was supplied as a reference. The exact prompt is in [media/logo-prompt.txt](media/logo-prompt.txt). The logo is included with the project materials under the MIT license; no exclusive rights to AI-generated output are claimed.
+`media/homeviewpad-logo.png` is an original logo concept generated with the built-in imagegen tool on 2026-10-14: an evergreen glass tile, ivory house/window outline, modular panes and a small amber light. The transparent PNG was previously used in the README headers and is retained as a historical asset. No Apple logo or third-party brand artwork was supplied as a reference. The exact prompt is in [media/logo-prompt.txt](media/logo-prompt.txt). The logo is included with the project materials under the MIT license; no exclusive rights to AI-generated output are claimed.
 
 ## Use-case illustration
 
