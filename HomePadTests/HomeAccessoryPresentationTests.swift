@@ -51,28 +51,25 @@ final class HomeAccessoryPresentationTests: XCTestCase {
                        [power.id, brightness.id, hue.id, saturation.id, colorTemperature.id])
     }
 
-    func testIndependentlyAdjustableDevicesRemainOnTheDashboardWithoutPower() {
+    func testServiceWithoutPowerUsesOnePrimaryCardAndRetainsAllItsAdjustments() {
         let dimmer = tile(1, kind: .brightness, service: identifier(101))
         let fan = tile(2, kind: .fanSpeed, service: identifier(102))
         let hue = tile(3, kind: .hue, service: identifier(103))
         let saturation = tile(4, kind: .saturation, service: identifier(103))
         let values = [dimmer, fan, hue, saturation]
-
-        XCTAssertEqual(HomeAccessoryPresentation.primaryTiles(values).map(\.id), values.map(\.id))
+        XCTAssertEqual(HomeAccessoryPresentation.primaryTiles(values).map(\.id), [dimmer.id, fan.id, hue.id])
         XCTAssertEqual(HomeAccessoryPresentation.details(for: dimmer.id, in: values).map(\.id), [dimmer.id])
-        XCTAssertEqual(HomeAccessoryPresentation.details(for: fan.id, in: values).map(\.id), [fan.id])
         XCTAssertEqual(HomeAccessoryPresentation.details(for: hue.id, in: values).map(\.id), [hue.id, saturation.id])
     }
 
-    func testPowerPresenceDoesNotHideClimateReadingsOrThermostatTarget() {
+    func testServicePowerKeepsClimateReadingsInItsDetailsWithoutDuplicateCards() {
         let service = identifier(101)
         let power = tile(1, kind: .power, service: service)
         let temperature = tile(2, kind: .temperature, service: service)
         let humidity = tile(3, kind: .humidity, service: service)
         let target = tile(4, kind: .targetTemperature, service: service)
         let values = [power, temperature, humidity, target]
-
-        XCTAssertEqual(HomeAccessoryPresentation.primaryTiles(values).map(\.id), values.map(\.id))
+        XCTAssertEqual(HomeAccessoryPresentation.primaryTiles(values).map(\.id), [power.id])
         XCTAssertEqual(HomeAccessoryPresentation.details(for: target.id, in: values).map(\.id), values.map(\.id))
     }
 
@@ -114,7 +111,7 @@ final class HomeAccessoryPresentationTests: XCTestCase {
         XCTAssertEqual(HomeValueKind(characteristicType: HMCharacteristicTypeSaturation), .saturation)
         XCTAssertEqual(HomeValueKind(characteristicType: HMCharacteristicTypeColorTemperature), .colorTemperature)
         XCTAssertNil(HomeValueKind(characteristicType: "Unsupported vendor color control"))
-        XCTAssertNil(HomeValueKind(characteristicType: HMCharacteristicTypeTargetLockMechanismState))
+        XCTAssertEqual(HomeValueKind(characteristicType: HMCharacteristicTypeTargetLockMechanismState), .state)
     }
 
     private func identifier(_ value: Int) -> UUID {

@@ -312,7 +312,7 @@ final class HomePadUITests: XCTestCase {
         openPhotoSettings()
         reveal(app.buttons["connectPhotos"])
         XCTAssertTrue(app.buttons["connectPhotos"].waitForExistence(timeout: 5)); app.buttons["connectPhotos"].tap()
-        let allow = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Allow Full Access"]
+        let allow = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons.matching(NSPredicate(format: "label IN %@", ["Allow Full Access", "允许完全访问"])).firstMatch
         XCTAssertTrue(allow.waitForExistence(timeout: 5)); allow.tap()
         reveal(app.buttons["album-all"])
         XCTAssertTrue(app.buttons["album-all"].waitForExistence(timeout: 8)); app.buttons["album-all"].tap()
@@ -547,7 +547,7 @@ final class HomePadUITests: XCTestCase {
         showNavigation(); XCTAssertTrue(app.descendants(matching: .any)["sideNavigation"].exists)
         navigationAction("hideNavigation")
         swipePage(forward: false); XCTAssertTrue(album.exists)
-        swipePage(forward: true); XCTAssertTrue(app.buttons["cameraWidget"].waitForExistence(timeout: 3))
+        swipePage(forward: true); XCTAssertTrue(app.descendants(matching: .any)["shortcut-camera"].waitForExistence(timeout: 3))
         swipePage(forward: true); XCTAssertTrue(app.descendants(matching: .any)["fullClock"].waitForExistence(timeout: 3))
         tab(0); assertGrid()
         expectation(for: NSPredicate(format: "hittable == true"), evaluatedWith: weather); waitForExpectations(timeout: 5)
@@ -557,11 +557,11 @@ final class HomePadUITests: XCTestCase {
         closePanel()
         app.terminate(); app.launch()
         XCTAssertTrue(app.descendants(matching: .any)["homePage"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.buttons["cameraWidget"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["shortcut-camera"].exists)
         XCTAssertFalse(app.buttons["photoWidget"].exists)
     }
     func testHorizontalPagingAndIndependentWidgetSwitching() {
-        let camera = app.buttons["cameraWidget"]
+        let camera = app.descendants(matching: .any)["shortcut-camera"]
         XCTAssertTrue(camera.exists); XCTAssertFalse(app.buttons["photoWidget"].exists)
         XCTAssertFalse(app.buttons["nextWidget-2"].exists)
         XCTAssertTrue(camera.exists) // Single camera category never borrows another stack's content.
@@ -611,7 +611,7 @@ final class HomePadUITests: XCTestCase {
         XCTAssertFalse(up.isEnabled); XCTAssertFalse(down.isEnabled)
         expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: position)
         waitForExpectations(timeout: 4)
-        XCTAssertTrue(app.buttons["cameraWidget"].exists); XCTAssertFalse(app.buttons["photoWidget"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["shortcut-camera"].exists); XCTAssertFalse(app.buttons["photoWidget"].exists)
         let clock = app.descendants(matching: .any)["homeWidget-slot-1"]
         XCTAssertTrue(clock.exists)
         XCTAssertTrue(clock.descendants(matching: .any).matching(NSPredicate(format: "label == %@ AND value CONTAINS %@", "Analog clock", "10:09")).firstMatch.exists)
@@ -731,7 +731,7 @@ final class HomePadUITests: XCTestCase {
         openPhotoSettings()
         XCTAssertTrue(app.buttons["singlePhotoPicker"].waitForExistence(timeout: 3))
         app.buttons["singlePhotoPicker"].tap()
-        let cancel = app.buttons["Cancel"].firstMatch
+        let cancel = app.buttons.matching(NSPredicate(format: "identifier == %@ OR label IN %@", "Cancel", ["Cancel", "取消"])).firstMatch
         if cancel.waitForExistence(timeout: 3) { cancel.tap() } else { app.swipeDown() }
         closePanel()
         app.terminate()
@@ -739,7 +739,7 @@ final class HomePadUITests: XCTestCase {
         launchHome(); tab(5)
         let audioFile = app.buttons["chooseAudioFile"]
         reveal(audioFile); XCTAssertTrue(audioFile.isEnabled); audioFile.tap()
-        XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 5)); shot("Audio file picker"); app.buttons["Cancel"].firstMatch.tap()
+        XCTAssertTrue(app.buttons.matching(NSPredicate(format: "identifier == %@ OR label IN %@", "Cancel", ["Cancel", "取消"])).firstMatch.waitForExistence(timeout: 5)); shot("Audio file picker"); app.buttons.matching(NSPredicate(format: "identifier == %@ OR label IN %@", "Cancel", ["Cancel", "取消"])).firstMatch.tap()
         XCTAssertTrue(app.buttons["Choose audio file"].waitForExistence(timeout: 5))
         tab(1)
         XCTAssertTrue(app.buttons["connectHome"].waitForExistence(timeout: 3))
@@ -754,7 +754,7 @@ final class HomePadUITests: XCTestCase {
         reveal(app.buttons["connectPhotos"])
         XCTAssertTrue(app.buttons["connectPhotos"].waitForExistence(timeout: 5)); app.buttons["connectPhotos"].tap()
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        let deny = springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Allow")).matching(NSPredicate(format: "label BEGINSWITH[c] %@", "Don")).firstMatch
+        let deny = springboard.buttons.matching(NSPredicate(format: "(label CONTAINS[c] %@ AND label BEGINSWITH[c] %@) OR label == %@", "Allow", "Don", "不允许")).firstMatch
         XCTAssertTrue(deny.waitForExistence(timeout: 5)); deny.tap()
         XCTAssertTrue(app.staticTexts["photosDenied"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["singlePhotoPicker"].exists); shot("Photo permission denied")
@@ -768,7 +768,7 @@ final class HomePadUITests: XCTestCase {
         reveal(app.buttons["connectPhotos"])
         XCTAssertTrue(app.buttons["connectPhotos"].waitForExistence(timeout: 5)); app.buttons["connectPhotos"].tap()
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        let allow = springboard.buttons["Allow Full Access"]
+        let allow = springboard.buttons.matching(NSPredicate(format: "label IN %@", ["Allow Full Access", "允许完全访问"])).firstMatch
         XCTAssertTrue(allow.waitForExistence(timeout: 5)); allow.tap()
         let album = app.buttons["album-all"]
         reveal(album)
@@ -824,18 +824,23 @@ final class HomePadUITests: XCTestCase {
         XCTAssertFalse(app.images["photoPreview"].exists); XCTAssertFalse(app.staticTexts["photoPosition"].exists)
         closePanel(); XCTAssertTrue(app.descendants(matching: .any)["photoWall"].exists)
     }
-    func testRoomFilteringCanBeRepeated() {
-        panel("allControls")
-        app.buttons["room-Kitchen"].tap()
-        XCTAssertTrue(app.buttons.matching(identifier: "accessory-Pendant lights").firstMatch.exists); XCTAssertFalse(app.buttons.matching(identifier: "accessory-Reading lamp").firstMatch.exists)
-        app.buttons["room-All rooms"].tap()
-        XCTAssertTrue(app.buttons.matching(identifier: "accessory-Reading lamp").firstMatch.exists); closePanel()
-        XCTAssertTrue(app.buttons.matching(identifier: "accessory-Pendant lights").firstMatch.exists)
+    func testAllControlsHaveNoRoomFilterAndDoNotChangeFavorites() {
+        let before = app.buttons["accessory-Ceiling fan"]
+        XCTAssertTrue(before.exists)
+        for _ in 0..<2 {
+            panel("allControls")
+            XCTAssertFalse(app.buttons["room-Kitchen"].exists)
+            XCTAssertTrue(app.buttons.matching(identifier: "accessory-Pendant lights").firstMatch.exists)
+            XCTAssertTrue(app.buttons.matching(identifier: "accessory-Reading lamp").firstMatch.exists)
+            closePanel()
+            XCTAssertTrue(before.exists)
+            XCTAssertEqual(app.staticTexts["temperatureValue"].label, "22.0")
+        }
     }
     func testLargeTextLayout() {
         app.terminate(); app.launchArguments = ["--demo", "--uitesting", "-homeWidgetLayouts", "", "-homeShortcuts", "", "-appLanguage", "en", "-display.nightMode", "off", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]; launchHome()
         XCTAssertTrue(app.staticTexts["demoBadge"].waitForExistence(timeout: 5)); shot("Accessibility large text")
-        reveal(app.buttons["cameraWidget"]); XCTAssertTrue(app.buttons["cameraWidget"].isHittable); XCTAssertFalse(app.buttons["photoWidget"].exists)
+        reveal(app.descendants(matching: .any)["shortcut-camera"]); XCTAssertTrue(app.descendants(matching: .any)["shortcut-camera"].isHittable); XCTAssertFalse(app.buttons["photoWidget"].exists)
         tab(4)
         for entry in ["settingsHome", "settingsDisplay", "settingsContentPrivacy", "settingsGeneral", "settingsCalendar", "settingsWeather", "settingsPermissions", "settingsHelp", "settingsAbout"] {
             reveal(app.buttons[entry]); XCTAssertTrue(app.buttons[entry].isHittable)
@@ -953,7 +958,10 @@ final class HomePadUITests: XCTestCase {
         panel("addShortcut")
         let name = app.textFields["shortcutName"]
         XCTAssertTrue(name.waitForExistence(timeout: 5)); name.tap(); name.typeText("Entry camera QA")
-        // The default new shortcut is Camera; no hardware stream is claimed in demo.
+        // Explicitly choose the first-available policy; an unconfigured card does not capture.
+        app.buttons["shortcutCameraPicker"].coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
+        app.buttons["First available camera"].tap()
+
         XCTAssertTrue(app.buttons["saveShortcut"].isEnabled); app.buttons["saveShortcut"].tap()
         expectation(for: NSPredicate { _, _ in shortcutQuery.count == previousIDs.count + 1 }, evaluatedWith: nil)
         waitForExpectations(timeout: 5)
@@ -1043,7 +1051,7 @@ final class HomePadUITests: XCTestCase {
             XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 8), "The system photo picker must be presented")
             // These are the system PhotosPicker's real synthetic photo assets,
             // independent of the app's PhotoKit album authorization and slideshow.
-            let photos = app.images.matching(NSPredicate(format: "label BEGINSWITH %@", "Photo,"))
+            let photos = app.images.matching(NSPredicate(format: "label BEGINSWITH %@ OR label BEGINSWITH %@", "Photo,", "照片,"))
             let photo = photos.element(boundBy: index)
             if !photo.waitForExistence(timeout: 8) {
                 let tree = XCTAttachment(string: app.debugDescription)
@@ -1090,7 +1098,7 @@ final class HomePadUITests: XCTestCase {
             XCTAssertEqual(frame.width, originalFrames[index].width, accuracy: 2)
             XCTAssertEqual(frame.height, originalFrames[index].height, accuracy: 2)
         }
-        XCTAssertTrue(app.buttons["cameraWidget"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["shortcut-camera"].exists)
         XCTAssertFalse(app.buttons["photoWidget"].exists)
         shot("Fullscreen custom wallpaper Home")
 
@@ -1221,7 +1229,7 @@ final class HomePadUITests: XCTestCase {
         XCTAssertTrue(app.buttons["contextShowNavigation"].waitForExistence(timeout: 4))
         // UIKit hosts SwiftUI previews under its own "Preview" AX node and
         // strips the supplied identifier; use that actual native container.
-        let preview = app.otherElements.matching(NSPredicate(format: "label == %@", "Preview")).firstMatch
+        let preview = app.otherElements.matching(NSPredicate(format: "label IN %@", ["Preview", "预览"])).firstMatch
         XCTAssertTrue(preview.waitForExistence(timeout: 4))
         XCTAssertTrue(app.frame.insetBy(dx: 2, dy: 2).contains(preview.frame), "The entire lifted climate preview must fit")
         let temperature = preview.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "22.0")).firstMatch
@@ -1242,7 +1250,7 @@ final class HomePadUITests: XCTestCase {
         }
         edgeWidget.press(forDuration: 1.2)
         XCTAssertTrue(app.buttons["contextShowNavigation"].waitForExistence(timeout: 4))
-        let edgePreview = app.otherElements.matching(NSPredicate(format: "label == %@", "Preview")).firstMatch
+        let edgePreview = app.otherElements.matching(NSPredicate(format: "label IN %@", ["Preview", "预览"])).firstMatch
         XCTAssertTrue(edgePreview.waitForExistence(timeout: 4))
         XCTAssertTrue(app.frame.insetBy(dx: 2, dy: 2).contains(edgePreview.frame))
         let edgeName = edgePreview.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Pendant lights")).firstMatch
@@ -1253,7 +1261,7 @@ final class HomePadUITests: XCTestCase {
         app.launchArguments = ["--demo", "--uitesting", "-homeWidgetLayouts", "", "-homeShortcuts", "", "-appLanguage", "zh-Hans", "-display.nightMode", "off", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
         launchHome()
         app.descendants(matching: .any)["homeWidget-slot-0"].press(forDuration: 1.2)
-        let accessiblePreview = app.otherElements.matching(NSPredicate(format: "label == %@", "Preview")).firstMatch
+        let accessiblePreview = app.otherElements.matching(NSPredicate(format: "label IN %@", ["Preview", "预览"])).firstMatch
         XCTAssertTrue(accessiblePreview.waitForExistence(timeout: 4))
         XCTAssertTrue(app.frame.insetBy(dx: 2, dy: 2).contains(accessiblePreview.frame))
         let accessibleTemperature = accessiblePreview.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "22.0")).firstMatch
@@ -1267,7 +1275,7 @@ final class HomePadUITests: XCTestCase {
         app.terminate(); app.launchArguments = ["--demo", "--uitesting", "-homeShortcuts", "", "-appLanguage", "en", "-display.nightMode", "off"]; launchHome()
         XCUIDevice.shared.orientation = .landscapeLeft; waitForLandscape()
         func restoreDefaults() {
-            navigationAction("restoreHomeWidgets")
+            navigationAction("restoreHomeWidgets"); app.buttons["confirmRestoreWidgets"].firstMatch.tap()
             XCTAssertTrue(app.descendants(matching: .any)["homeWidget-slot-2"].waitForExistence(timeout: 5))
         }
         restoreDefaults()
@@ -1281,11 +1289,11 @@ final class HomePadUITests: XCTestCase {
         XCTAssertTrue(lamp.label.contains("On")) // Editing layout must not issue accessory commands.
         app.terminate(); launchHome()
         XCTAssertFalse(camera.exists)
-        XCTAssertFalse(app.buttons["cameraWidget"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["shortcut-camera"].exists)
         let widgetQuery = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "homeWidget-"))
         let existing = Set(widgetQuery.allElementsBoundByIndex.map(\.identifier))
         panel("addHomeWidget")
-        XCTAssertTrue(app.buttons["widgetOption-camera"].waitForExistence(timeout: 3)); app.buttons["widgetOption-camera"].tap()
+        XCTAssertTrue(app.buttons["widgetOption-clock"].waitForExistence(timeout: 3)); app.buttons["widgetOption-clock"].tap()
         expectation(for: NSPredicate { _, _ in
             !Set(widgetQuery.allElementsBoundByIndex.map(\.identifier)).subtracting(existing).isEmpty
         }, evaluatedWith: nil)
@@ -1313,7 +1321,7 @@ final class HomePadUITests: XCTestCase {
         XCTAssertGreaterThan(widget.frame.height, smallHeight * 1.8)
         for _ in 0..<6 { if widget.isHittable { break }; board.swipeUp() }
         XCTAssertTrue(widget.isHittable)
-        shot("Large camera widget after context resize")
+        shot("Large clock widget after context resize")
         app.terminate(); launchHome()
         XCTAssertEqual(widget.value as? String, "Large")
         XCTAssertGreaterThan(widget.frame.height, smallHeight * 1.8)
@@ -1524,7 +1532,7 @@ final class HomePadUITests: XCTestCase {
         openPhotoSettings()
         tapReadyMusicButton("singlePhotoPicker")
         XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 8))
-        let seeded = app.images.matching(NSPredicate(format: "label BEGINSWITH %@", "Photo,"))
+        let seeded = app.images.matching(NSPredicate(format: "label BEGINSWITH %@ OR label BEGINSWITH %@", "Photo,", "照片,"))
         XCTAssertTrue(seeded.element(boundBy: 1).waitForExistence(timeout: 8))
         for index in 0..<2 {
             let photo = seeded.element(boundBy: index)
@@ -1532,7 +1540,7 @@ final class HomePadUITests: XCTestCase {
             XCTAssertTrue(app.frame.contains(CGPoint(x: photo.frame.midX, y: photo.frame.midY)))
             photo.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         }
-        let add = app.buttons["Add"].firstMatch
+        let add = app.buttons.matching(NSPredicate(format: "(identifier == %@ OR label IN %@) AND identifier != %@", "Add", ["Add", "Done", "添加", "完成"], "dismissPanel")).firstMatch
         XCTAssertTrue(add.waitForExistence(timeout: 8)); XCTAssertTrue(add.isEnabled); add.tap()
         let saved = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label == %@", "2 photos"), object: app.staticTexts["selectedPhotoCount"])
         XCTAssertEqual(XCTWaiter.wait(for: [saved], timeout: 20), .completed)
@@ -2392,14 +2400,14 @@ final class HomePadUITests: XCTestCase {
         let choose = app.buttons["singlePhotoPicker"]
         choose.tap()
         XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 8))
-        let photos = app.images.matching(NSPredicate(format: "label BEGINSWITH %@", "Photo,"))
+        let photos = app.images.matching(NSPredicate(format: "label BEGINSWITH %@ OR label BEGINSWITH %@", "Photo,", "照片,"))
         XCTAssertTrue(photos.element(boundBy: 1).waitForExistence(timeout: 8), "The isolated simulator must contain the seeded photos")
         for index in 0..<2 {
             let photo = photos.element(boundBy: index)
             XCTAssertGreaterThan(photo.frame.width, 1)
             photo.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         }
-        let confirmation = app.buttons["Add"].firstMatch
+        let confirmation = app.buttons.matching(NSPredicate(format: "(identifier == %@ OR label IN %@) AND identifier != %@", "Add", ["Add", "Done", "添加", "完成"], "dismissPanel")).firstMatch
         XCTAssertTrue(confirmation.waitForExistence(timeout: 8))
         XCTAssertTrue(confirmation.isEnabled)
         confirmation.tap()
@@ -2432,6 +2440,150 @@ final class HomePadUITests: XCTestCase {
         let selected = content.staticTexts.firstMatch
         if selected.isHittable { selected.tap() } else { content.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap() }
         app.buttons["Clock"].tap()
+    }
+
+    func testHomeFavoritesEditorRevealsAddsAndRequiresRestoreConfirmation() throws {
+        XCTAssertFalse(app.buttons["cameraWidget"].exists)
+        let sidebar = app.descendants(matching: .any)["shortcut-camera"]
+        XCTAssertTrue(sidebar.exists)
+        let widgets = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "homeWidget-"))
+        let before = Set(widgets.allElementsBoundByIndex.map(\.identifier))
+        app.buttons["editHomeLayout"].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["homeLayoutEditor"].waitForExistence(timeout: 4))
+        app.buttons["layoutAddFavorite"].tap()
+        XCTAssertFalse(app.buttons["widgetOption-camera"].exists)
+        XCTAssertFalse(app.buttons["widgetOption-agenda"].exists)
+        app.buttons["widgetOption-clock"].tap()
+        let visible = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            let ids = Set(widgets.allElementsBoundByIndex.map(\.identifier)).subtracting(before)
+            guard let id = ids.first else { return false }
+            return self.app.frame.contains(self.app.descendants(matching: .any)[id].frame)
+        }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [visible], timeout: 6), .completed, "Added card must be fully revealed without manual scrolling")
+        let addedID = try XCTUnwrap(Set(widgets.allElementsBoundByIndex.map(\.identifier)).subtracting(before).first)
+        let id = String(addedID.dropFirst("homeWidget-".count))
+        shot("New favorite automatically revealed")
+        app.buttons["editHomeLayout"].tap()
+        let size = app.buttons["layoutSize-" + id]
+        reveal(size); size.tap()
+        app.buttons["moveFirst-" + id].tap()
+        closePanel()
+        let added = app.descendants(matching: .any)[addedID]
+        app.descendants(matching: .any)["homeControlGrid"].swipeDown()
+        XCTAssertLessThan(added.frame.minY, app.descendants(matching: .any)["homeWidget-slot-0"].frame.minY + 2)
+        navigationAction("restoreHomeWidgets")
+        XCTAssertTrue(app.buttons["confirmRestoreWidgets"].firstMatch.waitForExistence(timeout: 4))
+        let cancel = app.buttons.matching(NSPredicate(format: "label IN %@", ["Cancel", "取消"])).firstMatch
+        if cancel.exists { cancel.tap() }
+        else { app.coordinate(withNormalizedOffset: CGVector(dx: 0.02, dy: 0.08)).tap() }
+        XCTAssertTrue(app.buttons["confirmRestoreWidgets"].firstMatch.waitForNonExistence(timeout: 4))
+        XCTAssertTrue(added.exists, "Cancel must preserve the customized favorites")
+        shot("Home favorite editing and right-only content")
+    }
+
+    func testHomeDimmerCommitsOnReleaseAndOfflineKeepsIndependentCards() {
+        app.terminate()
+        app.launchArguments += ["--home-controls-fixture"]
+        launchHome()
+        app.buttons["accessoryDetails-Pendant lights"].tap()
+        let dimmer = app.descendants(matching: .any)["adjustment-brightness"]
+        XCTAssertTrue(dimmer.waitForExistence(timeout: 4))
+        XCTAssertFalse(app.buttons["applyAdjustment-brightness"].exists)
+        dimmer.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6))
+            .press(forDuration: 0.1, thenDragTo: dimmer.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)))
+        let applied = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            (dimmer.value as? String)?.hasPrefix("80") == true && !self.app.buttons["retryAdjustment-brightness"].exists
+        }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [applied], timeout: 5), .completed)
+        shot("Focused large light dimmer after confirmed adjustment")
+        closePanel()
+        app.terminate(); app.launchArguments += ["--home-offline-fixture"]; launchHome()
+        XCTAssertTrue(app.descendants(matching: .any)["clockWidget"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["shortcut-music"].exists)
+        XCTAssertTrue(app.staticTexts["homeMusicTitle"].exists)
+        XCTAssertTrue(app.buttons["accessory-Pendant lights"].label.contains("Offline"))
+        XCTAssertFalse(app.buttons["accessory-Pendant lights"].isEnabled)
+        shot("Offline accessories keep Home layout clock and music")
+    }
+
+    func testLegacyLeftCameraAndCalendarMigrateToRightColumn() {
+        app.terminate()
+        app.launchArguments = ["--demo", "--uitesting", "--home-legacy-fixture", "-appLanguage", "en", "-display.nightMode", "off"]
+        launchHome()
+        XCTAssertTrue(app.descendants(matching: .any)["homeWidget-old-clock"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.descendants(matching: .any)["homeWidget-old-camera"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["homeWidget-old-calendar"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["shortcut-migrated-demo-old-camera"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["shortcut-migrated-demo-old-calendar"].exists)
+        XCTAssertFalse(app.buttons["cameraWidget"].exists)
+        shot("Legacy camera and calendar preserved in right column")
+    }
+
+    func testHomeKitLockCoverAndSensorControlsUseTheirActualStates() {
+        app.terminate(); app.launchArguments += ["--homekit-coverage-fixture"]; launchHome()
+        XCTAssertTrue(app.buttons["accessory-Door lock"].label.contains("Locked"))
+        app.buttons["accessory-Door lock"].tap()
+        XCTAssertFalse(app.buttons["accessoryDetailPower"].exists)
+        let unlock = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND identifier ENDSWITH %@", "accessoryOption-", "-0")).firstMatch
+        XCTAssertTrue(unlock.waitForExistence(timeout: 4)); unlock.tap()
+        XCTAssertTrue(app.staticTexts["accessoryDetailState"].label.contains("Unlocked"))
+        shot("HomeKit lock explicit controls and current state with battery")
+        closePanel()
+        XCTAssertTrue(app.buttons["accessory-Door lock"].label.contains("Unlocked"))
+        app.buttons["accessory-Window covering"].tap()
+        let position = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "adjustment-")).firstMatch
+        XCTAssertTrue(position.waitForExistence(timeout: 4))
+        position.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.55)).press(forDuration: 0.1,
+            thenDragTo: position.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)))
+        XCTAssertTrue((position.value as? String)?.hasPrefix("80") == true)
+        let stop = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND identifier ENDSWITH %@", "accessoryOption-", "-1")).firstMatch
+        XCTAssertTrue(app.frame.contains(stop.frame)); stop.tap()
+        XCTAssertTrue(app.staticTexts["accessoryCommandNotice"].waitForExistence(timeout: 3))
+        shot("HomeKit window covering position and stop controls")
+        closePanel()
+        app.buttons["accessory-Motion sensor"].tap()
+        XCTAssertTrue(app.staticTexts["accessoryDetailState"].label.contains("No motion"))
+        XCTAssertFalse(app.buttons["accessoryDetailPower"].exists)
+        XCTAssertEqual(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "accessoryOption-")).count, 0)
+        shot("HomeKit sensor read-only state is not a switch")
+    }
+
+    func testHomeKitAirPurifierModeSecurityAndTypedValvePower() {
+        app.terminate(); app.launchArguments += ["--homekit-coverage-fixture"]; launchHome()
+        app.buttons["accessoryDetails-Air purifier"].tap()
+        let manual = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND identifier ENDSWITH %@", "accessoryOption-", "-0")).firstMatch
+        XCTAssertTrue(manual.waitForExistence(timeout: 4)); manual.tap()
+        XCTAssertEqual(manual.value as? String, "Selected")
+        shot("HomeKit purifier uses Active power fan speed and modes")
+        closePanel()
+        app.buttons["accessory-Security system"].tap()
+        let disarm = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND identifier ENDSWITH %@", "accessoryOption-", "-3")).firstMatch
+        XCTAssertTrue(disarm.waitForExistence(timeout: 4)); disarm.tap()
+        XCTAssertTrue(app.staticTexts["accessoryDetailState"].label.contains("Disarmed"))
+        shot("HomeKit security modes separate from alarms")
+        closePanel()
+        XCTAssertTrue(app.buttons["accessory-Valve"].label.contains("Off"))
+        app.buttons["accessory-Valve"].tap()
+        XCTAssertTrue(app.buttons["accessory-Valve"].label.contains("On"))
+        shot("HomeKit six device families on unchanged Home grid")
+    }
+
+    func testHomeKitChineseLargestTextControlsRemainScrollableAndComplete() {
+        app.terminate(); app.launchArguments += ["--homekit-coverage-fixture", "-appLanguage", "zh-Hans", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        launchHome()
+        let details = app.buttons["accessoryDetails-Air purifier"]
+        reveal(details); details.tap()
+        let modes = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "accessoryOption-")).firstMatch
+        reveal(modes)
+        XCTAssertTrue(modes.exists); XCTAssertTrue(app.frame.contains(modes.frame))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "净化")).firstMatch.exists)
+        shot("Chinese largest text HomeKit purifier controls")
+        closePanel(); XCUIDevice.shared.orientation = .landscapeRight; waitForLandscape()
+        let lock = app.buttons["accessory-Door lock"]; reveal(lock); lock.tap()
+        let unlock = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND identifier ENDSWITH %@", "accessoryOption-", "-0")).firstMatch
+        reveal(unlock)
+        XCTAssertTrue(unlock.label.contains("解锁")); XCTAssertTrue(app.frame.contains(unlock.frame))
+        shot("Chinese largest text HomeKit lock opposite landscape")
     }
 
 }

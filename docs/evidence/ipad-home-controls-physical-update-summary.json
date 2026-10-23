@@ -1,0 +1,38 @@
+{
+  "iteration": "Home controls11 physical update",
+  "checkedUTC": "2026-10-23T06:29:54.096566+00:00",
+  "destination": "Boom pad / iPad Pro11-inch (4th generation), iPadOS27.0.1 (24A446)",
+  "transport": "wired",
+  "source": {
+    "finalManifestSHA256": "3bf8fc390271e95165c8e9fddcc02f330dfe8c9a1f23c9a2d1eb40e58e84c951",
+    "frozenInputs": 56,
+    "mainCheckoutUnchanged": true
+  },
+  "build": {
+    "configuration": "Release",
+    "exitCode": 0,
+    "strictSignaturePassed": true,
+    "profileUnexpired": true,
+    "profileIncludesTarget": true,
+    "packageFilesUnchangedAfterInstall": 13
+  },
+  "installation": {
+    "installed": true,
+    "exactBundleAndURLReadbackMatch": true,
+    "ordinaryForegroundLaunchSucceeded": true,
+    "launchArguments": [
+      "--page",
+      "1"
+    ],
+    "independentPIDAndExecutableReadbackMatch": true,
+    "demoOrTestingFlags": false,
+    "appDataReset": false
+  },
+  "validation": {
+    "newXCTestOrXCUITestRun": false,
+    "physicalRenderedLayoutObserved": false,
+    "realHomeKitAndHomePodAudioAcceptance": false
+  },
+  "rawEvidenceDirectory": ".validation/local/home-controls-11/update",
+  "gitCommitOrPush": false
+}

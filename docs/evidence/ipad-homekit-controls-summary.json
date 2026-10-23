@@ -1,0 +1,150 @@
+{
+  "iteration": "HomeKit device types and controls12",
+  "date": "2026-10-23",
+  "userGoal": "Implement actual device forms/icons/status and controls, rather than coverage audit alone.",
+  "implemented": {
+    "publicServices": 46,
+    "publicCategories": 33,
+    "publicCharacteristics": 138,
+    "typedUserFacingDefinitions": 129,
+    "explicitBinaryManagementExclusions": 9,
+    "unknownPrimitiveReadOnlyFallback": true,
+    "onePrimaryCardPerService": true,
+    "rightOnlyCamerasIncludingAuxiliaries": true,
+    "existingLayoutPreserved": true,
+    "newChineseAndEnglishKeys": 344
+  },
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "sdk": "27.0",
+    "simulator": "Isolated iPad Pro11-inch (M5), iPadOS26.5 (23F73)"
+  },
+  "results": {
+    "focused": {
+      "totalTestCount": 49,
+      "passedTests": 48,
+      "failedTests": 1,
+      "skippedTests": 0,
+      "result": "Failed"
+    },
+    "repair": {
+      "totalTestCount": 46,
+      "passedTests": 46,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "result": "Passed"
+    },
+    "final-unit": {
+      "totalTestCount": 46,
+      "passedTests": 46,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "result": "Passed"
+    }
+  },
+  "sourceBoundary": {
+    "finalManifestSHA256": "d1f4e7c5e1f281a9b408dae0f458515777d2b8785d75a2bfb95b08d664e1737b",
+    "finalInputs": 62,
+    "primaryAndWorktreeMatch": true,
+    "allRunsNoSourceDrift": true,
+    "finalVsRepairChanges": [
+      "HomePad/HomeModel.swift",
+      "HomePadTests/HomeCapabilityTests.swift"
+    ],
+    "changeExplanation": "Family-specific primary reading/toggle policy plus its unit case; control view/catalog/fixture/UI test bytes unchanged after repair.",
+    "completeSchemeNotRerun": true,
+    "distinctPassedAcrossStages": 51,
+    "finalUnitPassed": 46,
+    "differentHomeUIJourneysPassed": 5,
+    "notASingleFullSuiteClaim": true
+  },
+  "firstFailure": {
+    "test": "HomeServiceCatalogTests/testAllMappedAndStateVariantSymbolsResolveToSystemImages",
+    "cause": "doorbell.fill is not an installed system symbol",
+    "fix": "video.doorbell.fill",
+    "retainedOriginalFailure": true
+  },
+  "screenshotsInspected": [
+    {
+      "path": "screenshots/homekit-six-device-families-on-unchanged-home-grid.png",
+      "sha256": "b2fdbcabbdbdb47ea3e640b504684e60eb0d89aa4ebb95d8b3f3f3bf02e762cb"
+    },
+    {
+      "path": "screenshots/homekit-lock-explicit-controls-and-current-state-with-battery.png",
+      "sha256": "c875a3a205001d54407387150859a0ece82584f87033a8ab6c92d88a785fb059"
+    },
+    {
+      "path": "screenshots/homekit-window-covering-position-and-stop-controls.png",
+      "sha256": "6ca774af3ff8114f1c6deef42991a357ff2e912345a0777cec62aa9d276b673c"
+    },
+    {
+      "path": "screenshots/homekit-sensor-read-only-state-is-not-a-switch.png",
+      "sha256": "37f06f77752d71a8ff405c13a5cc57f8e209929ef3e2bcd00bb1de4d85597078"
+    },
+    {
+      "path": "screenshots/chinese-largest-text-homekit-purifier-controls.png",
+      "sha256": "79318fb802b223195a1e8ba5c31f13db53ee4428a6e48322ec2a2fd7eeb5cfa3"
+    },
+    {
+      "path": "screenshots/chinese-largest-text-homekit-lock-opposite-landscape.png",
+      "sha256": "f3dfefd9478a5fd563c738eb53fde97336ad25c6c8594e4e24e24e22024e7d24"
+    },
+    {
+      "path": "repair-screenshots/homekit-window-covering-position-and-stop-controls.png",
+      "sha256": "7e6f37ef77fe9a8d6e6e1d071561672206d8592182fa962ed3747b166c6e93a0"
+    }
+  ],
+  "integration": {
+    "changed": [
+      "HomePad/AccessoryAdjustmentView.swift",
+      "HomePad/Dashboard.swift",
+      "HomePad/HomeCharacteristicCatalog.swift",
+      "HomePad/HomeKitValidation.swift",
+      "HomePad/HomeModel.swift",
+      "HomePad/HomeServiceCatalog.swift",
+      "HomePad/HomeTileFactory.swift",
+      "HomePad/Localizable.xcstrings",
+      "HomePad.xcodeproj/project.pbxproj",
+      "HomePadTests/HomeAccessoryPresentationTests.swift",
+      "HomePadTests/HomeCapabilityTests.swift",
+      "HomePadTests/HomeCharacteristicCatalogTests.swift",
+      "HomePadTests/HomePadTests.swift",
+      "HomePadTests/HomeServiceCatalogTests.swift",
+      "HomePadUITests/HomePadUITests.swift"
+    ],
+    "applied": true,
+    "sourceManifestMatches": 62,
+    "conflicts": false,
+    "previousHome11AndConcurrentBackgroundPreserved": true
+  },
+  "physical": {
+    "destination": "Boom pad / iPad Pro11-inch (4th generation)",
+    "runtime": "iPadOS27.0.1 (24A446)",
+    "transport": "wired",
+    "signedReleaseBuildExit": 0,
+    "signatureAndProfilePassed": true,
+    "installed": true,
+    "exactBundleURLAndProcessReadback": true,
+    "arguments": [
+      "--page",
+      "1"
+    ],
+    "demoOrTestOverride": false,
+    "signedPackageFilesUnchangedAfterInstall": 13,
+    "dataReset": false,
+    "actualHomeKitCommandOrAirPlayAudioAcceptance": false,
+    "deviceViewerOpened": false
+  },
+  "limitations": [
+    "No claim that every physical accessory, lock/door movement, camera controls, or AirPlay/HomePod output was hardware-tested.",
+    "Apple Home private icon artwork/selected style variants are not imported or synchronized.",
+    "Private management payloads, automation editing, camera recording/intercom, and independent HomePod queue remain outside scope.",
+    "Existing unrelated album and Display09 failures were not re-investigated."
+  ],
+  "git": {
+    "commit": false,
+    "push": false,
+    "publication": false
+  },
+  "localEvidenceDirectory": ".validation/local/homekit-controls-12"
+}

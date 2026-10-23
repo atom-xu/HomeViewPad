@@ -131,6 +131,14 @@ struct MusicPage: View {
                         Section { MusicValidationLabel().accessibilityIdentifier("musicSettingsValidationData") }
                     }
                     Section { connectionDetails }
+                    Section("Playback destination".tr) {
+                        HStack {
+                            Label("HomePod or AirPlay speaker".tr, systemImage: "homepod.fill")
+                            Spacer()
+                            AirPlayPicker(presentationChanged: airPlayPresentationChanged).frame(width: 44, height: 44)
+                                .accessibilityIdentifier("musicSettingsAirPlay")
+                        }
+                    }
                     Section { fileDetails }
                 }
                 .scrollContentBackground(.visible)

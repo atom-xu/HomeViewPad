@@ -81,6 +81,22 @@
         }
       }
     },
+    "0°": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0°"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0°"
+          }
+        }
+      }
+    },
     "1 minute": {
       "localizations": {
         "en": {
@@ -110,6 +126,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "1. 在 iPad「设置 → 辅助功能 → 引导式访问」中开启，并设置退出密码。"
+          }
+        }
+      }
+    },
+    "10 µm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 µm"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 微米"
           }
         }
       }
@@ -162,6 +194,22 @@
         }
       }
     },
+    "180°": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "180°"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "180°"
+          }
+        }
+      }
+    },
     "2 minutes": {
       "localizations": {
         "en": {
@@ -191,6 +239,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "2. 返回 HomePad，连按三次顶部按钮或主屏幕按钮，点「开始」。保留触摸和动作功能。"
+          }
+        }
+      }
+    },
+    "2.5 µm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2.5 µm"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2.5 微米"
+          }
+        }
+      }
+    },
+    "270°": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "270°"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "270°"
           }
         }
       }
@@ -256,6 +336,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "60 秒"
+          }
+        }
+      }
+    },
+    "90°": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90°"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90°"
           }
         }
       }
@@ -356,6 +452,38 @@
         }
       }
     },
+    "Absolute": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Absolute"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "绝对音量"
+          }
+        }
+      }
+    },
+    "Access": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Access"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "访问权限"
+          }
+        }
+      }
+    },
     "Access denied — enable Calendars in Settings": {
       "localizations": {
         "en": {
@@ -436,6 +564,22 @@
         }
       }
     },
+    "Accessory information": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessory information"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设备信息"
+          }
+        }
+      }
+    },
     "Accessory unavailable": {
       "localizations": {
         "en": {
@@ -448,6 +592,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "设备不可用"
+          }
+        }
+      }
+    },
+    "Action": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Action"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "操作"
+          }
+        }
+      }
+    },
+    "Active": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "运行中"
           }
         }
       }
@@ -564,6 +740,22 @@
         }
       }
     },
+    "Add favorite": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add favorite"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加常用"
+          }
+        }
+      }
+    },
     "Add shortcut": {
       "localizations": {
         "en": {
@@ -596,6 +788,22 @@
         }
       }
     },
+    "Add your favorite devices": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add your favorite devices"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加常用设备"
+          }
+        }
+      }
+    },
     "Add your first widget": {
       "localizations": {
         "en": {
@@ -624,6 +832,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "调整目标温度"
+          }
+        }
+      }
+    },
+    "Administrators only": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Administrators only"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅管理员"
           }
         }
       }
@@ -692,6 +916,166 @@
         }
       }
     },
+    "Air conditioner": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Air conditioner"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "空调"
+          }
+        }
+      }
+    },
+    "Air purifier": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Air purifier"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "空气净化器"
+          }
+        }
+      }
+    },
+    "Air purifier mode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Air purifier mode"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "净化模式"
+          }
+        }
+      }
+    },
+    "Air purifier state": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Air purifier state"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "净化器状态"
+          }
+        }
+      }
+    },
+    "Air quality": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Air quality"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "空气质量"
+          }
+        }
+      }
+    },
+    "AirPlay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirPlay"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirPlay"
+          }
+        }
+      }
+    },
+    "AirPort": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirPort"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirPort"
+          }
+        }
+      }
+    },
+    "Alarm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarm"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "警报"
+          }
+        }
+      }
+    },
+    "Alarm active": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarm active"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "警报中"
+          }
+        }
+      }
+    },
+    "Alarm triggered": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarm triggered"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已触发警报"
+          }
+        }
+      }
+    },
     "Albums": {
       "localizations": {
         "en": {
@@ -740,6 +1124,22 @@
         }
       }
     },
+    "All accessories": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All accessories"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全部设备"
+          }
+        }
+      }
+    },
     "All accessories and rooms": {
       "localizations": {
         "en": {
@@ -784,6 +1184,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "全天"
+          }
+        }
+      }
+    },
+    "All home members": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All home members"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有家庭成员"
           }
         }
       }
@@ -960,6 +1376,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "始终开启"
+          }
+        }
+      }
+    },
+    "Always shown": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Always shown"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "始终显示"
           }
         }
       }
@@ -1253,6 +1685,22 @@
         }
       }
     },
+    "Application": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Application"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "应用"
+          }
+        }
+      }
+    },
     "Apply": {
       "localizations": {
         "en": {
@@ -1281,6 +1729,102 @@
           "stringUnit": {
             "state": "translated",
             "value": "应用到设备"
+          }
+        }
+      }
+    },
+    "Arm: away": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arm: away"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "离家布防"
+          }
+        }
+      }
+    },
+    "Arm: home": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arm: home"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在家布防"
+          }
+        }
+      }
+    },
+    "Arm: night": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arm: night"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "夜间布防"
+          }
+        }
+      }
+    },
+    "Armed: away": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armed: away"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "离家布防中"
+          }
+        }
+      }
+    },
+    "Armed: home": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armed: home"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在家布防中"
+          }
+        }
+      }
+    },
+    "Armed: night": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armed: night"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "夜间布防中"
           }
         }
       }
@@ -1317,6 +1861,22 @@
         }
       }
     },
+    "Audio feedback": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio feedback"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "声音反馈"
+          }
+        }
+      }
+    },
     "Audio files": {
       "localizations": {
         "en": {
@@ -1349,6 +1909,38 @@
         }
       }
     },
+    "Audio receiver": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio receiver"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音频接收器"
+          }
+        }
+      }
+    },
+    "Audio system": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio system"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音响系统"
+          }
+        }
+      }
+    },
     "Auto standby": {
       "localizations": {
         "en": {
@@ -1361,6 +1953,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "自动待机"
+          }
+        }
+      }
+    },
+    "Auto-lock delay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-lock delay"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动锁定延时"
           }
         }
       }
@@ -1429,6 +2037,22 @@
         }
       }
     },
+    "Back": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "返回"
+          }
+        }
+      }
+    },
     "Back to playing source": {
       "localizations": {
         "en": {
@@ -1493,6 +2117,38 @@
         }
       }
     },
+    "Battery": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Battery"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "电池电量"
+          }
+        }
+      }
+    },
+    "Battery status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Battery status"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "电池状态"
+          }
+        }
+      }
+    },
     "Bedroom": {
       "localizations": {
         "en": {
@@ -1505,6 +2161,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "卧室"
+          }
+        }
+      }
+    },
+    "Blowing air": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blowing air"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "送风中"
+          }
+        }
+      }
+    },
+    "Bridge": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bridge"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "网桥"
+          }
+        }
+      }
+    },
+    "Bright": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bright"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "明亮"
           }
         }
       }
@@ -1569,6 +2273,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "浏览专辑"
+          }
+        }
+      }
+    },
+    "Button event": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Button event"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按键事件"
           }
         }
       }
@@ -1717,6 +2437,22 @@
         }
       }
     },
+    "Calibrated": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calibrated"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "校准"
+          }
+        }
+      }
+    },
     "Camera": {
       "localizations": {
         "en": {
@@ -1761,6 +2497,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "相机访问未开启，可前往 iPad 设置修改。"
+          }
+        }
+      }
+    },
+    "Camera controls": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Camera controls"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "摄像头控制"
           }
         }
       }
@@ -1909,6 +2661,22 @@
         }
       }
     },
+    "Camera stream": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Camera stream"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "摄像头视频流"
+          }
+        }
+      }
+    },
     "Camera unavailable": {
       "localizations": {
         "en": {
@@ -2021,6 +2789,134 @@
         }
       }
     },
+    "Carbon dioxide": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carbon dioxide"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二氧化碳"
+          }
+        }
+      }
+    },
+    "Carbon dioxide detected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carbon dioxide detected"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到二氧化碳超标"
+          }
+        }
+      }
+    },
+    "Carbon dioxide level": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carbon dioxide level"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二氧化碳浓度"
+          }
+        }
+      }
+    },
+    "Carbon dioxide sensor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carbon dioxide sensor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二氧化碳传感器"
+          }
+        }
+      }
+    },
+    "Carbon monoxide": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carbon monoxide"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一氧化碳"
+          }
+        }
+      }
+    },
+    "Carbon monoxide detected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carbon monoxide detected"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到一氧化碳"
+          }
+        }
+      }
+    },
+    "Carbon monoxide level": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carbon monoxide level"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一氧化碳浓度"
+          }
+        }
+      }
+    },
+    "Carbon monoxide sensor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carbon monoxide sensor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一氧化碳传感器"
+          }
+        }
+      }
+    },
     "Caribbean Day": {
       "localizations": {
         "en": {
@@ -2069,6 +2965,22 @@
         }
       }
     },
+    "Celsius": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Celsius"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "摄氏度"
+          }
+        }
+      }
+    },
     "Change aerial every": {
       "localizations": {
         "en": {
@@ -2081,6 +2993,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "更换航拍间隔"
+          }
+        }
+      }
+    },
+    "Charging": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charging"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "充电中"
           }
         }
       }
@@ -2774,6 +3702,86 @@
         }
       }
     },
+    "Clockwise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clockwise"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顺时针"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭"
+          }
+        }
+      }
+    },
+    "Closed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已关闭"
+          }
+        }
+      }
+    },
+    "Closed captions": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closed captions"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隐藏式字幕"
+          }
+        }
+      }
+    },
+    "Closing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭中"
+          }
+        }
+      }
+    },
     "Color temperature": {
       "localizations": {
         "en": {
@@ -2806,6 +3814,70 @@
         }
       }
     },
+    "Command sent. Waiting for the accessory state.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Command sent. Waiting for the accessory state."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "指令已发送，正在等待设备状态。"
+          }
+        }
+      }
+    },
+    "Component video": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Component video"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分量视频"
+          }
+        }
+      }
+    },
+    "Composite video": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Composite video"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复合视频"
+          }
+        }
+      }
+    },
+    "Computer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Computer"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "电脑"
+          }
+        }
+      }
+    },
     "Conditions Unknown": {
       "localizations": {
         "en": {
@@ -2818,6 +3890,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "天气未知"
+          }
+        }
+      }
+    },
+    "Configuration": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configuration"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置"
+          }
+        }
+      }
+    },
+    "Configured": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configured"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已配置"
+          }
+        }
+      }
+    },
+    "Configured name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configured name"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设置名称"
           }
         }
       }
@@ -2982,6 +4102,22 @@
         }
       }
     },
+    "Connected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已连接"
+          }
+        }
+      }
+    },
     "Connected to Apple Home": {
       "localizations": {
         "en": {
@@ -3094,6 +4230,38 @@
         }
       }
     },
+    "Contact": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contact"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开合状态"
+          }
+        }
+      }
+    },
+    "Contact sensor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contact sensor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门窗传感器"
+          }
+        }
+      }
+    },
     "Content & permissions": {
       "localizations": {
         "en": {
@@ -3158,6 +4326,54 @@
         }
       }
     },
+    "Cool": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cool"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "制冷"
+          }
+        }
+      }
+    },
+    "Cooling": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cooling"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "制冷中"
+          }
+        }
+      }
+    },
+    "Cooling threshold": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cooling threshold"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "制冷温度"
+          }
+        }
+      }
+    },
     "Couldn't refresh. Any previous reading is marked as cached. Check your connection and try again.": {
       "localizations": {
         "en": {
@@ -3170,6 +4386,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "无法刷新，已有天气已标记为缓存。请检查网络后重试。"
+          }
+        }
+      }
+    },
+    "Counterclockwise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Counterclockwise"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "逆时针"
           }
         }
       }
@@ -3250,6 +4482,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "当前位置"
+          }
+        }
+      }
+    },
+    "Custom 1": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom 1"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义 1"
+          }
+        }
+      }
+    },
+    "Custom 2": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom 2"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义 2"
+          }
+        }
+      }
+    },
+    "Custom 3": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom 3"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义 3"
           }
         }
       }
@@ -3350,6 +4630,38 @@
         }
       }
     },
+    "DVI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DVI"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DVI"
+          }
+        }
+      }
+    },
+    "Dark": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗色"
+          }
+        }
+      }
+    },
     "Darker screen at night": {
       "localizations": {
         "en": {
@@ -3362,6 +4674,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "夜间调暗画面"
+          }
+        }
+      }
+    },
+    "Decrease %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Decrease %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "降低%@"
           }
         }
       }
@@ -3431,6 +4759,70 @@
         }
       }
     },
+    "Dehumidifier": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dehumidifier"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "除湿机"
+          }
+        }
+      }
+    },
+    "Dehumidify": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dehumidify"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "除湿"
+          }
+        }
+      }
+    },
+    "Dehumidifying": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dehumidifying"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "除湿中"
+          }
+        }
+      }
+    },
+    "Dehumidifying threshold": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dehumidifying threshold"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "除湿湿度"
+          }
+        }
+      }
+    },
     "Delete": {
       "localizations": {
         "en": {
@@ -3443,6 +4835,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "删除"
+          }
+        }
+      }
+    },
+    "Demo action sent": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo action sent"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "演示操作已执行"
           }
         }
       }
@@ -3623,6 +5031,22 @@
         }
       }
     },
+    "Digital zoom": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Digital zoom"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数码变焦"
+          }
+        }
+      }
+    },
     "Disabled": {
       "localizations": {
         "en": {
@@ -3635,6 +5059,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "已关闭"
+          }
+        }
+      }
+    },
+    "Disarm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disarm"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "撤防"
+          }
+        }
+      }
+    },
+    "Disarmed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disarmed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已撤防"
           }
         }
       }
@@ -3799,6 +5255,118 @@
         }
       }
     },
+    "Door": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Door"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门"
+          }
+        }
+      }
+    },
+    "Door lock": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Door lock"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门锁"
+          }
+        }
+      }
+    },
+    "Door state": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Door state"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门状态"
+          }
+        }
+      }
+    },
+    "Doorbell": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doorbell"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门铃"
+          }
+        }
+      }
+    },
+    "Dots": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dots"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圆点"
+          }
+        }
+      }
+    },
+    "Double press": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double press"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双击"
+          }
+        }
+      }
+    },
+    "Down": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Down"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向下"
+          }
+        }
+      }
+    },
     "Download & use": {
       "localizations": {
         "en": {
@@ -3879,6 +5447,22 @@
         }
       }
     },
+    "Duration": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duration"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "持续时间"
+          }
+        }
+      }
+    },
     "Duration unavailable": {
       "localizations": {
         "en": {
@@ -3923,6 +5507,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "编辑"
+          }
+        }
+      }
+    },
+    "Edit Home": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Home"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑首页"
           }
         }
       }
@@ -4055,6 +5655,38 @@
         }
       }
     },
+    "Excellent": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excellent"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "优"
+          }
+        }
+      }
+    },
+    "Exit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出"
+          }
+        }
+      }
+    },
     "Explore demo": {
       "localizations": {
         "en": {
@@ -4135,6 +5767,70 @@
         }
       }
     },
+    "Fahrenheit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fahrenheit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "华氏度"
+          }
+        }
+      }
+    },
+    "Fair": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fair"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一般"
+          }
+        }
+      }
+    },
+    "Fan": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fan"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "风扇"
+          }
+        }
+      }
+    },
+    "Fan mode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fan mode"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "风扇模式"
+          }
+        }
+      }
+    },
     "Fan speed": {
       "localizations": {
         "en": {
@@ -4147,6 +5843,102 @@
           "stringUnit": {
             "state": "translated",
             "value": "风速"
+          }
+        }
+      }
+    },
+    "Fan state": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fan state"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "风扇状态"
+          }
+        }
+      }
+    },
+    "Fast forward": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fast forward"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快进"
+          }
+        }
+      }
+    },
+    "Faucet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faucet"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水龙头"
+          }
+        }
+      }
+    },
+    "Fault": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fault"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "故障状态"
+          }
+        }
+      }
+    },
+    "Fault detected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fault detected"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到故障"
+          }
+        }
+      }
+    },
+    "Favorite controls": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorite controls"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "常用控制"
           }
         }
       }
@@ -4215,6 +6007,54 @@
         }
       }
     },
+    "Filter": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "滤芯"
+          }
+        }
+      }
+    },
+    "Filter life": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter life"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "滤芯寿命"
+          }
+        }
+      }
+    },
+    "Filter maintenance": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter maintenance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "滤芯维护"
+          }
+        }
+      }
+    },
     "Finding your city once…": {
       "localizations": {
         "en": {
@@ -4259,6 +6099,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "正在查找你的家庭…"
+          }
+        }
+      }
+    },
+    "Firmware version": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Firmware version"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "固件版本"
           }
         }
       }
@@ -4455,6 +6311,38 @@
         }
       }
     },
+    "Game": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Game"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "游戏"
+          }
+        }
+      }
+    },
+    "Garage door": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garage door"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "车库门"
+          }
+        }
+      }
+    },
     "General": {
       "localizations": {
         "en": {
@@ -4467,6 +6355,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "通用"
+          }
+        }
+      }
+    },
+    "Good": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "良好"
           }
         }
       }
@@ -4584,6 +6488,38 @@
         }
       }
     },
+    "HDMI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HDMI"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HDMI"
+          }
+        }
+      }
+    },
+    "Hardware version": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hardware version"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "硬件版本"
+          }
+        }
+      }
+    },
     "Hawaii": {
       "localizations": {
         "en": {
@@ -4600,6 +6536,134 @@
         }
       }
     },
+    "Heat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heat"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "制热"
+          }
+        }
+      }
+    },
+    "Heater": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heater"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取暖器"
+          }
+        }
+      }
+    },
+    "Heater / cooler mode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heater / cooler mode"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冷暖模式"
+          }
+        }
+      }
+    },
+    "Heater / cooler state": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heater / cooler state"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冷暖设备状态"
+          }
+        }
+      }
+    },
+    "Heater and cooler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heater and cooler"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冷暖设备"
+          }
+        }
+      }
+    },
+    "Heating": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heating"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "制热中"
+          }
+        }
+      }
+    },
+    "Heating / cooling": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heating / cooling"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冷暖状态"
+          }
+        }
+      }
+    },
+    "Heating threshold": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heating threshold"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "制热温度"
+          }
+        }
+      }
+    },
     "Help": {
       "localizations": {
         "en": {
@@ -4612,6 +6676,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "帮助"
+          }
+        }
+      }
+    },
+    "Hidden": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已隐藏"
           }
         }
       }
@@ -4660,6 +6740,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "隐藏导航"
+          }
+        }
+      }
+    },
+    "Hide settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide settings"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隐藏设置"
           }
         }
       }
@@ -4856,6 +6952,22 @@
         }
       }
     },
+    "Home screen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home screen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主屏幕"
+          }
+        }
+      }
+    },
     "Home selection": {
       "localizations": {
         "en": {
@@ -5048,6 +7160,22 @@
         }
       }
     },
+    "HomePod or AirPlay speaker": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HomePod or AirPlay speaker"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HomePod 或 AirPlay 音箱"
+          }
+        }
+      }
+    },
     "Hong Kong": {
       "localizations": {
         "en": {
@@ -5060,6 +7188,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "香港"
+          }
+        }
+      }
+    },
+    "Horizontal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Horizontal"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水平"
+          }
+        }
+      }
+    },
+    "Horizontal tilt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Horizontal tilt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水平角度"
           }
         }
       }
@@ -5080,6 +7240,86 @@
         }
       }
     },
+    "Humidifier": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Humidifier"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加湿器"
+          }
+        }
+      }
+    },
+    "Humidifier and dehumidifier": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Humidifier and dehumidifier"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加湿除湿设备"
+          }
+        }
+      }
+    },
+    "Humidify": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Humidify"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加湿"
+          }
+        }
+      }
+    },
+    "Humidifying": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Humidifying"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加湿中"
+          }
+        }
+      }
+    },
+    "Humidifying threshold": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Humidifying threshold"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加湿湿度"
+          }
+        }
+      }
+    },
     "Humidity": {
       "localizations": {
         "en": {
@@ -5096,6 +7336,54 @@
         }
       }
     },
+    "Humidity control mode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Humidity control mode"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "湿度控制模式"
+          }
+        }
+      }
+    },
+    "Humidity control state": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Humidity control state"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "湿度控制状态"
+          }
+        }
+      }
+    },
+    "Humidity sensor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Humidity sensor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "湿度传感器"
+          }
+        }
+      }
+    },
     "Iceland": {
       "localizations": {
         "en": {
@@ -5108,6 +7396,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "冰岛"
+          }
+        }
+      }
+    },
+    "Identify": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Identify"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "识别设备"
+          }
+        }
+      }
+    },
+    "Identify accessory": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Identify accessory"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "识别此设备"
+          }
+        }
+      }
+    },
+    "Idle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Idle"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "待机"
           }
         }
       }
@@ -5144,6 +7480,86 @@
         }
       }
     },
+    "Illuminance": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Illuminance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "光照度"
+          }
+        }
+      }
+    },
+    "Image rotation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Image rotation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画面旋转"
+          }
+        }
+      }
+    },
+    "In use": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In use"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用中"
+          }
+        }
+      }
+    },
+    "Inactive": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inactive"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未运行"
+          }
+        }
+      }
+    },
+    "Increase %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Increase %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提高%@"
+          }
+        }
+      }
+    },
     "Increase target temperature": {
       "localizations": {
         "en": {
@@ -5172,6 +7588,230 @@
           "stringUnit": {
             "state": "translated",
             "value": "提高温度"
+          }
+        }
+      }
+    },
+    "Inferior": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inferior"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "较差"
+          }
+        }
+      }
+    },
+    "Info": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Info"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信息"
+          }
+        }
+      }
+    },
+    "Information": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Information"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信息"
+          }
+        }
+      }
+    },
+    "Input": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "输入源"
+          }
+        }
+      }
+    },
+    "Input device type": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input device type"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "输入设备类型"
+          }
+        }
+      }
+    },
+    "Input identifier": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input identifier"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "输入源编号"
+          }
+        }
+      }
+    },
+    "Input source": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input source"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "输入源"
+          }
+        }
+      }
+    },
+    "Input source type": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input source type"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "输入源类型"
+          }
+        }
+      }
+    },
+    "Input visibility": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input visibility"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "输入源显示"
+          }
+        }
+      }
+    },
+    "Input visibility state": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input visibility state"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "输入源显示状态"
+          }
+        }
+      }
+    },
+    "Interrupted": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Interrupted"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已中断"
+          }
+        }
+      }
+    },
+    "Irrigation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Irrigation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灌溉"
+          }
+        }
+      }
+    },
+    "Irrigation system": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Irrigation system"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灌溉系统"
+          }
+        }
+      }
+    },
+    "Jammed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jammed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卡住"
           }
         }
       }
@@ -5368,6 +8008,38 @@
         }
       }
     },
+    "Label index": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Label index"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签序号"
+          }
+        }
+      }
+    },
+    "Label style": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Label style"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签样式"
+          }
+        }
+      }
+    },
     "Language": {
       "localizations": {
         "en": {
@@ -5396,6 +8068,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "大"
+          }
+        }
+      }
+    },
+    "Last event": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last event"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最近事件"
+          }
+        }
+      }
+    },
+    "Last lock action": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last lock action"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最近门锁操作"
+          }
+        }
+      }
+    },
+    "Leak detected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leak detected"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到漏水"
+          }
+        }
+      }
+    },
+    "Leak sensor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leak sensor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "漏水传感器"
           }
         }
       }
@@ -5448,6 +8184,22 @@
         }
       }
     },
+    "Left": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向左"
+          }
+        }
+      }
+    },
     "Let iPad turn off the screen": {
       "localizations": {
         "en": {
@@ -5460,6 +8212,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "按 iPad 设置自动熄屏"
+          }
+        }
+      }
+    },
+    "Light": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯"
+          }
+        }
+      }
+    },
+    "Light sensor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light sensor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "光照传感器"
           }
         }
       }
@@ -5540,6 +8324,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "客厅"
+          }
+        }
+      }
+    },
+    "Loading": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载中"
           }
         }
       }
@@ -5864,6 +8664,166 @@
         }
       }
     },
+    "Lock": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "锁定"
+          }
+        }
+      }
+    },
+    "Lock settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock settings"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门锁设置"
+          }
+        }
+      }
+    },
+    "Lock state": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock state"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门锁状态"
+          }
+        }
+      }
+    },
+    "Locked": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已锁定"
+          }
+        }
+      }
+    },
+    "Locked automatically": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked automatically"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动锁定"
+          }
+        }
+      }
+    },
+    "Locked from inside": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked from inside"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "室内锁定"
+          }
+        }
+      }
+    },
+    "Locked from outside": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked from outside"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "室外锁定"
+          }
+        }
+      }
+    },
+    "Locked manually": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked manually"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手动锁定"
+          }
+        }
+      }
+    },
+    "Locked remotely": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked remotely"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程锁定"
+          }
+        }
+      }
+    },
+    "Locked with keypad": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked with keypad"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键盘锁定"
+          }
+        }
+      }
+    },
     "London": {
       "localizations": {
         "en": {
@@ -5876,6 +8836,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "伦敦"
+          }
+        }
+      }
+    },
+    "Long press": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Long press"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "长按"
+          }
+        }
+      }
+    },
+    "Low battery": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Low battery"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "电量低"
           }
         }
       }
@@ -5928,6 +8920,38 @@
         }
       }
     },
+    "Manual override": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual override"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手动运行"
+          }
+        }
+      }
+    },
+    "Manufacturer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manufacturer"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "制造商"
+          }
+        }
+      }
+    },
     "Medium": {
       "localizations": {
         "en": {
@@ -5940,6 +8964,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "中"
+          }
+        }
+      }
+    },
+    "Menu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menu"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "菜单"
+          }
+        }
+      }
+    },
+    "Microphone": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Microphone"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "麦克风"
+          }
+        }
+      }
+    },
+    "Mirror image": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mirror image"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "镜像画面"
+          }
+        }
+      }
+    },
+    "Mode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mode"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模式"
+          }
+        }
+      }
+    },
+    "Model": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "型号"
           }
         }
       }
@@ -6024,6 +9128,22 @@
         }
       }
     },
+    "Motion detected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Motion detected"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到移动"
+          }
+        }
+      }
+    },
     "Motion detection failed. Reopen the app to retry.": {
       "localizations": {
         "en": {
@@ -6052,6 +9172,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "移动感知已暂停。"
+          }
+        }
+      }
+    },
+    "Motion sensor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Motion sensor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移动传感器"
           }
         }
       }
@@ -6120,6 +9256,22 @@
         }
       }
     },
+    "Move to top": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to top"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移到最前"
+          }
+        }
+      }
+    },
     "Movement": {
       "localizations": {
         "en": {
@@ -6132,6 +9284,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "移动"
+          }
+        }
+      }
+    },
+    "Movie": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movie"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "电影"
           }
         }
       }
@@ -6292,6 +9460,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "音乐来源"
+          }
+        }
+      }
+    },
+    "Mute": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mute"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "静音"
+          }
+        }
+      }
+    },
+    "Muted": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muted"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已静音"
           }
         }
       }
@@ -6472,6 +9672,22 @@
         }
       }
     },
+    "Next track": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next track"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一首"
+          }
+        }
+      }
+    },
     "Next widget": {
       "localizations": {
         "en": {
@@ -6484,6 +9700,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "下一个组件"
+          }
+        }
+      }
+    },
+    "Night": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Night"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "夜间"
           }
         }
       }
@@ -6584,6 +9816,38 @@
         }
       }
     },
+    "Night vision": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Night vision"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "夜视"
+          }
+        }
+      }
+    },
+    "Nitrogen dioxide": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nitrogen dioxide"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二氧化氮"
+          }
+        }
+      }
+    },
     "No activity for": {
       "localizations": {
         "en": {
@@ -6596,6 +9860,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "没有操作或移动后"
+          }
+        }
+      }
+    },
+    "No alarm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No alarm"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无警报"
           }
         }
       }
@@ -6664,6 +9944,54 @@
         }
       }
     },
+    "No controls exposed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No controls exposed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设备未提供控制项"
+          }
+        }
+      }
+    },
+    "No event received": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No event received"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚未收到事件"
+          }
+        }
+      }
+    },
+    "No fault": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No fault"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无故障"
+          }
+        }
+      }
+    },
     "No home found. Add a home in Apple's Home app, then connect again.": {
       "localizations": {
         "en": {
@@ -6692,6 +10020,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "尚未选择家庭"
+          }
+        }
+      }
+    },
+    "No leak": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No leak"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未检测到漏水"
+          }
+        }
+      }
+    },
+    "No motion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No motion"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未检测到移动"
           }
         }
       }
@@ -6760,6 +10120,22 @@
         }
       }
     },
+    "No presence": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No presence"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未检测到有人"
+          }
+        }
+      }
+    },
     "No proximity sensor is exposed on this device.": {
       "localizations": {
         "en": {
@@ -6788,6 +10164,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "暂无场景"
+          }
+        }
+      }
+    },
+    "No smoke": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No smoke"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未检测到烟雾"
           }
         }
       }
@@ -6824,6 +10216,22 @@
         }
       }
     },
+    "No tampering": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No tampering"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未检测到拆动"
+          }
+        }
+      }
+    },
     "No video is being captured. Connect Apple Home to view a compatible camera.": {
       "localizations": {
         "en": {
@@ -6840,6 +10248,22 @@
         }
       }
     },
+    "None": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "None"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无"
+          }
+        }
+      }
+    },
     "None in this room": {
       "localizations": {
         "en": {
@@ -6852,6 +10276,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "此房间暂无设备"
+          }
+        }
+      }
+    },
+    "Normal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Normal"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正常"
           }
         }
       }
@@ -6904,6 +10344,38 @@
         }
       }
     },
+    "Not charging": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not charging"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未充电"
+          }
+        }
+      }
+    },
+    "Not configured": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not configured"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未配置"
+          }
+        }
+      }
+    },
     "Not connected": {
       "localizations": {
         "en": {
@@ -6916,6 +10388,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "尚未连接"
+          }
+        }
+      }
+    },
+    "Not in use": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not in use"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未使用"
+          }
+        }
+      }
+    },
+    "Not jammed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not jammed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未卡住"
+          }
+        }
+      }
+    },
+    "Not ready": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not ready"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未就绪"
+          }
+        }
+      }
+    },
+    "Not rechargeable": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not rechargeable"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不可充电"
           }
         }
       }
@@ -6949,6 +10485,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "未运行"
+          }
+        }
+      }
+    },
+    "Not scheduled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not scheduled"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未设置计划"
           }
         }
       }
@@ -7001,6 +10553,22 @@
         }
       }
     },
+    "Numbers": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Numbers"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数字"
+          }
+        }
+      }
+    },
     "OK": {
       "localizations": {
         "en": {
@@ -7013,6 +10581,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "好"
+          }
+        }
+      }
+    },
+    "Obstructed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obstructed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "受阻"
+          }
+        }
+      }
+    },
+    "Obstruction": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obstruction"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "障碍物"
+          }
+        }
+      }
+    },
+    "Occupancy sensor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Occupancy sensor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "人体存在传感器"
           }
         }
       }
@@ -7173,6 +10789,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "只调暗待机画面，轻点返回后恢复原亮度。定时使用 iPad 的本地时间。"
+          }
+        }
+      }
+    },
+    "Open": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开"
           }
         }
       }
@@ -7369,6 +11001,38 @@
         }
       }
     },
+    "Opening": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opening"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开中"
+          }
+        }
+      }
+    },
+    "Optical zoom": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optical zoom"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "光学变焦"
+          }
+        }
+      }
+    },
     "Optional front-camera detection checks only whether a face is present during standby. It does not identify people, record video, save images or send them anywhere. The system camera indicator stays visible while detecting. Detection pauses for sheets and when the app leaves the foreground.": {
       "localizations": {
         "en": {
@@ -7417,6 +11081,54 @@
         }
       }
     },
+    "Oscillating": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oscillating"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "摆动中"
+          }
+        }
+      }
+    },
+    "Oscillation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oscillation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "摆动"
+          }
+        }
+      }
+    },
+    "Other": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其他"
+          }
+        }
+      }
+    },
     "Outdated · tap to refresh": {
       "localizations": {
         "en": {
@@ -7429,6 +11141,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "数据已过期，轻点刷新"
+          }
+        }
+      }
+    },
+    "Outlet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outlet"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插座"
+          }
+        }
+      }
+    },
+    "Outlet usage": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outlet usage"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插座使用状态"
           }
         }
       }
@@ -7465,6 +11209,54 @@
         }
       }
     },
+    "Ozone": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ozone"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "臭氧"
+          }
+        }
+      }
+    },
+    "PM10": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PM10"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PM10"
+          }
+        }
+      }
+    },
+    "PM2.5": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PM2.5"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PM2.5"
+          }
+        }
+      }
+    },
     "Pages": {
       "localizations": {
         "en": {
@@ -7477,6 +11269,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "页面"
+          }
+        }
+      }
+    },
+    "Particle density": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Particle density"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "颗粒物浓度"
+          }
+        }
+      }
+    },
+    "Particle size": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Particle size"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "颗粒物粒径"
           }
         }
       }
@@ -7541,6 +11365,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "已暂停"
+          }
+        }
+      }
+    },
+    "Peak carbon dioxide": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peak carbon dioxide"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二氧化碳峰值"
+          }
+        }
+      }
+    },
+    "Peak carbon monoxide": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peak carbon monoxide"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一氧化碳峰值"
           }
         }
       }
@@ -7945,6 +11801,22 @@
         }
       }
     },
+    "Physical controls": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Physical controls"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "实体按键"
+          }
+        }
+      }
+    },
     "Pick up fresh bread": {
       "localizations": {
         "en": {
@@ -7957,6 +11829,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "买新鲜面包"
+          }
+        }
+      }
+    },
+    "Picture mode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture mode"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画面模式"
           }
         }
       }
@@ -7989,6 +11877,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "播放歌曲 %@"
+          }
+        }
+      }
+    },
+    "Play / pause": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play / pause"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "播放／暂停"
           }
         }
       }
@@ -8057,6 +11961,38 @@
         }
       }
     },
+    "Playback": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "播放"
+          }
+        }
+      }
+    },
+    "Playback destination": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback destination"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "播放到"
+          }
+        }
+      }
+    },
     "Playback interrupted. Tap Play to resume.": {
       "localizations": {
         "en": {
@@ -8101,6 +12037,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "待播清单"
+          }
+        }
+      }
+    },
+    "Playback state": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback state"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "播放状态"
           }
         }
       }
@@ -8169,6 +12121,54 @@
         }
       }
     },
+    "Poor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "差"
+          }
+        }
+      }
+    },
+    "Position": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Position"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开合程度"
+          }
+        }
+      }
+    },
+    "Position control": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Position control"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开合控制"
+          }
+        }
+      }
+    },
     "Power": {
       "localizations": {
         "en": {
@@ -8181,6 +12181,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "电源"
+          }
+        }
+      }
+    },
+    "Presence": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presence"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "人体存在"
+          }
+        }
+      }
+    },
+    "Presence detected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presence detected"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到有人"
           }
         }
       }
@@ -8313,6 +12345,22 @@
         }
       }
     },
+    "Previous track": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous track"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上一首"
+          }
+        }
+      }
+    },
     "Previous widget": {
       "localizations": {
         "en": {
@@ -8341,6 +12389,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "隐私"
+          }
+        }
+      }
+    },
+    "Program": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Program"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "运行计划"
+          }
+        }
+      }
+    },
+    "Programmable button": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Programmable button"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可编程按键"
+          }
+        }
+      }
+    },
+    "Programmable switch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Programmable switch"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可编程开关"
           }
         }
       }
@@ -8425,6 +12521,22 @@
         }
       }
     },
+    "Purifying": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purifying"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "净化中"
+          }
+        }
+      }
+    },
     "Quick access": {
       "localizations": {
         "en": {
@@ -8473,6 +12585,22 @@
         }
       }
     },
+    "Range extender": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Range extender"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信号扩展器"
+          }
+        }
+      }
+    },
     "Read-only sensor": {
       "localizations": {
         "en": {
@@ -8485,6 +12613,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "只读传感器"
+          }
+        }
+      }
+    },
+    "Reading": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "读数"
           }
         }
       }
@@ -8505,6 +12649,22 @@
         }
       }
     },
+    "Ready": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已就绪"
+          }
+        }
+      }
+    },
     "Ready · use AirPlay to choose a speaker": {
       "localizations": {
         "en": {
@@ -8517,6 +12677,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "已就绪，通过 AirPlay 选择扬声器"
+          }
+        }
+      }
+    },
+    "Recording": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recording"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录制设备"
           }
         }
       }
@@ -8649,6 +12825,22 @@
         }
       }
     },
+    "Refresh status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh status"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新状态"
+          }
+        }
+      }
+    },
     "Refresh weather": {
       "localizations": {
         "en": {
@@ -8665,6 +12857,54 @@
         }
       }
     },
+    "Relative": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relative"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "相对音量"
+          }
+        }
+      }
+    },
+    "Relative with current value": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relative with current value"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "相对调节并显示音量"
+          }
+        }
+      }
+    },
+    "Remaining duration": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining duration"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "剩余时间"
+          }
+        }
+      }
+    },
     "Reminders · %@": {
       "localizations": {
         "en": {
@@ -8677,6 +12917,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "提醒事项 · %@"
+          }
+        }
+      }
+    },
+    "Remote": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遥控"
           }
         }
       }
@@ -8761,6 +13017,54 @@
         }
       }
     },
+    "Replace filter": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replace filter"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要更换滤芯"
+          }
+        }
+      }
+    },
+    "Replacement not needed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replacement not needed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无需更换滤芯"
+          }
+        }
+      }
+    },
+    "Reset filter": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset filter"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重置滤芯寿命"
+          }
+        }
+      }
+    },
     "Rest iPad upright. Standby starts after no touch or movement.": {
       "localizations": {
         "en": {
@@ -8805,6 +13109,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "恢复默认组件"
+          }
+        }
+      }
+    },
+    "Restore default widgets?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore default widgets?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复默认布局？"
+          }
+        }
+      }
+    },
+    "Restore layout": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore layout"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复布局"
           }
         }
       }
@@ -8905,6 +13241,54 @@
         }
       }
     },
+    "Rewind": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rewind"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快退"
+          }
+        }
+      }
+    },
+    "Right": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向右"
+          }
+        }
+      }
+    },
+    "Right column": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right column"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右侧卡片"
+          }
+        }
+      }
+    },
     "Rooms": {
       "localizations": {
         "en": {
@@ -8933,6 +13317,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "每 30 秒轮播"
+          }
+        }
+      }
+    },
+    "Rotation direction": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rotation direction"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "旋转方向"
+          }
+        }
+      }
+    },
+    "Router status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Router status"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "路由器状态"
           }
         }
       }
@@ -8998,6 +13414,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "正在运行"
+          }
+        }
+      }
+    },
+    "S-Video": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "S-Video"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "S 端子"
           }
         }
       }
@@ -9290,6 +13722,70 @@
         }
       }
     },
+    "Security mode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Security mode"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安防模式"
+          }
+        }
+      }
+    },
+    "Security state": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Security state"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安防状态"
+          }
+        }
+      }
+    },
+    "Security system": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Security system"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安防系统"
+          }
+        }
+      }
+    },
+    "Select": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择"
+          }
+        }
+      }
+    },
     "Selected": {
       "localizations": {
         "en": {
@@ -9386,6 +13882,22 @@
         }
       }
     },
+    "Sensor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "传感器"
+          }
+        }
+      }
+    },
     "Sensor status": {
       "localizations": {
         "en": {
@@ -9402,6 +13914,54 @@
         }
       }
     },
+    "Serial number": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serial number"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "序列号"
+          }
+        }
+      }
+    },
+    "Service label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Service label"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "服务标签"
+          }
+        }
+      }
+    },
+    "Service status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Service status"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "服务状态"
+          }
+        }
+      }
+    },
     "Set to %@": {
       "localizations": {
         "en": {
@@ -9414,6 +13974,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "设为 %@"
+          }
+        }
+      }
+    },
+    "Set-top box": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set-top box"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "机顶盒"
+          }
+        }
+      }
+    },
+    "Setting": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setting"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设置项"
           }
         }
       }
@@ -9510,6 +14102,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "快捷功能"
+          }
+        }
+      }
+    },
+    "Show": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示"
           }
         }
       }
@@ -9626,6 +14234,22 @@
         }
       }
     },
+    "Show settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show settings"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示设置"
+          }
+        }
+      }
+    },
     "Show the next 7 days from this iPad’s calendars on HomePad. Anyone looking at this screen can see event titles.": {
       "localizations": {
         "en": {
@@ -9658,6 +14282,38 @@
         }
       }
     },
+    "Shower": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shower"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "淋浴"
+          }
+        }
+      }
+    },
+    "Shower head": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shower head"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "淋浴喷头"
+          }
+        }
+      }
+    },
     "Showing up to 100 library songs.": {
       "localizations": {
         "en": {
@@ -9686,6 +14342,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "最多显示 25 条搜索结果。"
+          }
+        }
+      }
+    },
+    "Shown": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shown"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已显示"
           }
         }
       }
@@ -9802,6 +14474,86 @@
         }
       }
     },
+    "Single press": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Single press"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "单击"
+          }
+        }
+      }
+    },
+    "Size": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Size"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尺寸"
+          }
+        }
+      }
+    },
+    "Slat orientation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slat orientation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "百叶方向"
+          }
+        }
+      }
+    },
+    "Slat state": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slat state"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "百叶状态"
+          }
+        }
+      }
+    },
+    "Slats": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slats"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "百叶"
+          }
+        }
+      }
+    },
     "Small": {
       "localizations": {
         "en": {
@@ -9814,6 +14566,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "小"
+          }
+        }
+      }
+    },
+    "Smoke": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smoke"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "烟雾"
+          }
+        }
+      }
+    },
+    "Smoke detected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smoke detected"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到烟雾"
+          }
+        }
+      }
+    },
+    "Smoke sensor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smoke sensor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "烟雾传感器"
           }
         }
       }
@@ -9898,6 +14698,22 @@
         }
       }
     },
+    "Software version": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Software version"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "软件版本"
+          }
+        }
+      }
+    },
     "Song or artist": {
       "localizations": {
         "en": {
@@ -9926,6 +14742,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "歌曲"
+          }
+        }
+      }
+    },
+    "Sound on": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sound on"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "声音开启"
+          }
+        }
+      }
+    },
+    "Speaker": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speaker"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扬声器"
+          }
+        }
+      }
+    },
+    "Sport": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sport"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "运动"
+          }
+        }
+      }
+    },
+    "Sprinkler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprinkler"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "喷淋"
+          }
+        }
+      }
+    },
+    "Standard": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标准"
           }
         }
       }
@@ -10010,6 +14906,38 @@
         }
       }
     },
+    "State": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "State"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "状态"
+          }
+        }
+      }
+    },
+    "Stationary": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stationary"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "静止"
+          }
+        }
+      }
+    },
     "Status": {
       "localizations": {
         "en": {
@@ -10022,6 +14950,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "状态"
+          }
+        }
+      }
+    },
+    "Stop": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停止"
+          }
+        }
+      }
+    },
+    "Stopped": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stopped"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已停止"
           }
         }
       }
@@ -10042,6 +15002,38 @@
         }
       }
     },
+    "Streaming device": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Streaming device"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "流媒体设备"
+          }
+        }
+      }
+    },
+    "Sulphur dioxide": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sulphur dioxide"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二氧化硫"
+          }
+        }
+      }
+    },
     "Swipe to browse · tap a cover to choose songs": {
       "localizations": {
         "en": {
@@ -10058,6 +15050,22 @@
         }
       }
     },
+    "Switch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开关"
+          }
+        }
+      }
+    },
     "Switch page": {
       "localizations": {
         "en": {
@@ -10070,6 +15078,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "切换页面"
+          }
+        }
+      }
+    },
+    "Switch state": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch state"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开关状态"
           }
         }
       }
@@ -10166,6 +15190,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "测试数据 · 航拍"
+          }
+        }
+      }
+    },
+    "TV": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TV"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "电视"
+          }
+        }
+      }
+    },
+    "TV settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TV settings"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "电视设置"
+          }
+        }
+      }
+    },
+    "Tamper": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tamper"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "防拆状态"
+          }
+        }
+      }
+    },
+    "Tampering detected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tampering detected"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到拆动"
           }
         }
       }
@@ -10298,6 +15386,54 @@
         }
       }
     },
+    "Target horizontal tilt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target horizontal tilt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目标水平角度"
+          }
+        }
+      }
+    },
+    "Target humidity": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target humidity"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目标湿度"
+          }
+        }
+      }
+    },
+    "Target position": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target position"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目标开合程度"
+          }
+        }
+      }
+    },
     "Target temperature": {
       "localizations": {
         "en": {
@@ -10310,6 +15446,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "目标温度"
+          }
+        }
+      }
+    },
+    "Target tilt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target tilt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目标角度"
+          }
+        }
+      }
+    },
+    "Target vertical tilt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target vertical tilt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目标垂直角度"
           }
         }
       }
@@ -10362,6 +15530,22 @@
         }
       }
     },
+    "Television": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Television"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "电视"
+          }
+        }
+      }
+    },
     "Temperature": {
       "localizations": {
         "en": {
@@ -10374,6 +15558,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "温度"
+          }
+        }
+      }
+    },
+    "Temperature sensor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temperature sensor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "温度传感器"
+          }
+        }
+      }
+    },
+    "Temperature unit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temperature unit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "温度单位"
           }
         }
       }
@@ -10826,6 +16042,22 @@
         }
       }
     },
+    "This replaces the left column layout. Right column cards are kept.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This replaces the left column layout. Right column cards are kept."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这会替换左侧控件布局，右侧卡片会保留。"
+          }
+        }
+      }
+    },
     "This wallpaper could not be loaded or saved. Your previous background is unchanged. Please try another photo.": {
       "localizations": {
         "en": {
@@ -10870,6 +16102,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "雷暴"
+          }
+        }
+      }
+    },
+    "Tilt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tilt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "角度"
           }
         }
       }
@@ -10955,6 +16203,22 @@
         }
       }
     },
+    "Tuner": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tuner"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "调谐器"
+          }
+        }
+      }
+    },
     "Turn off": {
       "localizations": {
         "en": {
@@ -11031,6 +16295,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "类型"
+          }
+        }
+      }
+    },
+    "USB": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USB"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USB"
           }
         }
       }
@@ -11307,6 +16587,134 @@
         }
       }
     },
+    "Unknown": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未知"
+          }
+        }
+      }
+    },
+    "Unlock": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "解锁"
+          }
+        }
+      }
+    },
+    "Unlocked": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlocked"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未锁定"
+          }
+        }
+      }
+    },
+    "Unlocked from inside": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlocked from inside"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "室内解锁"
+          }
+        }
+      }
+    },
+    "Unlocked from outside": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlocked from outside"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "室外解锁"
+          }
+        }
+      }
+    },
+    "Unlocked manually": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlocked manually"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手动解锁"
+          }
+        }
+      }
+    },
+    "Unlocked remotely": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlocked remotely"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程解锁"
+          }
+        }
+      }
+    },
+    "Unlocked with keypad": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlocked with keypad"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键盘解锁"
+          }
+        }
+      }
+    },
     "Untitled album": {
       "localizations": {
         "en": {
@@ -11355,6 +16763,22 @@
         }
       }
     },
+    "Up": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Up"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向上"
+          }
+        }
+      }
+    },
     "Updating accessory…": {
       "localizations": {
         "en": {
@@ -11399,6 +16823,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "正在更新…"
+          }
+        }
+      }
+    },
+    "Usage": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usage"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用状态"
           }
         }
       }
@@ -11723,6 +17163,118 @@
         }
       }
     },
+    "Valve": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valve"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "阀门"
+          }
+        }
+      }
+    },
+    "Valve type": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valve type"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "阀门类型"
+          }
+        }
+      }
+    },
+    "Ventilation fan": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ventilation fan"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通风风扇"
+          }
+        }
+      }
+    },
+    "Version": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "版本"
+          }
+        }
+      }
+    },
+    "Vertical": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vertical"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "垂直"
+          }
+        }
+      }
+    },
+    "Vertical tilt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vertical tilt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "垂直角度"
+          }
+        }
+      }
+    },
+    "Video doorbell": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Video doorbell"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可视门铃"
+          }
+        }
+      }
+    },
     "View album": {
       "localizations": {
         "en": {
@@ -11755,6 +17307,38 @@
         }
       }
     },
+    "Vivid": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vivid"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鲜艳"
+          }
+        }
+      }
+    },
+    "Volatile organic compounds": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volatile organic compounds"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "挥发性有机物"
+          }
+        }
+      }
+    },
     "Volume": {
       "localizations": {
         "en": {
@@ -11767,6 +17351,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "音量"
+          }
+        }
+      }
+    },
+    "Volume buttons": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volume buttons"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音量按键"
+          }
+        }
+      }
+    },
+    "Volume control": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volume control"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音量控制方式"
+          }
+        }
+      }
+    },
+    "Volume down": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volume down"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "减小音量"
+          }
+        }
+      }
+    },
+    "Volume up": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volume up"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "增大音量"
           }
         }
       }
@@ -11979,6 +17627,38 @@
         }
       }
     },
+    "Water leak": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Water leak"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "漏水"
+          }
+        }
+      }
+    },
+    "Water level": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Water level"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水位"
+          }
+        }
+      }
+    },
     "Weather": {
       "localizations": {
         "en": {
@@ -12171,6 +17851,38 @@
         }
       }
     },
+    "Wi-Fi router": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi-Fi router"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi-Fi 路由器"
+          }
+        }
+      }
+    },
+    "Wi-Fi satellite": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi-Fi satellite"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi-Fi 扩展节点"
+          }
+        }
+      }
+    },
     "Widget": {
       "localizations": {
         "en": {
@@ -12215,6 +17927,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "组件位置"
+          }
+        }
+      }
+    },
+    "Window": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Window"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窗"
+          }
+        }
+      }
+    },
+    "Window covering": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Window covering"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窗帘"
           }
         }
       }

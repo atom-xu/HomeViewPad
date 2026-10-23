@@ -15,7 +15,11 @@ enum HomeWidgetSize: String, Codable, CaseIterable, Identifiable {
     var rows: Int { self == .large ? 2 : 1 }
 }
 
-enum HomeWidgetKind: String, Codable { case stack, accessory, scene, camera, clock, agenda }
+enum HomeWidgetKind: String, Codable {
+    case stack, accessory, scene, camera, clock, agenda
+    // Keep decoding older layouts; these kinds now belong to the right column.
+    var rightColumnOnly: Bool { self == .camera || self == .agenda }
+}
 
 struct HomeWidgetConfiguration: Codable, Identifiable, Equatable {
     var id: String
@@ -75,4 +79,17 @@ enum HomePowerState: String, Equatable {
         }
     }
     var title: String { rawValue.tr }
+}
+
+enum HomeFavoriteMigration {
+    static func migrated(_ widgets: [HomeWidgetConfiguration], shortcuts: [HomeShortcut], homeID: String) -> (widgets: [HomeWidgetConfiguration], shortcuts: [HomeShortcut]) {
+        var result = shortcuts
+        for widget in widgets where widget.kind.rightColumnOnly {
+            let id = "migrated-\(homeID)-\(widget.id)"
+            guard !result.contains(where: { $0.id == id }) else { continue }
+            result.append(HomeShortcut(id: id, kind: widget.kind == .camera ? .camera : .agenda,
+                                       target: widget.target, homeID: widget.kind == .camera ? homeID : nil))
+        }
+        return (widgets.filter { !$0.kind.rightColumnOnly }, result)
+    }
 }

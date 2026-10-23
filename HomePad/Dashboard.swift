@@ -12,7 +12,7 @@ private struct MusicWidgetFrameKey: PreferenceKey {
     static func reduce(value: inout [CGRect], nextValue: () -> [CGRect]) { value += nextValue() }
 }
 
-enum Panel: String, Identifiable { case settings, music, agenda, camera, controls, photos, accessory, weather, shortcut, widget; var id: String { rawValue } }
+enum Panel: String, Identifiable { case settings, music, agenda, camera, controls, photos, accessory, weather, shortcut, widget, layout; var id: String { rawValue } }
 enum HomeShortcutKind: String, CaseIterable, Codable, Identifiable {
     case camera, scene, agenda, music, controls
     var id: String { rawValue }
@@ -87,7 +87,9 @@ struct Dashboard: View {
     @State private var homeRefreshOnResume = false
     @State private var musicWidgetFrames: [CGRect] = []
     @State private var wallpaperItem: PhotosPickerItem?
-    @State private var selectedRoom = "All rooms"
+    @State private var pendingWidgetReveal: String?
+    @State private var highlightedWidget: String?
+    @State private var restoreConfirmation = false
     @State private var editingShortcutID: String?
     @State private var shortcutKind = HomeShortcutKind.camera
     @State private var shortcutTarget = ""
@@ -227,12 +229,19 @@ struct Dashboard: View {
         }
         .sheet(item: $panel) { panel in
             NavigationStack {
-                panelContent(panel).navigationTitle(panel.rawValue.capitalized.tr)
+                panelContent(panel).navigationTitle(panel == .accessory ? "" : panel == .layout ? "Edit Home".tr : panel.rawValue.capitalized.tr)
+                    .navigationBarTitleDisplayMode(.inline)
                     .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done".tr) { self.panel = nil }.accessibilityIdentifier("dismissPanel") } }
-            }.foregroundStyle(Color.primary)
+            }.foregroundStyle(panel == .accessory ? Color.white : Color.primary)
+                .preferredColorScheme(panel == .accessory ? .dark : nil)
+                .presentationBackground(panel == .accessory ? .ultraThinMaterial : .regularMaterial)
                 .modifier(SceneConfirmation(name: $sceneToRun, enabled: true, demo: home.demo, run: home.runScene))
                 .overlay { if phase == .background || (phase == .inactive && !airPlayPresented) { paper.ignoresSafeArea().overlay { Text("HomePad".tr).font(.largeTitle) } } }.presentationDetents([.large])
         }
+        .confirmationDialog("Restore default widgets?".tr, isPresented: Binding(get: { restoreConfirmation && panel == nil }, set: { restoreConfirmation = $0 }), titleVisibility: .visible) {
+            Button("Restore layout".tr, role: .destructive) { saveWidgets(HomeWidgetConfiguration.defaults); widgetOffsets = Array(repeating: 0, count: 6) }.accessibilityIdentifier("confirmRestoreWidgets")
+            Button("Cancel".tr, role: .cancel) {}
+        } message: { Text("This replaces the left column layout. Right column cards are kept.".tr) }
         .modifier(SceneConfirmation(name: $sceneToRun, enabled: panel == nil, demo: home.demo, run: home.runScene))
         .alert("Home needs attention".tr, isPresented: Binding(get: { home.error != nil }, set: { if !$0 { home.error = nil } })) { Button("OK".tr) { home.error = nil } } message: { Text(home.error ?? "") }
     }
@@ -243,10 +252,28 @@ struct Dashboard: View {
             didConfigure = true
             if ProcessInfo.processInfo.arguments.contains("--uitesting") { tealWallpaper = false }
             photos.restore()
+            migrateLegacyWidgets()
             if ProcessInfo.processInfo.arguments.contains("--demo") {
                 let args = ProcessInfo.processInfo.arguments
                 let state = args.firstIndex(of: "--state").flatMap { $0 + 1 < args.count ? HomeStatus(rawValue: args[$0 + 1]) : nil } ?? .ready
                 home.startDemo(state: state)
+                #if DEBUG
+                if args.contains("--uitesting") && args.contains("--home-legacy-fixture") {
+                    widgetLayoutsData = #"{"demo":[{"id":"old-camera","kind":"camera","target":"first-available","size":"large"},{"id":"old-calendar","kind":"agenda","size":"small"},{"id":"old-clock","kind":"clock","size":"small"}]}"#
+                    shortcutsData = ""
+                    migrateLegacyWidgets()
+                }
+                if args.contains("--uitesting") && args.contains("--home-controls-fixture") {
+                    home.configureControlValidation(offline: args.contains("--home-offline-fixture"))
+                }
+                if args.contains("--uitesting") && args.contains("--homekit-coverage-fixture") {
+                    home.configureHomeKitValidation()
+                    let favorites = HomeAccessoryPresentation.primaryTiles(home.tiles).prefix(6).map {
+                        HomeWidgetConfiguration(id: "fixture-\($0.name)", kind: .accessory, target: $0.id.uuidString, size: .small)
+                    }
+                    saveWidgets(favorites)
+                }
+                #endif
             } else if !ProcessInfo.processInfo.arguments.contains("--fresh") {
                 let mode = UserDefaults.standard.string(forKey: "homeMode")
                 if mode == "demo" { home.startDemo() } else if mode == "live" { home.connect() }
@@ -329,10 +356,11 @@ struct Dashboard: View {
             updateCameraAccess()
             if !home.demo && value != .ready && panel == .camera { panel = nil; selectedCamera = nil }
         }
-        .onChange(of: home.homeName) { _, _ in selectedRoom = "All rooms"; widgetOffsets = Array(repeating: 0, count: 6) }
+        .onChange(of: widgetNamespace) { _, _ in migrateLegacyWidgets(); pendingWidgetReveal = nil; highlightedWidget = nil }
+        .onChange(of: home.homeName) { _, _ in widgetOffsets = Array(repeating: 0, count: 6) }
         .onChange(of: home.selectedHomeID) { _, _ in
             cameraSnapshots.clear(); updateCameraAccess()
-            selectedRoom = "All rooms"; widgetOffsets = Array(repeating: 0, count: 6); selectedAccessoryID = nil; sceneToRun = nil
+            widgetOffsets = Array(repeating: 0, count: 6); selectedAccessoryID = nil; sceneToRun = nil
             if panel == .accessory || panel == .camera { panel = nil; selectedCamera = nil }
         }
         .onChange(of: music.state) { _, state in
@@ -344,7 +372,7 @@ struct Dashboard: View {
             musicNavigation.reset()
             weather.setDemo(value); music.setDemo(musicDemo); agendaStore.setDemo(value)
             if value { weatherLocation.stop() }
-            selectedRoom = "All rooms"; widgetOffsets = Array(repeating: 0, count: 6); audio.stop()
+            widgetOffsets = Array(repeating: 0, count: 6); audio.stop()
         }
     }
     private var photoPresentationVisible: Bool {
@@ -358,10 +386,10 @@ struct Dashboard: View {
         cameraSnapshots.setAccess(allowed: phase == .active && !home.demo && home.status == .ready)
     }
     private func activate(_ tile: HomeTile) {
-        if tile.kind == .power { home.toggle(tile) }
-        else if tile.writable { selectedAccessoryID = tile.id; panel = .accessory }
+        if let target = home.quickToggle(for: tile) { home.toggle(target) }
+        else { selectedAccessoryID = tile.id; panel = .accessory }
     }
-    private var visibleTiles: [HomeTile] { HomeAccessoryPresentation.primaryTiles(home.tiles).filter { selectedRoom == "All rooms" || $0.room == selectedRoom } }
+    private var visibleTiles: [HomeTile] { HomeAccessoryPresentation.primaryTiles(home.tiles) }
     private var navigationAnimation: Animation { reduceMotion ? .easeOut(duration: 0.15) : .spring(duration: 0.46, bounce: 0.06) }
     private var pageTransition: AnyTransition {
         if reduceMotion { return .opacity }
@@ -390,7 +418,7 @@ struct Dashboard: View {
         switch page {
         case .home:
             ZStack {
-                if home.status == .ready { homeDashboard(size: size) }
+                if home.keepsDashboard { homeDashboard(size: size) }
                 else {
                     VStack(spacing: 0) {
                         dashboardHeader(title: "Home", subtitle: "Your home, at a glance")
@@ -437,14 +465,6 @@ struct Dashboard: View {
             }
             Spacer(minLength: 8)
             if home.demo { demoMark }
-            if page == .home && home.status == .ready && !dynamicTypeSize.isAccessibilitySize {
-                Menu {
-                    ForEach(["All rooms"] + Array(Set(home.tiles.map(\.room))).sorted(), id: \.self) { room in
-                        Button(room == "All rooms" || home.demo ? room.tr : room) { selectedRoom = room; widgetOffsets = Array(repeating: 0, count: 6) }
-                    }
-                } label: { Label(selectedRoom == "All rooms" || home.demo ? selectedRoom.tr : selectedRoom, systemImage: "door.left.hand.open").font(.callout.weight(.medium)).padding(.horizontal, 14).padding(.vertical, 12).background(.white.opacity(0.07), in: Capsule()) }
-                .accessibilityIdentifier("homeRoomPicker")
-            }
             showNavigationButton
         }.padding(.horizontal, 28).padding(.top, 24).padding(.bottom, 20).frame(height: dynamicTypeSize.isAccessibilitySize ? 180 : 104)
             .accessibilityElement(children: .contain).accessibilityIdentifier("dashboardHeader")
@@ -486,6 +506,13 @@ struct Dashboard: View {
                 }.scrollIndicators(.hidden)
                     .accessibilityIdentifier("homePortraitScroll")
             }
+            VStack {
+                Spacer()
+                HStack { Spacer(); Button { panel = .layout } label: {
+                    Image(systemName: "slider.horizontal.3").font(.system(size: 18, weight: .medium)).frame(width: 44, height: 44)
+                        .modifier(GlassSurface(radius: 22))
+                }.buttonStyle(.plain).accessibilityLabel("Edit Home".tr).accessibilityIdentifier("editHomeLayout") }
+            }.padding(24)
             if home.demo {
                 demoMark.padding(.leading, dynamicTypeSize.isAccessibilitySize ? 24 : (size.width - contentWidth) / 2 + 12)
                     .padding(.top, 24).allowsHitTesting(false)
@@ -580,7 +607,7 @@ struct Dashboard: View {
         navigationAction("Albums", "photo.stack", id: "wallAlbums", horizontal: horizontal) { panel = .photos }
         navigationAction("Add widget", "plus.square", id: "addHomeWidget", horizontal: horizontal) { panel = .widget }
         navigationAction("Add shortcut", "plus", id: "addShortcut", horizontal: horizontal) { editShortcut(nil) }
-        navigationAction("Restore default widgets", "arrow.counterclockwise", id: "restoreHomeWidgets", horizontal: horizontal) { saveWidgets(HomeWidgetConfiguration.defaults) }
+        navigationAction("Restore default widgets", "arrow.counterclockwise", id: "restoreHomeWidgets", horizontal: horizontal) { restoreConfirmation = true }
         navigationAction("Hide", horizontal ? "chevron.down" : "chevron.right", id: "hideNavigation", horizontal: horizontal) {}
     }
     private func navigationAction(_ title: String, _ symbol: String, id: String, horizontal: Bool, action: @escaping () -> Void) -> some View {
@@ -594,28 +621,20 @@ struct Dashboard: View {
             }.contentShape(Rectangle())
         }.accessibilityLabel(title.tr).accessibilityIdentifier(id)
     }
-    private var roomChoices: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                ForEach(["All rooms"] + Array(Set(home.tiles.map(\.room))).sorted(), id: \.self) { room in
-                    Button {
-                        withAnimation(navigationAnimation) { selectedRoom = room; widgetOffsets = Array(repeating: 0, count: 6) }
-                    } label: {
-                        Text(room == "All rooms" || home.demo ? room.tr : room).padding(.horizontal, 16).padding(.vertical, 12)
-                            .background(selectedRoom == room ? Color.purple.opacity(0.15) : Color.gray.opacity(0.08), in: Capsule())
-                    }.buttonStyle(.plain).accessibilityIdentifier("room-\(room)")
-                        .accessibilityAddTraits(selectedRoom == room ? .isSelected : [])
-                }
-            }
-        }
-    }
     private var widgetNamespace: String { home.demo ? "demo" : home.selectedHomeID?.uuidString ?? "unconnected" }
     private var widgetLayouts: [String: [HomeWidgetConfiguration]] {
         guard let data = widgetLayoutsData.data(using: .utf8),
               let decoded = try? JSONDecoder().decode([String: [HomeWidgetConfiguration]].self, from: data) else { return [:] }
         return decoded
     }
-    private var configuredWidgets: [HomeWidgetConfiguration] { widgetLayouts[widgetNamespace] ?? HomeWidgetConfiguration.defaults }
+    private var storedWidgets: [HomeWidgetConfiguration] { widgetLayouts[widgetNamespace] ?? HomeWidgetConfiguration.defaults }
+    private var configuredWidgets: [HomeWidgetConfiguration] { storedWidgets.filter { !$0.kind.rightColumnOnly } }
+    private func migrateLegacyWidgets() {
+        guard storedWidgets.contains(where: { $0.kind.rightColumnOnly }) else { return }
+        let result = HomeFavoriteMigration.migrated(storedWidgets, shortcuts: shortcuts, homeID: widgetNamespace)
+        saveShortcuts(result.shortcuts) // Save the destination first; stable IDs make retries idempotent.
+        saveWidgets(result.widgets)
+    }
     private func saveWidgets(_ widgets: [HomeWidgetConfiguration]) {
         var layouts = widgetLayouts
         layouts[widgetNamespace] = widgets
@@ -629,13 +648,21 @@ struct Dashboard: View {
         let placements = HomeWidgetPacking.place(configuredWidgets, columns: columns)
         let rowCount = placements.map { $0.row + $0.rows }.max() ?? 0
         let contentHeight = max(1, CGFloat(rowCount) * (cellHeight + gap) - gap)
-        return ScrollView {
+        return ScrollViewReader { proxy in
+          ScrollView {
             if configuredWidgets.isEmpty {
                 Button { panel = .widget } label: {
                     boardTile("plus", "Add widget", "Choose controls for this home".tr, width: width, height: cellHeight)
                 }.buttonStyle(.plain).accessibilityIdentifier("addHomeWidget")
             } else {
                 ZStack(alignment: .topLeading) {
+                    // Real layout anchors avoid ScrollViewReader resolving an
+                    // offset card at the canvas origin instead of its visible row.
+                    VStack(spacing: gap) {
+                        ForEach(0..<max(1, rowCount), id: \.self) { row in
+                            Color.clear.frame(height: cellHeight).id("home-row-\(row)")
+                        }
+                    }.allowsHitTesting(false).accessibilityHidden(true)
                     ForEach(placements, id: \.id) { placement in
                         if let configuration = configuredWidgets.first(where: { $0.id == placement.id }) {
                             let widgetWidth = CGFloat(placement.columns) * (cellWidth + gap) - gap
@@ -651,6 +678,8 @@ struct Dashboard: View {
                                 .accessibilityElement(children: .contain)
                                 .accessibilityIdentifier("homeWidget-\(configuration.id)")
                                 .accessibilityValue(configuration.size.title)
+                                .overlay { RoundedRectangle(cornerRadius: 30).stroke(highlightedWidget == configuration.id ? Color.white : .clear, lineWidth: 3).allowsHitTesting(false) }
+                                .id(configuration.id)
                                 .offset(x: CGFloat(placement.column) * (cellWidth + gap), y: CGFloat(placement.row) * (cellHeight + gap))
                         }
                     }
@@ -660,6 +689,23 @@ struct Dashboard: View {
         }.scrollIndicators(.hidden).scrollDisabled(!scrolls)
             .frame(width: width, height: height ?? max(cellHeight, contentHeight))
             .accessibilityElement(children: .contain).accessibilityIdentifier("homeControlGrid")
+          .onChange(of: pendingWidgetReveal) { _, id in
+              guard let id else { return }
+              Task { @MainActor in
+                  try? await Task.sleep(for: .milliseconds(350))
+                  guard pendingWidgetReveal == id, configuredWidgets.contains(where: { $0.id == id }) else { return }
+                  let target = HomeWidgetPacking.place(configuredWidgets, columns: columns).first { $0.id == id }
+                  if let target {
+                      withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.25)) {
+                          proxy.scrollTo("home-row-\(target.row + target.rows - 1)", anchor: .bottom); highlightedWidget = id
+                      }
+                  }
+                  pendingWidgetReveal = nil
+                  try? await Task.sleep(for: .seconds(2))
+                  if highlightedWidget == id { highlightedWidget = nil }
+              }
+          }
+        }
     }
     private func widgetMenuPreview(_ configuration: HomeWidgetConfiguration, width: CGFloat, height: CGFloat) -> some View {
         // Lift an independent full card, not the ScrollView's clipped source
@@ -697,7 +743,7 @@ struct Dashboard: View {
         }
         Divider()
         Button("Add widget".tr) { panel = .widget }.accessibilityIdentifier("addHomeWidget")
-        Button("Restore default widgets".tr) { saveWidgets(HomeWidgetConfiguration.defaults) }.accessibilityIdentifier("restoreHomeWidgets")
+        Button("Restore default widgets".tr) { restoreConfirmation = true }.accessibilityIdentifier("restoreHomeWidgets")
         Divider()
         Button("Remove widget".tr, role: .destructive) { saveWidgets(configuredWidgets.filter { $0.id != configuration.id }) }
             .accessibilityIdentifier("removeWidget-\(configuration.id)")
@@ -705,7 +751,7 @@ struct Dashboard: View {
     private func resizeWidget(_ id: String, size: HomeWidgetSize) {
         var widgets = configuredWidgets
         guard let index = widgets.firstIndex(where: { $0.id == id }) else { return }
-        widgets[index].size = size; saveWidgets(widgets)
+        widgets[index].size = size; saveWidgets(widgets); pendingWidgetReveal = id
     }
     @ViewBuilder private func configuredWidget(_ configuration: HomeWidgetConfiguration, width: CGFloat, height: CGFloat) -> some View {
         if configuration.kind == .stack, let raw = configuration.target, let slot = Int(raw), (0..<6).contains(slot) {
@@ -713,7 +759,7 @@ struct Dashboard: View {
         } else {
             switch configuration.kind {
             case .accessory:
-                if let tile = home.tiles.first(where: { $0.id.uuidString == configuration.target }) {
+                if let tile = home.tiles.first(where: { $0.id.uuidString == configuration.target }), !tile.rightColumnOnly {
                     if tile.isClimate { climateTile(tile, width: width, height: height) }
                     else { accessoryWidget(tile, width: width, height: height) }
                 } else { boardTile("exclamationmark.triangle", "Accessory unavailable", "Choose again for this home".tr, width: width, height: height) }
@@ -736,24 +782,84 @@ struct Dashboard: View {
         }
     }
     private func addWidget(_ kind: HomeWidgetKind, target: String? = nil) {
+        guard !kind.rightColumnOnly else { return }
         let widget = HomeWidgetConfiguration(id: UUID().uuidString, kind: kind, target: target, size: .small)
-        saveWidgets(configuredWidgets + [widget]); panel = nil
+        saveWidgets(configuredWidgets + [widget]); panel = nil; pendingWidgetReveal = widget.id
+    }
+    private func widgetName(_ widget: HomeWidgetConfiguration) -> String {
+        switch widget.kind {
+        case .accessory: return home.tiles.first { $0.id.uuidString == widget.target }.map { home.demo ? $0.name.tr : $0.name } ?? "Accessory unavailable".tr
+        case .scene: return widget.target.map { home.demo ? $0.tr : $0 } ?? "Scene".tr
+        case .clock: return "Clock".tr
+        case .camera: return "Camera".tr
+        case .agenda: return "Today".tr
+        case .stack:
+            let titles = ["Climate", "Clock", "Add favorite", "Scenes", "Devices", "Lights"]
+            return titles[min(5, max(0, Int(widget.target ?? "") ?? 0))].tr
+        }
+    }
+    private var homeLayoutEditor: some View {
+        List {
+            Section("Favorite controls".tr) {
+                ForEach(configuredWidgets) { widget in
+                    HStack {
+                        Text(widgetName(widget)).frame(maxWidth: .infinity, alignment: .leading)
+                        Menu {
+                            ForEach(HomeWidgetSize.allCases) { size in
+                                Button(size.title) { resizeWidget(widget.id, size: size) }
+                            }
+                            Divider()
+                            Button("Move to top".tr) {
+                                var items = configuredWidgets
+                                if let index = items.firstIndex(where: { $0.id == widget.id }) {
+                                    items.insert(items.remove(at: index), at: 0); saveWidgets(items); pendingWidgetReveal = widget.id
+                                }
+                            }.accessibilityIdentifier("moveFirst-\(widget.id)")
+                        } label: { Text(widget.size.title) }
+                            .accessibilityLabel("\(widgetName(widget)), \("Size".tr)")
+                            .accessibilityIdentifier("layoutSize-\(widget.id)")
+                    }.accessibilityElement(children: .contain).accessibilityIdentifier("layoutRow-\(widget.id)")
+                }.onMove { source, destination in
+                    var items = configuredWidgets; items.move(fromOffsets: source, toOffset: destination); saveWidgets(items)
+                }.onDelete { offsets in
+                    var items = configuredWidgets; items.remove(atOffsets: offsets); saveWidgets(items)
+                }
+                Button { panel = .widget } label: { Label("Add favorite".tr, systemImage: "plus") }
+                    .accessibilityIdentifier("layoutAddFavorite").moveDisabled(true).deleteDisabled(true)
+            }
+            Section("Right column".tr) {
+                ForEach(shortcuts) { shortcut in
+                    Button { editShortcut(shortcut) } label: {
+                        Label(shortcut.name.isEmpty ? shortcut.kind.title : shortcut.name, systemImage: shortcut.kind.symbol)
+                    }.accessibilityIdentifier("layoutShortcut-\(shortcut.id)")
+                }.onMove { source, destination in
+                    var items = shortcuts; items.move(fromOffsets: source, toOffset: destination); saveShortcuts(items)
+                }.onDelete { offsets in
+                    var items = shortcuts; items.remove(atOffsets: offsets); saveShortcuts(items)
+                }
+                Button { editShortcut(nil) } label: { Label("Add shortcut".tr, systemImage: "plus") }
+                    .accessibilityIdentifier("layoutAddShortcut").moveDisabled(true).deleteDisabled(true)
+            }
+            Section {
+                Button("Restore default widgets".tr, role: .destructive) { restoreConfirmation = true }
+                    .accessibilityIdentifier("layoutRestoreDefaults")
+            }
+        }.environment(\.editMode, .constant(.active))
+            .accessibilityIdentifier("homeLayoutEditor")
+            .confirmationDialog("Restore default widgets?".tr, isPresented: Binding(get: { restoreConfirmation && panel == .layout }, set: { restoreConfirmation = $0 }), titleVisibility: .visible) {
+                Button("Restore layout".tr, role: .destructive) { saveWidgets(HomeWidgetConfiguration.defaults); widgetOffsets = Array(repeating: 0, count: 6) }.accessibilityIdentifier("confirmRestoreWidgets")
+                Button("Cancel".tr, role: .cancel) {}
+            } message: { Text("This replaces the left column layout. Right column cards are kept.".tr) }
     }
     private var widgetPicker: some View {
         List {
             Section("Display widgets".tr) {
-                Button { addWidget(.camera) } label: { Label("Camera".tr, systemImage: "video") }.accessibilityIdentifier("widgetOption-camera")
-                ForEach(home.cameras, id: \.uniqueIdentifier) { camera in
-                    Button { addWidget(.camera, target: camera.uniqueIdentifier.uuidString) } label: { Label(camera.name, systemImage: "video.fill") }
-                        .accessibilityIdentifier("widgetOption-camera-\(camera.uniqueIdentifier.uuidString)")
-                }
                 Button { addWidget(.clock) } label: { Label("Clock".tr, systemImage: "clock") }.accessibilityIdentifier("widgetOption-clock")
-                Button { addWidget(.agenda) } label: { Label("Today".tr, systemImage: "calendar") }.accessibilityIdentifier("widgetOption-agenda")
             }
             Section("Accessories".tr) {
                 ForEach(HomeAccessoryPresentation.primaryTiles(home.tiles)) { tile in
                     Button { addWidget(.accessory, target: tile.id.uuidString) } label: {
-                        Label("\(home.demo ? tile.name.tr : tile.name) · \(home.demo ? tile.room.tr : tile.room)", systemImage: tile.symbol)
+                        Label("\(home.demo ? tile.name.tr : tile.name) · \(home.demo ? tile.room.tr : tile.room)", systemImage: tile.displaySymbol)
                     }.accessibilityIdentifier("widgetOption-accessory-\(tile.id.uuidString)")
                 }
                 if home.tiles.isEmpty { Text("No supported accessories in this home.".tr).foregroundStyle(.secondary) }
@@ -830,6 +936,7 @@ struct Dashboard: View {
     }
     private func camera(for shortcut: HomeShortcut) -> HMAccessory? {
         guard shortcutBelongsToCurrentHome(shortcut), let target = shortcut.target else { return nil }
+        if target == "first-available" { return home.cameras.first }
         return home.cameras.first { $0.uniqueIdentifier.uuidString == target }
     }
     private func shortcutDetail(_ shortcut: HomeShortcut) -> String {
@@ -837,12 +944,12 @@ struct Dashboard: View {
         switch shortcut.kind {
         case .camera:
             if home.demo { return "Demo · no live feed".tr }
-            if let target = shortcut.target { return home.cameras.first(where: { $0.uniqueIdentifier.uuidString == target })?.name ?? "Camera unavailable".tr }
-            return home.cameras.first?.name ?? "No camera".tr
+            if shortcut.target != nil { return camera(for: shortcut)?.name ?? "Camera unavailable".tr }
+            return "Choose a camera".tr
         case .scene: return shortcut.target.map { home.demo ? $0.tr : $0 } ?? "Choose a scene".tr
         case .agenda: return showPersonal ? (agendaStore.eventLines.first ?? agendaStore.statusTitle) : "Calendar is hidden".tr
         case .music: return "Apple Music and AirPlay".tr
-        case .controls: return "All accessories and rooms".tr
+        case .controls: return "All accessories".tr
         }
     }
     private func runShortcut(_ shortcut: HomeShortcut) {
@@ -850,8 +957,8 @@ struct Dashboard: View {
         switch shortcut.kind {
         case .camera:
             guard shortcutBelongsToCurrentHome(shortcut) else { editShortcut(shortcut); return }
-            selectedCamera = shortcutBelongsToCurrentHome(shortcut) ? (shortcut.target == nil ? home.cameras.first : home.cameras.first { $0.uniqueIdentifier.uuidString == shortcut.target }) : nil
-            panel = .camera
+            guard shortcut.target != nil else { editShortcut(shortcut); return }
+            selectedCamera = camera(for: shortcut); panel = .camera
         case .scene:
             if shortcutBelongsToCurrentHome(shortcut), let target = shortcut.target, home.scenes.contains(target) { sceneToRun = target }
         case .agenda: panel = .agenda
@@ -875,7 +982,8 @@ struct Dashboard: View {
                 }.accessibilityIdentifier("shortcutKind")
                 if shortcutKind == .camera {
                     Picker("Camera".tr, selection: $shortcutTarget) {
-                        Text("First available camera".tr).tag("")
+                        Text("Choose a camera".tr).tag("")
+                        Text("First available camera".tr).tag("first-available")
                         ForEach(home.cameras, id: \.uniqueIdentifier) { camera in Text(camera.name).tag(camera.uniqueIdentifier.uuidString) }
                     }.accessibilityIdentifier("shortcutCameraPicker")
                     if home.cameras.isEmpty { Text((home.demo ? "Demo mode has no camera stream. Connect Apple Home to choose a camera." : "No compatible HomeKit cameras in this home.").tr).font(.footnote).foregroundStyle(.secondary) }
@@ -898,7 +1006,7 @@ struct Dashboard: View {
                     if let index = saved.firstIndex(where: { $0.id == shortcut.id }) { saved[index] = shortcut } else { saved.append(shortcut) }
                     saveShortcuts(saved); panel = nil
                 }.disabled((shortcutKind == .scene && !home.scenes.contains(shortcutTarget)) ||
-                           (shortcutKind == .camera && !shortcutTarget.isEmpty && !home.cameras.contains { $0.uniqueIdentifier.uuidString == shortcutTarget }))
+                           (shortcutKind == .camera && !shortcutTarget.isEmpty && shortcutTarget != "first-available" && !home.cameras.contains { $0.uniqueIdentifier.uuidString == shortcutTarget }))
                     .accessibilityIdentifier("saveShortcut")
                 Button("Cancel".tr, role: .cancel) { panel = nil }.accessibilityIdentifier("cancelShortcut")
             }
@@ -929,36 +1037,40 @@ struct Dashboard: View {
                 boardTile("sun.max.fill", name, home.notice?.contains(name) == true ? "Done".tr : "Scene".tr, width: width, height: height, localizeTitle: home.demo)
             }.disabled(home.sceneBusy).accessibilityIdentifier("scene-\(name)")
         case .accessory(let id):
-            if let tile = visibleTiles.first(where: { $0.id == id }) { accessoryWidget(tile, width: width, height: height) }
+            if let tile = home.tiles.first(where: { $0.id == id }), !tile.rightColumnOnly { accessoryWidget(tile, width: width, height: height) }
         case .camera:
             Button { selectedCamera = home.cameras.first; panel = .camera } label: {
                 boardTile("video.fill", "Camera", home.demo ? "Demo · no live feed".tr : (home.cameras.first?.name ?? "No camera".tr), width: width, height: height)
             }.accessibilityIdentifier("cameraWidget")
         case .agenda:
             Button { panel = .agenda } label: { boardTile("calendar", "Today", agendaStore.eventLines.first ?? agendaStore.statusTitle, width: width, height: height) }.accessibilityIdentifier("agendaWidget")
+        case .empty(let slot) where slot == 2:
+            Button { panel = .widget } label: { boardTile("plus", "Add favorite", "", width: width, height: height) }
+                .buttonStyle(.plain).accessibilityIdentifier("addHomeFavorite")
         case .empty(let slot):
             let title = slot == 0 ? "Climate" : slot == 3 ? "Scenes" : slot == 5 ? "Lights" : "Devices"
             boardTile(slot == 0 ? "thermometer.medium" : slot == 3 ? "sun.max.fill" : slot == 5 ? "lightbulb.fill" : "switch.2",
-                      title, "None in this room".tr, width: width, height: height)
+                      title, "Add your favorite devices".tr, width: width, height: height)
 
         }
     }
     private func accessoryWidget(_ tile: HomeTile, width: CGFloat, height: CGFloat) -> some View {
         let power = HomePowerState.resolve(value: tile.value, reachable: tile.reachable)
         let state = tile.kind == .power ? power.title : (tile.reachable ? tile.value.tr : "Offline".tr)
-        let active = tile.kind == .power && power == .on
+        let toggle = home.quickToggle(for: tile)
+        let active = tile.hasActiveState || tile.needsAttention
         let size = min(width, height)
         return VStack(spacing: 0) {
             Button { activate(tile) } label: {
-                Image(systemName: tile.symbol).font(.system(size: min(64, max(48, size * 0.22)), weight: .regular))
-                    .foregroundStyle(active ? Color.yellow : Color.white.opacity(0.7))
+                Image(systemName: tile.displaySymbol).font(.system(size: min(64, max(48, size * 0.22)), weight: .regular))
+                    .foregroundStyle(tile.needsAttention ? Color.orange : active ? Color.yellow : Color.white.opacity(0.7))
                     .frame(maxWidth: .infinity, maxHeight: .infinity).contentShape(Rectangle())
                     .overlay { if home.busy.contains(tile.id) { ProgressView().tint(.white) } }
             }.buttonStyle(.plain)
-                .disabled(tile.kind == .power && (!tile.writable || !tile.reachable || home.busy.contains(tile.id)))
+                .disabled(toggle.map { !home.canToggle($0) } ?? false)
                 .accessibilityLabel("\(home.demo ? tile.name.tr : tile.name), \(home.demo ? tile.room.tr : tile.room), \(home.busy.contains(tile.id) ? "Updating…".tr : state)")
                 .accessibilityValue(home.busy.contains(tile.id) ? "Updating…".tr : state)
-                .accessibilityHint((tile.kind == .power ? "Tap to switch. Tap the name for more controls." : "Open accessory controls").tr)
+                .accessibilityHint((toggle != nil ? "Tap to switch. Tap the name for more controls." : "Open accessory controls").tr)
                 .accessibilityIdentifier("accessory-\(tile.name)")
             Button { selectedAccessoryID = tile.id; panel = .accessory } label: {
                 VStack(spacing: 8) {
@@ -983,12 +1095,15 @@ struct Dashboard: View {
             Spacer(minLength: 12)
             HStack(spacing: 12) {
                 temperatureArrow(tile, increase: false, size: 44)
-                VStack(spacing: 8) {
-                    Text(tile.kind == .targetTemperature ? "Thermostat".tr : (home.demo ? tile.name.tr : tile.name))
-                        .font(widgetLabelFont(size, weight: .semibold))
-                    Text("\(home.demo ? tile.room.tr : tile.room) · \(tile.value.tr)")
-                        .font(widgetLabelFont(size)).opacity(0.9)
-                }.multilineTextAlignment(.center).lineLimit(2).minimumScaleFactor(0.7).frame(maxWidth: .infinity)
+                Button { selectedAccessoryID = tile.id; panel = .accessory } label: {
+                    VStack(spacing: 8) {
+                        Text(tile.kind == .targetTemperature ? "Thermostat".tr : (home.demo ? tile.name.tr : tile.name))
+                            .font(widgetLabelFont(size, weight: .semibold))
+                        Text("\(home.demo ? tile.room.tr : tile.room) · \(tile.value.tr)")
+                            .font(widgetLabelFont(size)).opacity(0.9)
+                    }.multilineTextAlignment(.center).lineLimit(2).minimumScaleFactor(0.7)
+                        .frame(maxWidth: .infinity, minHeight: 64).contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityIdentifier("climateDetails")
                 temperatureArrow(tile, increase: true, size: 44)
             }.padding(.bottom, 12)
         }.padding(24).frame(width: width, height: height).modifier(GlassSurface(radius: 30))
@@ -1044,10 +1159,18 @@ struct Dashboard: View {
     }
     @ViewBuilder private func panelContent(_ selected: Panel) -> some View {
         switch selected {
+        case .layout: homeLayoutEditor
         case .widget: widgetPicker
         case .shortcut: shortcutEditor
         case .camera:
-            CameraConnectionView(home: home, selection: $selectedCamera)
+            VStack {
+                CameraConnectionView(home: home, selection: $selectedCamera)
+                if let camera = selectedCamera ?? home.cameras.first,
+                   let value = home.tiles.first(where: { $0.accessoryID == camera.uniqueIdentifier && $0.control != .readOnly }) {
+                    Button("Camera controls".tr) { selectedAccessoryID = value.id; panel = .accessory }
+                        .buttonStyle(.bordered).padding(.bottom).accessibilityIdentifier("cameraAccessoryControls")
+                }
+            }
         case .photos: PhotosPanel(photos: photos)
         case .weather: WeatherPanel(weather: weather, location: weatherLocation)
         case .accessory:
@@ -1062,12 +1185,11 @@ struct Dashboard: View {
                         if let error = home.error { Text(error).foregroundStyle(.red) }
                     }
                 }
-                Section("Rooms".tr) { roomChoices }
                 Section("Accessories".tr) {
                     ForEach(visibleTiles) { tile in
                         HStack(spacing: 16) {
-                            Button { activate(tile) } label: { Image(systemName: tile.symbol).frame(width: 52, height: 52).contentShape(Rectangle()) }
-                                .disabled(tile.kind == .power && (!tile.writable || !tile.reachable || home.busy.contains(tile.id)))
+                            Button { activate(tile) } label: { Image(systemName: tile.displaySymbol).frame(width: 52, height: 52).contentShape(Rectangle()) }
+                                .disabled(home.quickToggle(for: tile).map { !home.canToggle($0) } ?? false)
                                 .accessibilityLabel("\(home.demo ? tile.name.tr : tile.name), \(tile.value.tr)")
                                 .accessibilityValue(tile.value.tr).accessibilityIdentifier("accessory-\(tile.name)")
                             Button { selectedAccessoryID = tile.id; panel = .accessory } label: {
@@ -1186,7 +1308,7 @@ struct GlassSurface: ViewModifier {
         if enabled {
             let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
             if #available(iOS 26.0, *) {
-                content.contentShape(shape).glassEffect(active ? .clear.tint(.green.opacity(0.12)) : .clear, in: shape)
+                content.contentShape(shape).background(Color.black.opacity(0.48), in: shape).glassEffect(active ? .clear.tint(.green.opacity(0.12)) : .clear, in: shape).environment(\.colorScheme, .dark)
             } else {
                 content.contentShape(shape).background(.regularMaterial, in: shape)
             }

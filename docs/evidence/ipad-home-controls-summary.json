@@ -1,0 +1,154 @@
+{
+  "iteration": "Home favorite controls 11",
+  "date": "2026-10-23",
+  "scope": "Home favorites, right-only camera/calendar, readable glass, reveal/editor/confirmation, focused device controls, known-offline preservation; device coverage audit and system AirPlay destination entry.",
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "simulators": "Isolated iPad Pro 11-inch (M5), iPadOS 26.5 (23F73)",
+    "hardwareAcceptance": false
+  },
+  "stages": {
+    "full": {
+      "totalTestCount": 240,
+      "passedTests": 231,
+      "failedTests": 9,
+      "skippedTests": 0,
+      "result": "Failed"
+    },
+    "photo-localization": {
+      "totalTestCount": 3,
+      "passedTests": 3,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "result": "Passed"
+    },
+    "photo-permission-clean": {
+      "totalTestCount": 3,
+      "passedTests": 2,
+      "failedTests": 1,
+      "skippedTests": 0,
+      "result": "Failed"
+    },
+    "native-followup": {
+      "totalTestCount": 3,
+      "passedTests": 1,
+      "failedTests": 2,
+      "skippedTests": 0,
+      "result": "Failed"
+    },
+    "native-locator-final": {
+      "totalTestCount": 2,
+      "passedTests": 1,
+      "failedTests": 1,
+      "skippedTests": 0,
+      "result": "Failed"
+    }
+  },
+  "fullSourceManifestSHA256": "d50d579befa2f9962acdc50e95c1dc194f5ca336f1eb90fafab979fcd528fd04",
+  "finalSourceManifestSHA256": "3bf8fc390271e95165c8e9fddcc02f330dfe8c9a1f23c9a2d1eb40e58e84c951",
+  "sourceBoundary": {
+    "fullRunDrift": [],
+    "onlyFormalFileChangedAfterFullRun": "HomePadUITests/HomePadUITests.swift",
+    "change": "Verified native English/Chinese test selectors only; production and unit sources unchanged.",
+    "temporaryDiagnosticAndUnprovenAlbumPositionChangesExcluded": true,
+    "probeMatchesAllOther55ManifestFiles": true,
+    "primaryCheckoutMatchesFinal56FileManifest": true,
+    "concurrentBackgroundWorkPreserved": true
+  },
+  "distinctCoverage": {
+    "total": 240,
+    "passedAcrossBundles": 238,
+    "notPassed": [
+      "DisplayCoordinatorTests/testPresence09UsesThirtySecondsWithoutRewritingTheConfiguredIdleDelay()",
+      "HomePadUITests/testPhotoLibraryAlbumDisplayRotationRestoreAndRemoval()"
+    ],
+    "notASingleAllGreenRun": true,
+    "unitPassed": 184,
+    "unitNotPassed": 1,
+    "uiPassedAcrossBundles": 54,
+    "uiNotPassed": 1
+  },
+  "failures": {
+    "inheritedPresence": "Existing unfinished Display09 30-second presence rule; both implementation and test are byte-identical to baseline.",
+    "albumProgress": "Existing album journey still cannot locate photoPosition; later assertions not executed. Actual album/slideshow changes separately observed by the passed Readme journey; this does not replace that failed test.",
+    "recoveredNativeQueries": "Observed Chinese Photos labels, permission choices and file cancel, plus an earlier unclosed permission dialog; all original behavior assertions retained."
+  },
+  "additionalValidation": {
+    "sameCandidateHomeFocused": {
+      "passed": 2,
+      "failed": 0
+    },
+    "debugSimulatorBuildExit": 0,
+    "unsignedGenericDeviceReleaseBuildExit": 0,
+    "nativeLightWallpaperScreenshot": "home-light-wallpaper-fixed.png",
+    "syntheticWallpaperRestored": true
+  },
+  "localEvidenceRoot": ".validation/local/home-controls-11",
+  "integration": {
+    "productionAndTestsAppliedToPrimaryCheckout": true,
+    "conflicts": false,
+    "gitCommit": false,
+    "push": false,
+    "publication": false,
+    "physicalIPadInstallByThisTask": false
+  },
+  "limitations": [
+    "No real HomeKit accessory write/readback, camera snapshot/live stream, AirPlay/HomePod audio or physical brightness acceptance.",
+    "Reminder content is not implemented; left camera/calendar entries are removed and old valid records migrate right.",
+    "HomeKit accessory forms/icons are not complete; see docs/HOMEKIT-COVERAGE.md.",
+    "Independent HomePod queue control is not implemented."
+  ],
+  "inspectedOriginalScreenshots": [
+    {
+      "path": "home-light-wallpaper-fixed.png",
+      "sha256": "5291678b99bb2ae47d34ec75e7ecd012235963e3a7eb78e740c899e09d570297"
+    },
+    {
+      "path": "final-home-shots/home-favorite-editing-and-right-only-content.png",
+      "sha256": "14c2b70f330dddb16276929b941ee680271760f78c81b34c80271fd2685c12b0"
+    },
+    {
+      "path": "final-home-shots/offline-accessories-keep-home-layout-clock-and-music.png",
+      "sha256": "1b214f364fa3a013aaef74943efd3f19ff2b1a566b2c0ae5ab244e64747fbc6d"
+    },
+    {
+      "path": "full-shots/home-same-height-rectangular-right-column-and-split-control-actions.png",
+      "sha256": "a51ad904529462b35bd2e377bccaaf27bd3c00454ed4bd26caf5be5bd657f32c"
+    },
+    {
+      "path": "full-shots/square-home-landscape-left.png",
+      "sha256": "f0e49c1a7c656df34e3701bde70fb38ecccbf58eb4f505cee3d4a9f97d0dd7d5"
+    },
+    {
+      "path": "full-shots/accessibility-large-text.png",
+      "sha256": "8d0690636a59edab2b29b12b4ab29b26662a91b8919035c5c90deb52d922cff5"
+    },
+    {
+      "path": "full-shots/music-settings-readable-native-form-landscape-right.png",
+      "sha256": "1be3f09950aeea352f09626552d6ab9ea50818e789e307cf6f3ab654f3d23552"
+    },
+    {
+      "path": "full-shots/focused-large-light-dimmer-after-confirmed-adjustment.png",
+      "sha256": "e4c12e17702ba4c86d068a9e38ca77951507d7ed9373717028183cfb745c2ef7"
+    },
+    {
+      "path": "full-shots/chinese-home-landscape.png",
+      "sha256": "15459f07c5f4f507871de3a90450010648c80edf33b7145b44f62a7e2ddc7c94"
+    }
+  ],
+  "screenshotsBoundary": "Selected native original exports inspected; no claim that every export was viewed or that contrast/accessibility is certified.",
+  "closure": {
+    "sourceDrift": [],
+    "primaryManifestFiles": 56,
+    "ownedTwoSimulatorsShutDown": true,
+    "otherSimulatorsAndPhysicalDevicesUntouched": true
+  },
+  "subsequentPhysicalUpdate": {
+    "installed": true,
+    "destination": "Boom pad",
+    "sourceUnchanged": true,
+    "ordinaryHomePageLaunchAndProcessReadback": true,
+    "newSuiteRun": false,
+    "evidence": "ipad-home-controls-physical-update-summary.json"
+  }
+}

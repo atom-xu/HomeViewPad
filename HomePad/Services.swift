@@ -58,6 +58,7 @@ struct AirPlayPicker: UIViewRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator(presentationChanged: presentationChanged) }
     func makeUIView(context: Context) -> AVRoutePickerView {
         let view = AVRoutePickerView(); view.tintColor = lightControls ? .white : UIColor.label; view.activeTintColor = .systemPurple
+        view.prioritizesVideoDevices = false
         view.delegate = context.coordinator
         view.accessibilityLabel = "Choose AirPlay speaker".tr; return view
     }

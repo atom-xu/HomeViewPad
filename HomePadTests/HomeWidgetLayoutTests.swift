@@ -2,6 +2,42 @@ import XCTest
 @testable import HomePad
 
 final class HomeWidgetLayoutTests: XCTestCase {
+    func testLegacyRightColumnContentMigratesOnceWithoutLosingHomeScopeOrOrder() {
+        let light = HomeWidgetConfiguration(id: "lamp", kind: .accessory, target: "lamp-id", size: .medium)
+        let camera = HomeWidgetConfiguration(id: "front", kind: .camera, target: "camera-id", size: .large)
+        let agenda = HomeWidgetConfiguration(id: "calendar", kind: .agenda, size: .small)
+        let original = [HomeShortcut(id: "music", kind: .music)]
+        let migrated = HomeFavoriteMigration.migrated([light, camera, agenda], shortcuts: original, homeID: "home-a")
+        XCTAssertEqual(migrated.widgets, [light])
+        XCTAssertEqual(migrated.shortcuts.map(\.id), ["music", "migrated-home-a-front", "migrated-home-a-calendar"])
+        XCTAssertEqual(migrated.shortcuts[1].target, "camera-id")
+        XCTAssertTrue(migrated.shortcuts[1].belongs(to: "home-a"))
+        XCTAssertFalse(migrated.shortcuts[1].belongs(to: "home-b"))
+        let retried = HomeFavoriteMigration.migrated([light, camera, agenda], shortcuts: migrated.shortcuts, homeID: "home-a")
+        XCTAssertEqual(retried.shortcuts.map(\.id), migrated.shortcuts.map(\.id))
+        XCTAssertEqual(retried.widgets, migrated.widgets)
+    }
+
+    func testSnappingRespectsActualAccessoryStepAndNonAlignedMaximum() throws {
+        let bounds = try XCTUnwrap(HomeAdjustment(minimum: 10, maximum: 29.8, step: 0.5))
+        XCTAssertEqual(bounds.snapped(100), 29.5)
+        XCTAssertEqual(bounds.snapped(-1), 10)
+        XCTAssertEqual(bounds.snapped(22.23), 22)
+        XCTAssertTrue(bounds.accepts(bounds.snapped(22.49)))
+        XCTAssertEqual(bounds.snapped(.nan), 10)
+    }
+
+    @MainActor func testOfflineKnownDashboardSurvivesButRevocationAndUnknownHomeDoNot() {
+        let home = HomeStore(); home.startDemo()
+        home.status = .offline
+        XCTAssertTrue(home.keepsDashboard)
+        home.clearUnavailableHome(.denied)
+        XCTAssertFalse(home.keepsDashboard)
+        XCTAssertTrue(home.tiles.isEmpty)
+        home.startDemo(state: .offline)
+        XCTAssertFalse(home.keepsDashboard)
+    }
+
     func testMixedWidgetSizesStayWithinCanvasWithoutOverlap() {
         let widgets = (0..<24).map { index in
             HomeWidgetConfiguration(id: String(index), kind: .camera, target: nil,

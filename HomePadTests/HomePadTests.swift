@@ -270,7 +270,7 @@ extension HomePadTests {
         XCTAssertEqual(HomeValueKind(characteristicType: HMCharacteristicTypeBrightness), .brightness)
         XCTAssertEqual(HomeValueKind(characteristicType: HMCharacteristicTypeTargetTemperature), .targetTemperature)
         XCTAssertEqual(HomeValueKind(characteristicType: HMCharacteristicTypeRotationSpeed), .fanSpeed)
-        XCTAssertNil(HomeValueKind(characteristicType: HMCharacteristicTypeTargetLockMechanismState))
+        XCTAssertEqual(HomeValueKind(characteristicType: HMCharacteristicTypeTargetLockMechanismState), .state)
         XCTAssertEqual(HomeValueKind.temperature.formatted(21.5), "21.5 °C")
         XCTAssertEqual(HomeValueKind.humidity.formatted(45), "45 %")
         XCTAssertEqual(HomeValueKind.temperature.formatted(.nan), "Unavailable")
@@ -381,7 +381,7 @@ extension HomePadTests {
         let stacks = (0..<6).map { DashboardWidget.options(for: $0, tiles: home.tiles, scenes: home.scenes) }
         let all = stacks.flatMap { $0 }
         XCTAssertEqual(Set(all).count, all.count)
-        XCTAssertEqual(stacks[1], [.clock, .agenda]); XCTAssertEqual(stacks[2], [.camera])
+        XCTAssertEqual(stacks[1], [.clock]); XCTAssertEqual(stacks[2], [.empty(2)])
         XCTAssertFalse(all.contains(.photo)) // Photos belong only to Overview and the Photos page.
         XCTAssertEqual(stacks[4], [.accessory(home.tiles[2].id)])
         XCTAssertEqual(stacks[5], [.accessory(home.tiles[0].id), .accessory(home.tiles[1].id)])

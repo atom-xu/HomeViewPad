@@ -1,5 +1,37 @@
 # HomePad 本地初始化与交接
 
+## 新版源码交付 — 2026-10-23
+
+用户现已明确要求将安装到Boom pad的新版App源码提交到GitHub，目标为 `origin/main` 与 `origin/codex/dynamic-screensaver`（`atom-xu/HomeViewPad`）。本次包括Home常用控制11及HomeKit设备／图标／控制12的29份源码、测试、文档和脱敏摘要；设计素材、mini安装／功耗另项证据、个人签名配置与原始结果包不纳入。当前62输入与已签名安装候选完全一致，设备精确bundle回读通过；本次交付不改变App行为，也不重跑无关套件。
+
+实时时间检查仍在纽约工作日提交窗口外，用户已明确回复“允许本次时间例外并推送”。仅此次例外，提交使用Git实际当前时间，不修改AGENTS或守卫，不覆盖时间戳。提交和推送结果以实际Git／远端回读为准；命令及回执在 `.validation/local/homekit-release-20261023/`。下列交接保留开发／测试／设备安装的独立记录。
+
+## 当前交接：2026-10-23，Boom pad 静置20分钟观察
+
+- 用户暂缓新mini的安装验签排查，改测原Boom pad。用户打开HomePad、确认拔线后保持不动；本任务没有重启App、切页、改亮度／权限／待机设置或向iPad输入。测试对应已安装Home常用控制11版Release（56输入），不是后来更新的HomeKit12版。
+- Instruments界面真实记录14:42:04.979–15:02:15.213（上海时间），共1210.233741秒。结束处理时Mac Instruments在网络统计modeler处SIGTRAP崩溃，原始234MB轨迹／未完成trace及缓存已保留。用独立Time Profiler导入恢复42,691条HomePad运行采样；前1200秒42,312条×1ms，CPU单核估算均值3.526%，分钟均值3.4517–3.6833%，主线程占采样CPU权重97.85%。[验证](VALIDATION.md)、[摘要](evidence/ipad-standby-power-20261023-summary.json)、[CPU曲线](evidence/ipad-standby-cpu-20261023.png)。
+- 功耗、亮度、充电和热状态表独立导出均无有效采样，不能报0功耗、瓦数、耗电率或续航，也不称功耗验收通过。后置5秒链路检查又遇设备断连，不计入20分钟结果。无线调试保持芯片唤醒的限制另有注明；后续应先确认短采集能得到非空功耗表，再重复正式静置测试。工具缺陷的修复尚未验证，未写入长期开发经验。
+- HomeKit12的真机安装／启动读回完成于15:12:18.998，晚于测试结束，需另测功耗。原始证据 `.validation/local/boom-standby-power-20261023T063212Z/`。本任务无应用修改、新原生套件、Git提交或推送；其他任务的更新和未提交工作全部保留。
+- 新iPad mini：正常签名包已安装并精确读回，但首次Apple联网开发者验证未通过；换蜂窝热点后用户仍见验证提示。用户拒绝7天离线方案，并明确暂缓排查。未生成或安装离线profile。后续恢复时先核实mini可连接和实际提示；[当前状态](evidence/ipad-mini-install-summary.json)，私有证据 `.validation/local/ipad-mini-install-20261023T060404Z/`。
+
+## 当前交接：2026-10-23，HomeKit设备／图标／控制12
+
+- 用户指出第8项核心没有开发完成，现已落实到真实HomeStore与界面：46公共服务／33类别图标、129特征定义，门锁、开合、安防、专门传感器、Active空气设备／阀门、公开媒体及诊断均按实际能力呈现；9项二进制管理字段明确排除。Apple家庭私有外形图标变体不导入或同步。[范围](HOMEKIT-CONTROLS-12.md)、[能力](HOMEKIT-COVERAGE.md)。
+- 保留左三列／右宽列布局和已有家庭配置；同服务一张主卡，传感器优先显示检测状态、温控优先目标温度，详情保留实际关联控制。枚举／元数据／权限限制写入，状态回读前不冒充完成；摄像头及辅助信息只在右侧。
+- 相关scheme首轮48／49，修复门铃不存在的系统符号后45单元＋1UI 46／46；最终补充主卡／快切策略后46单元全部通过，5条不同Home UI流程均已通过并查看英文／中文最大字号／两个横屏方向原图。未重追无关旧失败，不称完整scheme全绿。[验证](VALIDATION.md)、[摘要](evidence/ipad-homekit-controls-summary.json)。
+- 已将62输入同一候选Release签名安装到Boom pad（iPad Pro11寸第4代／iPadOS27.0.1），普通 `--page 1` 前台启动与精确安装身份／PID回读通过，无演示或测试参数。真实门锁／窗帘／传感器与HomePod硬件效果仍需实际使用确认。
+- 工作沿用隔离managed worktree `codex/home-controls-11`，15个源码／测试／工程路径清洁合入主工作区 `codex/dynamic-screensaver`；并行背景、文档与既有Home11工作保留。没有Git提交、推送或发布。源码与签名包散列已核对；原始证据 `.validation/local/homekit-controls-12/`。下列交接保留历史检查点。
+
+## 当前交接：2026-10-23，Home 常用控制 11
+
+- **随后已更新 Boom pad**：用户要求优先完成开发、停止扩大无关测试后，沿用既有iPad交付目标，将同一56文件候选生成Release签名包，签名／profile／目标设备检查通过；有线安装到Boom pad（iPad Pro11寸第4代／iPadOS27.0.1），安装URL、普通 `--page 1` 前台启动及独立PID／executable回读一致。未重跑套件、重置数据或打开设备查看器；真实画面／家庭操作／HomePod发声仍由实际使用确认。[安装摘要](evidence/ipad-home-controls-physical-update-summary.json)。以下“未安装”段落为此前检查点。
+
+- 用户批准上一轮review的修复：移除房间筛选；保留左三列基准单元与右侧同高宽列；左侧摄像头／日历移到右侧，提醒未新增。新增后定位、可见编辑、排序／尺寸／移除／恢复确认、浅背景对比度、摄像头来源一致、参数回读反馈、已知家庭离线保留均已实现。点设备图标开关，点名称打开更集中的竖向调光面板。[范围](HOME-CONTROLS-11.md)。
+- 类型／图标并不完整：现有9类特征值，缺门锁、窗帘、安防及多数专门传感器状态等。指定HomePod的现有路径是播放后从Home音乐卡、音乐页或音乐设置“播放到”打开系统AirPlay选择；独立HomePod队列未实现。[逐类核对](HOMEKIT-COVERAGE.md)。
+- Xcode27.0／iPadOS26.5独立模拟器，未筛选完整scheme231／240通过、9失败、0跳过；原生中文选择器／权限／文件取消定位修正后，跨包238／240个不同方法曾通过，**不称单份完整全绿**。剩余原有Presence09的30秒规则、旧相册photoPosition定位失败；不扩大Home控制范围修复它们。Home专项与最终编辑／调光复核已通过；Debug与通用设备Release未签名构建均退出0。[验证](VALIDATION.md)、[摘要](evidence/ipad-home-controls-summary.json)。
+- 在独立managed worktree `codex/home-controls-11` 完成实现和回归，清洁合入主工作区 `codex/dynamic-screensaver`，保留并行背景／航拍与独立项目文档改动。最终56文件manifest与主工作区一致；完整回归后仅正式UI测试的已验证双语原生定位改变，产品及单元源码未变。新文档只定向合入本轮内容，未覆盖并行任务记录。
+- 本任务没有真机安装／运行、真实家庭写入或HomePod发声验收，没有Git提交、推送、发布。代码完成、模拟器测试、真机安装及硬件验收保持分开。原始证据在 `.validation/local/home-controls-11/`；独立工作树仍保留，不归档生成额外Git快照。以下为各既有迭代的历史交接。
+
 ## 当前交接：2026-10-23，HomePad 独立项目首页
 
 - 用户要求项目介绍按独立 HomePad 重写，并明确选择把已安装的壁纸版本与新文档一起同步到 `origin/main`，作为 GitHub 默认首页。开发分支仍为 `codex/dynamic-screensaver`，上游历史、MIT 版权和仓库 URL 保留。
