@@ -1,0 +1,133 @@
+{
+  "scope": "HomePad interaction fixes 03",
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "sdk": "27.0",
+    "simulator": "Independent iPad Pro 11-inch M5",
+    "runtime": "iPadOS 26.5 (23F73)"
+  },
+  "fullScheme": {
+    "sourceManifestSHA256": "7068126a79d7d8ea6de33dbe7674e514e5e81686cad6185c44ae7eee9e2dc049",
+    "sourceFiles": 48,
+    "sourceUnchangedThroughoutExecution": true,
+    "unfiltered": true,
+    "total": 170,
+    "passed": 168,
+    "failed": 2,
+    "skipped": 0,
+    "unit": {
+      "total": 135,
+      "passed": 135,
+      "failed": 0
+    },
+    "ui": {
+      "total": 35,
+      "passed": 33,
+      "failed": 2
+    },
+    "exitCode": 65,
+    "resultBundleReadable": true,
+    "summaryExportSucceeded": true,
+    "failedTests": [
+      "HomePadUITests/testLocationPermissionUsesDetectedCity()",
+      "HomePadUITests/testMusicAccessibleChinesePlayerAndAlbumList()"
+    ],
+    "runtimeWarnings": 35
+  },
+  "newControlledCoverage": {
+    "airPlayUnitTests": 3,
+    "cameraUnitTests": 11,
+    "cameraFixtures": "Time/completion metadata only; no unsupported synthetic HomeKit snapshot or camera image",
+    "ui": [
+      "Rendered Overview black gutters after repeated paging and in both landscape directions",
+      "Complete climate and edge-control native Preview bounds, number/name containment and unchanged source-card dimensions",
+      "Chinese maximum-text climate preview"
+    ]
+  },
+  "musicReadinessFollowUp": {
+    "status": "Completed",
+    "sourceManifestSHA256": "57df524b02a1abe3902ab3b012216068e18516533040b9d25dee3ba0dc6ab3b2",
+    "changedFiles": [
+      "HomePadUITests/HomePadUITests.swift"
+    ],
+    "otherManifestFilesUnchanged": 47,
+    "applicationSourceUnchanged": true,
+    "change": "Wait for player title and a stable in-viewport header before querying hittability; all original playback and album assertions retained",
+    "failureEvidence": "The full-run test queried playback 0.29 seconds after opening music during the 0.46-second transition. Failure AX put playback origin at x1193.5 with width62 outside a1210-wide viewport; the original video/AX are retained. No music layout code changed.",
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "resultBundleReadable": true,
+    "summaryExportSucceeded": true,
+    "runtimeWarnings": 4
+  },
+  "screenshots": {
+    "fullExported": 70,
+    "fullInspected": [
+      "overview-repeated-paging-full-black-landscape-left.png",
+      "overview-full-black-landscape-right.png",
+      "home-full-climate-long-press-preview.png",
+      "home-edge-control-complete-long-press-preview.png",
+      "home-chinese-maximum-text-complete-climate-preview.png",
+      "square-home-landscape-right.png",
+      "large-camera-widget-after-context-resize.png",
+      "music-home-widget-shared-test-playback.png",
+      "music-immersive-native-player-test-data.png",
+      "landscape-home-after-device-rotations.png"
+    ],
+    "followUpExported": 7,
+    "followUpInspected": [
+      "music-chinese-accessibility-album-tracks-test-data.png",
+      "music-chinese-accessibility-player-test-data.png",
+      "music-cover-flow-native-test-albums.png",
+      "music-failed-selection-stays-in-album-test-data.png",
+      "music-home-widget-shared-test-playback.png",
+      "music-immersive-native-player-test-data.png",
+      "music-restored-cover-flow-after-search-and-edge-drag-test-data.png"
+    ],
+    "labels": "Synthetic music TEST DATA and Home DEMO remain visible; no private hardware images exported"
+  },
+  "remainingFailure": "Existing automatic-city reverse-geocoding success expectation times out; unchanged by this iteration",
+  "hardwareLimitations": [
+    "User confirmed music AirPlay no longer jumps to loading and Home static camera snapshots update; timing was not instrumented",
+    "Actual remote audibility, Home-widget AirPlay presentation and lock/background ordering remain unverified for this package",
+    "Camera offline/stale recovery, household/revocation isolation, muted live opening and stream teardown remain unverified on hardware",
+    "Snapshots can be earlier captures supplied by HomeKit; app cancellation detaches callbacks rather than cancelling camera-side work",
+    "Physical Overview paging/preview and arbitrary iPadOS27 window-mode acceptance remain unverified"
+  ],
+  "physicalUpdate": "Signed final application installed and ordinarily launched on the authorized iPad; exact bundle URL and process readbacks succeeded. Viewer remains off. User confirmed music AirPlay page continuity and updating Home snapshots.",
+  "commitPushPublication": false,
+  "coverageAcrossExecutions": {
+    "distinctMethodsPassed": 169,
+    "totalDistinctMethods": 170,
+    "remainingFailedMethods": [
+      "HomePadUITests/testLocationPermissionUsesDetectedCity()"
+    ],
+    "singleAllGreenFullSuite": false
+  },
+  "physicalUserFeedback": {
+    "source": "User replies in this conversation after final physical update on 2026-10-17 Asia/Shanghai",
+    "airPlayMusicPageRemainsVisible": {
+      "confirmed": true,
+      "userReply": "页面保持不变，不再跳加载"
+    },
+    "homeCameraStaticSnapshotsUpdate": {
+      "confirmed": true,
+      "userReply": "能看到静态快照更新"
+    },
+    "limits": "No measured capture interval, remote audio, Home-widget route picker, lock/background privacy, offline recovery, live-stream teardown or physical Overview/preview acceptance inferred from these two answers"
+  },
+  "finalIntegrity": {
+    "current48FileManifestMatches": true,
+    "onlyUITestReadinessChangedAfterFull": true,
+    "other47FilesUnchanged": true,
+    "installedPackage5FilesUnchanged": true,
+    "bilingualEntries": 645,
+    "diffCheckPassed": true,
+    "commitGuardNewYork": "2026-10-16 22:29 -04:00: commits allowed",
+    "commitMade": false,
+    "pushOrPublicationMade": false
+  }
+}

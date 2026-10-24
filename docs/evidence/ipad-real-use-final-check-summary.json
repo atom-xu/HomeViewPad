@@ -1,0 +1,48 @@
+{
+  "scope": "Final real-use app repair checks and final test-only picker correction",
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "device": "iPad Pro 11-inch (M5) Simulator",
+    "os": "iPadOS 26.5 (23F73)"
+  },
+  "repairRun": {
+    "total": 119,
+    "passed": 118,
+    "failed": 1,
+    "skipped": 0,
+    "unitPassed": 112,
+    "uiPassed": 6,
+    "uiFailed": 1,
+    "sourceManifestSHA256": "8aceed0dece70a07f01de9d2eca2e1153fd364ea724e9bab7d6c68c46cfd6a7a",
+    "remainingFailure": "testSystemPickerDismissal: importer opened/cancelled and Home returned; test incorrectly expected stateCard title on welcome Home"
+  },
+  "testOnlyCorrection": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "method": "testSystemPickerDismissal",
+    "outcomeChecks": [
+      "Photos picker cancels and panel dismisses",
+      "Audio file importer opens and cancels in real mode",
+      "Music page restores file button",
+      "Home returns with actual Connect Apple Home and Explore demo actions, no demo badge or photo widget"
+    ],
+    "manifestSHA256": "51d12ef409379e8465acf115bcdf54d298b44f563c780d08f36eb0cc8dc1fb5e",
+    "onlyChangedFile": "HomePadUITests/HomePadUITests.swift",
+    "other45ManifestFilesUnchanged": true,
+    "manifestMatchesAfterRun": true
+  },
+  "coverageAcrossRuns": "112 unit methods and 28 of 29 UI methods passed across complete and focused runs; automatic city remains failed. Not a single 141/141 bundle.",
+  "screenshotsInspected": [
+    "Home equal-height rectangular column and split actions",
+    "Real Music disconnected page",
+    "Two-synthetic-photo wall and standby with legible clock",
+    "English/Chinese legacy face-scope disclosures and expanded sensor states",
+    "Custom camera title restored and visible"
+  ],
+  "limitations": [
+    "Automatic city expected-success case timed out; tested manual-city route remains available.",
+    "Simulated HomeKit controls, fake MusicKit adapter tests and synthetic-photo flows do not establish physical music, video, AirPlay or accessory control acceptance."
+  ],
+  "gitCommitPushPublication": false
+}

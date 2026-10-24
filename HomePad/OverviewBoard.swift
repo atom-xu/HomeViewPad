@@ -31,7 +31,7 @@ struct OverviewBoard: View {
         .foregroundStyle(.white).buttonStyle(.plain)
         .overlay(alignment: .bottomLeading) {
             if demoDate != nil {
-                Text("DEMO").font(.system(size: 11, weight: .semibold)).tracking(1)
+                Text("DEMO".tr).font(.system(size: 11, weight: .semibold)).tracking(1)
                     .foregroundStyle(.white.opacity(0.65)).padding(.leading, inset).padding(.bottom, 5)
                     .accessibilityIdentifier("demoBadge")
             }
@@ -44,10 +44,10 @@ struct OverviewBoard: View {
             let date = demoDate ?? context.date
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: size * 0.035) {
-                    Text(date.formatted(.dateTime.weekday(.abbreviated))).foregroundStyle(yellow)
-                    Text(date.formatted(.dateTime.month(.abbreviated))).foregroundStyle(.gray)
+                    Text(date.formatted(.dateTime.locale(L10n.locale).weekday(.abbreviated))).foregroundStyle(yellow)
+                    Text(date.formatted(.dateTime.locale(L10n.locale).month(.abbreviated))).foregroundStyle(.gray)
                 }.font(.system(size: size * 0.105, weight: .medium)).lineLimit(1).minimumScaleFactor(0.6)
-                Text(date.formatted(.dateTime.day()))
+                Text(date.formatted(.dateTime.locale(L10n.locale).day()))
                     .font(.system(size: size * 0.65, weight: .light))
                     .tracking(-size * 0.035).lineLimit(1).minimumScaleFactor(0.65)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -55,7 +55,7 @@ struct OverviewBoard: View {
             .padding(.leading, size * 0.07).frame(width: size, height: size, alignment: .leading)
             .background(.black)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(date.formatted(date: .complete, time: .omitted))
+            .accessibilityLabel(date.formatted(Date.FormatStyle(date: .complete, time: .omitted).locale(L10n.locale)))
         }.accessibilityIdentifier("overviewDate")
     }
 
@@ -71,11 +71,11 @@ struct OverviewBoard: View {
                     }
                 }.frame(width: size * 0.53, height: size * 0.53)
                     .clipShape(RoundedRectangle(cornerRadius: size * 0.015))
-                Text(photos.image == nil ? "Your photos" : photos.albumTitle)
+                Text(photos.image == nil ? "Your photos".tr : photos.displayAlbumTitle)
                     .font(.system(size: size * 0.063, weight: .medium)).lineLimit(1)
-                Text(photos.image == nil ? "Choose an album" : "Favorite moments")
+                Text((photos.image == nil ? "Choose an album" : "Favorite moments").tr)
                     .font(.system(size: size * 0.05)).foregroundStyle(.gray).lineLimit(1)
-                Label("Albums", systemImage: "photo.stack")
+                Label("Albums".tr, systemImage: "photo.stack")
                     .font(.system(size: size * 0.052, weight: .medium))
                     .padding(.horizontal, size * 0.04).padding(.vertical, size * 0.025)
                     .background(Color(white: 0.16), in: Capsule())
@@ -83,10 +83,10 @@ struct OverviewBoard: View {
             }.frame(width: size * 0.86, alignment: .leading)
                 .frame(width: size, height: size).background(.black)
                 .contentShape(Rectangle())
-        }.accessibilityLabel("Albums, \(photos.albumTitle)")
-            .accessibilityValue(photos.image == nil ? "No photo selected" : photos.photoCount > 0 ? "Photo \(photos.position + 1) of \(photos.photoCount)" : "Selected photo")
+        }.accessibilityLabel(L10n.format("Albums, %@", photos.displayAlbumTitle))
+            .accessibilityValue(photos.image == nil ? "No photo selected".tr : photos.photoCount > 0 ? L10n.format("Photo %d of %d", photos.position + 1, photos.photoCount) : "Selected photo".tr)
             .accessibilityIdentifier("overviewAlbum")
-            .accessibilityAction(named: "Next photo") { photos.next() }
+            .accessibilityAction(named: "Next photo".tr) { photos.next() }
     }
 
     private func weatherWidget(size: CGFloat) -> some View {
@@ -96,7 +96,7 @@ struct OverviewBoard: View {
         let status = demo ? "Partly Cloudy" : weather.failed ? (reading == nil ? "Unavailable" : "Offline · cached") : weather.stale() ? "Outdated · tap to refresh" : reading?.condition ?? (weather.city == nil ? "Choose a city" : "Loading…")
         return Button(action: configureWeather) {
             VStack(alignment: .leading, spacing: size * 0.015) {
-                Text(demo ? "Philadelphia" : weather.city?.name ?? "Weather")
+                Text(demo ? "Philadelphia".tr : weather.city?.displayName ?? "Weather".tr)
                     .font(.system(size: size * 0.063, weight: .medium)).foregroundStyle(yellow)
                     .lineLimit(1).minimumScaleFactor(0.7)
                 Text(reading.map { $0.degrees($0.temperature, fahrenheit: fahrenheit) } ?? "—°")
@@ -105,8 +105,8 @@ struct OverviewBoard: View {
                 Image(systemName: reading?.symbol ?? "cloud")
                     .symbolRenderingMode(.palette).foregroundStyle(.white, yellow)
                     .font(.system(size: size * 0.085))
-                Text(status).font(.system(size: size * 0.058)).lineLimit(1).minimumScaleFactor(0.6)
-                Text(reading.map { "H:\($0.degrees($0.high, fahrenheit: fahrenheit)) L:\($0.degrees($0.low, fahrenheit: fahrenheit))" } ?? "Tap to configure")
+                Text(status.tr).font(.system(size: size * 0.058)).lineLimit(1).minimumScaleFactor(0.6)
+                Text(reading.map { L10n.format("H:%@ L:%@", $0.degrees($0.high, fahrenheit: fahrenheit), $0.degrees($0.low, fahrenheit: fahrenheit)) } ?? "Tap to configure".tr)
                     .font(.system(size: size * 0.052)).foregroundStyle(.white.opacity(0.75))
                     .lineLimit(1).minimumScaleFactor(0.7)
                 if !demo, reading != nil {

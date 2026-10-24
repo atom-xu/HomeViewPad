@@ -1,0 +1,50 @@
+{
+  "scope": "Approved native music player, Cover Flow and Home music widget",
+  "nativeFiles": 48,
+  "manifestSHA256": "4e8d6de7f3f3c76442d8f7a6741af62fb877fed3a2f629673d8d32d9b29be453",
+  "physicalDevice": {
+    "model": "iPad Pro 11-inch (4th generation)",
+    "runtime": "iPadOS 27.0.1 (24A446)",
+    "bundleIdentifier": "cn.vilhil.homeviewpad"
+  },
+  "signedPackageVerified": true,
+  "installSucceeded": true,
+  "appReadbackSucceeded": true,
+  "launchSucceeded": true,
+  "processReadbackSucceeded": true,
+  "launchArguments": [
+    "--page",
+    "5"
+  ],
+  "observed": [
+    "Real library artwork and Cover Flow on physical iPad with no test/demo badge",
+    "Real current-track metadata and a playing-state mini-player became visible while browsing; user interaction may also have occurred",
+    "User explicitly confirmed audible HomePad playback on the physical iPad"
+  ],
+  "notVerified": [
+    "Physical remote AirPlay/HomePod audibility",
+    "Sustained playback and power/thermal behavior"
+  ],
+  "fullRegression": {
+    "total": 151,
+    "passed": 150,
+    "failed": 1,
+    "skipped": 0,
+    "remainingFailure": "Existing automatic-city reverse-geocoding timeout"
+  },
+  "reportedAudioIssue": "User heard no audio although playback state was playing",
+  "audioDiagnosis": {
+    "systemVolumeObserved": "Nonzero; approximately half in native Music after local output selection",
+    "originalOutput": "two selected remote AirPlay speakers; iPad speaker not selected",
+    "action": "Selected iPad speakers and observed system checkmark",
+    "audibleResult": "User confirmed HomePad audio audible",
+    "comparison": "User reported native Music silent while video audio worked; native Music picker showed iPad speaker selected",
+    "resolutionSteps": [
+      "Quit Mac Device Hub using Quit and Keep Simulators Running",
+      "User paused/resumed native Music and pressed volume up",
+      "User confirmed native Music audible",
+      "User returned to HomePad, selected a song and confirmed HomePad audible"
+    ],
+    "causalLimit": "Combined steps; individual root cause not isolated. No audio source change made during diagnosis."
+  }
+}

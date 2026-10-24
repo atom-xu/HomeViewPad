@@ -1,0 +1,34 @@
+{
+  "scope": "Music interaction refinement 02 initial focused checks",
+  "sourceManifestSHA256": "415cec4de9501218fa3500b90f3e02ec4a07630c3c391d1c10e7f64791d7c664",
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "simulator": "iPad Pro 11-inch M5",
+    "runtime": "iPadOS 26.5 (23F73)"
+  },
+  "result": "Passed",
+  "total": 31,
+  "passed": 31,
+  "failed": 0,
+  "skipped": 0,
+  "journeys": [
+    "Shared Home/player pause, skip and seek without page swipe",
+    "Source-aware back, album restoration, edge drag and explicit Home player entry",
+    "Delayed selection failure remains in source album with prior track and re-enabled controls",
+    "Chinese maximum-accessibility player and album list"
+  ],
+  "fixture": "Double-gated DEBUG synthetic MusicKit fixture with visible TEST DATA; no hardware/audio claim",
+  "screenshotsInspected": [
+    "Restored Cover Flow after search and edge drag",
+    "Failed selection remains in album",
+    "Shared Home playback card"
+  ],
+  "subsequentChanges": "Passive-open caching and submitted-search restoration are covered by the later full execution and successful 125-test follow-up; see ipad-music-interaction-full-suite-summary.json",
+  "laterAttemptStatus": {
+    "reopenRegression": "One test failed on old open(): ready became connecting, selection cleared and requests duplicated; final repair test passed",
+    "fullAttempt01": "Intentionally interrupted, exit 75, incomplete suite",
+    "fullAttempt02": "Compiler error before tests, no result bundle; diagnostic retained in status JSON"
+  },
+  "finalSourceManifestSHA256": "9caf096fb2a44385c2b3412607c4618ed3bcbce08f86bd84c0edde73a4064aa6",
+  "laterFinalResult": "125/125 follow-up passed; full execution retained 151/154 with artifact save failure; automatic-city failure remains"
+}

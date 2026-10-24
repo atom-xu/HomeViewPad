@@ -1,0 +1,743 @@
+{
+  "scope": "Distinct method coverage across complete and focused runs; not a later all-green full-suite result.",
+  "distinctMethods": 52,
+  "methodsWithPassingEvidence": 52,
+  "methods": [
+    {
+      "method": "HomePadTests.DisplayCoordinatorTests testMovementInteractionAndSensorGapsRestartTheEntireWindow",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.DisplayCoordinatorTests testNightScheduleCrossesMidnightAndHonorsBoundaries",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.DisplayCoordinatorTests testResetDiscardsPriorForegroundAndClockReversalCannotEnter",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.DisplayCoordinatorTests testStandbyRequiresContinuousUprightStationaryAndIdleWindow",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.DisplayCoordinatorTests testVerticalDetectionUsesScreenNormalWithHysteresisAndRejectsInvalidData",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testAccessoryWritesRequireDeviceBoundsAndStep",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testCarouselWindowIncludesSelectionWithoutOverflowingTile",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testDemoToggleScenesAndIsolation",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testEveryFailureFixtureIsClearlyDemo",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testHomeKitCharacteristicsAreTypedAndUnknownControlsExcluded",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testPageEdgesDoNotWrapUnexpectedly",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testPhotoAuthorizationAndSlideshowBoundaries",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testReadOnlySensorCannotToggle",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testSinglePhotoRestoreDownsamplesAndClearRemovesOnlyAppCopy",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testStoppingAudioClearsPersonalFileMetadata",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testSwipeDirectionLocksAndRejectsAmbiguousDrags",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testThermostatStepsRespectBoundsReachabilityAndReadOnlySensors",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testUnavailableHomeClearsCachedControlsAndPendingActions",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testUnreadablePowerCannotBecomeClimateOrAcceptNumericWrite",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomePadTests testWidgetStacksNeverShareContentAndKeepReferenceCategories",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomeWidgetLayoutTests testEmptyAndNarrowLayoutsRemainUsable",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomeWidgetLayoutTests testMixedWidgetSizesStayWithinCanvasWithoutOverlap",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomeWidgetLayoutTests testSavedLayoutsKeepDemoAndPhysicalHomesSeparate",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.HomeWidgetLayoutTests testUnknownAndOfflinePowerNeverClaimOff",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.WeatherTests testDemoDoesNotRequestWeatherAndCitySelectionPersists",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.WeatherTests testLateResponseCannotReplaceAnotherCityOrDemoMode",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.WeatherTests testLocationUpdatesCannotOverrideManualChoiceOrDemo",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.WeatherTests testRefreshThrottlesAndOfflineReadingIsMarked",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadTests.WeatherTests testWeatherResponseUnitsNightAndMalformedData",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testBlackOverviewLayoutAndLiveWeatherDisclosure",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testChineseLanguageSwitchAndPersistence",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testCustomCameraShortcutPersistsAndRemainsDemo",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testDashboardRepeatedControlsAndSceneCancellation",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testFailureStatesAndReturnToRealOnboarding",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "failed"
+        },
+        {
+          "run": "focused",
+          "result": "failed"
+        },
+        {
+          "run": "diagnostic",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testFullscreenClockAndSettingsInBothOrientations",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "failed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testFullscreenHomeReferenceGeometryAndHiddenNavigation",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testGlassThemePersistsAfterNavigation",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "failed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testHorizontalPagingAndIndependentWidgetSwitching",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "failed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testLandscapeCameraAndAgenda",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testLargeTextLayout",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testLiveWeatherDefaultCitySearchAndRestore",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "failed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testLocationPermissionUsesDetectedCity",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testManualStandbyWakeNightModeAndSimulatorLimitations",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testPhotoLibraryAlbumDisplayRotationRestoreAndRemoval",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testPhotoLibraryDenialKeepsSinglePhotoAvailable",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testPortraitDockMovesToRightOnRotation",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testReadmeDemoJourney",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "failed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testRealConnectionGracefulWithoutDevices",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testRoomFilteringCanBeRepeated",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testSystemPickerDismissal",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testThermostatArrowsAndTransientIndicators",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "failed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "method": "HomePadUITests.HomePadUITests testWidgetRemoveAddResizeAndPersistence",
+      "runs": [
+        {
+          "run": "complete",
+          "result": "failed"
+        },
+        {
+          "run": "focused",
+          "result": "passed"
+        }
+      ]
+    }
+  ]
+}

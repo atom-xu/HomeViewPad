@@ -1,0 +1,75 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceName": "HomePad Acceptance",
+        "modelName": "iPad Pro 11-inch (M5)",
+        "osBuildNumber": "23F73",
+        "osVersion": "26.5",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 8,
+      "passedTests": 44,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "HomePad \u00b7 Built with macOS 27.0",
+  "expectedFailures": 0,
+  "failedTests": 8,
+  "finishTime": 1792083632.489,
+  "passedTests": 44,
+  "result": "Failed",
+  "runtimeWarnings": [],
+  "skippedTests": 0,
+  "startTime": 1792082775.212,
+  "statistics": [],
+  "testFailures": [
+    {
+      "testName": "testFailureStatesAndReturnToRealOnboarding()",
+      "message": "Failed to tap \"Simulate denied\" Button: No matches found for Elements matching predicate '\"Simulate denied\" IN identifiers' from input {("
+    },
+    {
+      "testName": "testFullscreenClockAndSettingsInBothOrientations()",
+      "message": "Asynchronous wait failed: Exceeded timeout of 5 seconds, with unfulfilled expectations: \"Expect predicate `BLOCKPREDICATE(0x10a62fbd0)`\"."
+    },
+    {
+      "testName": "testGlassThemePersistsAfterNavigation()",
+      "message": "Failed to tap \"tealWallpaper\" Switch: No matches found for Elements matching predicate '\"tealWallpaper\" IN identifiers' from input {("
+    },
+    {
+      "testName": "testHorizontalPagingAndIndependentWidgetSwitching()",
+      "message": "XCTAssertTrue failed"
+    },
+    {
+      "testName": "testLiveWeatherDefaultCitySearchAndRestore()",
+      "message": "Failed to get matching snapshot: No matches found for Elements matching predicate '\"weatherSelectedCity\" IN identifiers' from input {("
+    },
+    {
+      "testName": "testReadmeDemoJourney()",
+      "message": "Failed to swipe left \"climateWidget\" Any: No matches found for Elements matching predicate '\"climateWidget\" IN identifiers' from input {("
+    },
+    {
+      "testName": "testThermostatArrowsAndTransientIndicators()",
+      "message": "Failed to get matching snapshot: No matches found for Elements matching predicate '\"climateWidget\" IN identifiers' from input {("
+    },
+    {
+      "testName": "testWidgetRemoveAddResizeAndPersistence()",
+      "message": "Failed to determine hittability of \"homeWidget-slot-0\" Other: Activation point invalid and no suggested hit points based on element frame"
+    }
+  ],
+  "title": "Test - HomePad",
+  "topInsights": [
+    {
+      "category": "Longest Test Runs",
+      "impact": "18% of duration",
+      "text": "1 longest test run with outlier durations exceeding 125.00s (three standard deviations)"
+    }
+  ],
+  "totalTestCount": 52
+}

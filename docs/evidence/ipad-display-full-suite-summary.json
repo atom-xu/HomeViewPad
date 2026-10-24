@@ -1,0 +1,51 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceName": "HomePad Acceptance",
+        "modelName": "iPad Pro 11-inch (M5)",
+        "osBuildNumber": "23F73",
+        "osVersion": "26.5",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "passedTests": 54,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "HomePad \u00b7 Built with macOS 27.0",
+  "expectedFailures": 0,
+  "failedTests": 0,
+  "finishTime": 1792087472.549,
+  "passedTests": 54,
+  "result": "Passed",
+  "runtimeWarnings": [],
+  "skippedTests": 0,
+  "startTime": 1792086316.214,
+  "statistics": [],
+  "testFailures": [],
+  "title": "Test - HomePad",
+  "topInsights": [
+    {
+      "category": "Longest Test Runs",
+      "impact": "13% of duration",
+      "text": "1 longest test run with outlier durations exceeding 152.62s (three standard deviations)"
+    }
+  ],
+  "totalTestCount": 54,
+  "sourceState": {
+    "branch": "codex/ipad-display-01",
+    "baseCommit": "3c395111ab2a6c85e62ca763f7c156da4845b49c",
+    "gitStatus": "uncommitted, unpushed",
+    "manifestSHA256": "91748336bf01ce521ac8a78c498e89d4536feade0eb5c13ae6b0765eafa73d10",
+    "frozenFiles": 33,
+    "unchangedDuringSuite": true,
+    "scope": "Complete candidate before the separate foreground-camera consent migration; does not cover subsequent changes."
+  }
+}

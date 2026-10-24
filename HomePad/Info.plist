@@ -3,11 +3,16 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>HomeViewPad</string>
+	<string>HomePad</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>zh-Hans</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
@@ -16,16 +21,20 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Browse your music library and Apple Music, and play songs you choose in HomePad. Apple handles music requests and streaming.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Show upcoming events on this shared iPad screen only after you opt in.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Use the front camera for face-presence wake during standby. If you separately enable continuous foreground detection, it can also keep the display awake on other foreground pages. Frames stay on this iPad and are never recorded, saved or uploaded.</string>
 	<key>NSHomeKitUsageDescription</key>
-	<string>HomeViewPad shows your home accessories, runs scenes you select, and displays cameras only when you open them.</string>
+	<string>HomePad shows your home accessories and runs scenes you select. Camera video is shown only when you open a camera or choose it for a Home page card.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Show weather for your current city. If location is unavailable, HomeViewPad uses Philadelphia. Approximate coordinates are sent to Open-Meteo for weather.</string>
+	<string>Show weather for your current city. Approximate coordinates are sent to Open-Meteo for weather. If location is unavailable, choose a city yourself.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Detect when this iPad is standing upright or moves to enter and leave foreground display standby.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Display photos from the iPad albums you choose in the HomeViewPad photo widget. HomeViewPad never changes your photo library.</string>
-	<key>NSRemindersFullAccessUsageDescription</key>
-	<string>Show open reminders on this shared iPad screen only after you opt in.</string>
+	<string>Display photos from the iPad albums you choose in the HomePad photo widget. HomePad never changes your photo library.</string>
 	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
@@ -35,10 +44,15 @@
 	</dict>
 	<key>UILaunchScreen</key>
 	<dict/>
+	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>

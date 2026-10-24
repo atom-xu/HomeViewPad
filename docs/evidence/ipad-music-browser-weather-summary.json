@@ -1,0 +1,249 @@
+{
+  "scope": [
+    "music-browser-06",
+    "weather-manual-07"
+  ],
+  "recordedUTC": "2026-10-17T07:47:04.684113+00:00",
+  "environment": {
+    "Xcode": "27.0 (27A266a)",
+    "SDK": "27.0",
+    "simulator": "isolated HomePad Acceptance, iPad Pro 11-inch M5",
+    "runtime": "iPadOS 26.5 (23F73)",
+    "otherUserSimulatorOrBrowserTakenOver": false,
+    "physicalTarget": "paired iPad Pro 11-inch 4th generation / iPadOS 27.0.1 (24A446)"
+  },
+  "stages": [
+    {
+      "label": "Music 06 unfiltered scheme",
+      "rawBundle": "full-2.xcresult",
+      "exitCode": 65,
+      "total": 204,
+      "passed": 200,
+      "failed": 4,
+      "skipped": 0,
+      "manifestSHA256": "6bde87ac6501e9c9d9f7373c12946b8920f9f4eaf30e296f6b352e0b8fec4f61",
+      "sourceDrift": []
+    },
+    {
+      "label": "Combined weather 07 all unit plus seven executed UI",
+      "rawBundle": "focused-final.xcresult",
+      "exitCode": 65,
+      "total": 176,
+      "passed": 175,
+      "failed": 1,
+      "skipped": 0,
+      "manifestSHA256": "0fa909b8eadf9de6e008c5c16977f76cc67bed57d60f24991965c3e3918c1950",
+      "sourceDrift": []
+    },
+    {
+      "label": "Corrected queue visibility and live manual city UI",
+      "rawBundle": "final-followup.xcresult",
+      "exitCode": 0,
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "manifestSHA256": "59d358f6e2ed4b37ab79a4c44a548fc17d0bc9be9a8ab474119ee54bf3c1e20b",
+      "sourceDrift": []
+    },
+    {
+      "label": "Screen capture only repeat of exact music UI",
+      "rawBundle": "queue-screen-capture.xcresult",
+      "exitCode": 0,
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "manifestSHA256": "14932f7c509d46238c82f5f1d0d6728a44d67ed195f13168191ea7afc97b3347",
+      "sourceDrift": []
+    }
+  ],
+  "initialInterruptedFullRun": {
+    "exitCode": 75,
+    "passedUnit": 159,
+    "passedUI": 2,
+    "cancelledUI": 1,
+    "sourceUnchanged": true,
+    "reason": "Stopped before source repair for refresh fingerprint race and native Form shared row activation risk; never counted as full pass."
+  },
+  "fullRunFailuresRetained": [
+    "Old automatic-city external reverse-geocoding timeout; superseded requirement does not prove service success.",
+    "Camera shortcut new UUID below the visible sidebar; final full-frame preparation/relaunch/remove now passes.",
+    "Ninth queue row selection was attempted without full visibility; final complete-order and exact last-occurrence checks now pass.",
+    "Overview widget-origin paging opened Weather while reaching Home; background-origin black pixel/viewport check now passes, widget-origin double action remains an observation."
+  ],
+  "combinedRelatedDistinctPasses": {
+    "unitMethods": 169,
+    "uiMethods": 8,
+    "totalDistinct": 177,
+    "singleAllGreenUnfilteredSuiteOnFinalCandidate": false,
+    "selectorAccounting": "Combined command requested eight UI selectors but one misspelled manual-city method did not exist: only seven actually executed and were counted. Correct actual manual-city method executed and passed in final followup."
+  },
+  "finalSource": {
+    "fileCount": 48,
+    "manifestSHA256": "14932f7c509d46238c82f5f1d0d6728a44d67ed195f13168191ea7afc97b3347",
+    "signedBuildManifestSHA256": "59d358f6e2ed4b37ab79a4c44a548fc17d0bc9be9a8ab474119ee54bf3c1e20b",
+    "changedFromSignedBuild": [
+      "HomePadUITests/HomePadUITests.swift"
+    ],
+    "other47FilesByteIdentical": true,
+    "capturingOnlyTestChange": "XCUIScreen.main.screenshot replaces app.screenshot; no application behavior change; full identical music UI acceptance actually repeated 1/1."
+  },
+  "weather": {
+    "manualCityPrimary": true,
+    "explicitOneShotOnly": true,
+    "successStoresRoundedCityAndStops": true,
+    "automaticStartupForegroundRefreshLocation": false,
+    "oldFollowFlagDoesNotAuthorizeLocation": true,
+    "weatherUnitMethodsPassed": 33,
+    "nativePromptDenyNoAutomaticRetryPassed": true,
+    "manualSearchSaveReopenAndLiveForecastPassed": true,
+    "realAppleReverseGeocodingSuccessVerified": false,
+    "successAndTimeoutVerifiedWithControlledClients": true,
+    "proposalResults": {
+      "first": {
+        "passed": 170,
+        "failed": 1,
+        "total": 171
+      },
+      "permissionRepair": {
+        "passed": 0,
+        "failed": 1,
+        "total": 1
+      },
+      "finalPermission": {
+        "passed": 1,
+        "failed": 0,
+        "total": 1
+      },
+      "failures": "System alert used observed Chinese labels; failed run then left same alert on next run. Only selector/preparation repaired. Valid result writer completed after stopping only its verified own stuck optional simctl-diagnose child."
+    }
+  },
+  "screenshotReview": {
+    "source": "full-2-shots",
+    "inspectedOriginalPNG": [
+      "music-album-browsing-soft-outer-edges-without-changing-playback.png",
+      "music-songs-mode-soft-cover-flow-edges-while-browsing-does-not-play.png",
+      "music-playlist-playing-source-in-opposite-landscape-direction.png"
+    ],
+    "observations": [
+      "Album and song mode selection is explicit; search is in header; no footer tutorial or large shuffle button.",
+      "Native synthetic fixture lacks real artwork and is visibly TEST DATA; these images do not validate real-cover edge aesthetics.",
+      "Playlist remains a scrollable list beside a collection header. Playing-source screenshot remains distinct from browsed content."
+    ],
+    "physicalScreenshotsInspected": 0,
+    "focusedFinalInspected": [
+      "music-settings-chinese-largest-text-readable-native-form.png",
+      "music-settings-chinese-largest-text-audio-file-controls.png",
+      "music-chinese-accessibility-player-test-data.png",
+      "custom-camera-shortcut-fully-visible-before-remove-menu.png",
+      "overview-repeated-paging-full-black-landscape-left.png",
+      "overview-full-black-landscape-right.png"
+    ],
+    "finalFollowupInspected": [
+      "music-settings-readable-native-form-landscape-left.png",
+      "music-settings-readable-native-form-landscape-right.png",
+      "live-weather-overview.png",
+      "explicit-city-and-regional-weather-units.png"
+    ],
+    "queueScreenCaptureInspected": [
+      "music-ninth-queue-item-fully-visible-before-selection-1-d9ff6084-2534-4ad0-8930-0fca9a10557b-png.png",
+      "music-ninth-queue-item-immediately-after-selection-1-aaafd971-a572-410e-b845-c1923ea7808f-png.png"
+    ],
+    "invalidDiagnosticImages": {
+      "focusedFinalAppCapture": 1,
+      "finalFollowupAppCapture": 1,
+      "finding": "Raw app.screenshot images had landscape-sized pixels with EXIF orientation 6 and cropped composition; not credited as visual acceptance. Repeated unchanged app with XCUIScreen.main captures; both inspected complete queue frames are correct, last row visible above mini player and actual current marker/mini title move from 1.3 to 3.3."
+    },
+    "validOriginalImagesInspected": 15,
+    "exportedPNGCounts": {
+      "full2": 94,
+      "focused": 19,
+      "followup": 9,
+      "capture": 7
+    }
+  },
+  "signedPackage": {
+    "buildExitCode": 0,
+    "finishedUTC": "2026-10-17T07:33:50.843960+00:00",
+    "sourceManifestSHA256": "59d358f6e2ed4b37ab79a4c44a548fc17d0bc9be9a8ab474119ee54bf3c1e20b",
+    "sourceDrift": [],
+    "bundleIdentifier": "cn.vilhil.homeviewpad",
+    "strictSignaturePassed": true,
+    "profileUnexpired": true,
+    "profileIncludesPairedDevice": true,
+    "files": {
+      "HomePad": "3bb77fab0e3e4fc45ee70802727686d84db0502f53ae414ad1df10e6cb991170",
+      "HomePad.debug.dylib": "dad02378e0ae2baabe5335448368e69adc8b4f2f43db97f9fe8c1e953b37cb09",
+      "Info.plist": "7e8c3ac4992e93d5fec27e983c1fd7d1e556a6651295e4bd77eaef2ed182416e",
+      "embedded.mobileprovision": "3926bf703aabe1883c68d7871a0ce5c813c5ce910bd6687b7a933c86cade9f30",
+      "_CodeSignature/CodeResources": "58e8d49e6215d8826eb297b08a2bb248163f02c873590bfaa067f759e36ae82b"
+    }
+  },
+  "physicalUpdate": {
+    "checkedUTC": "2026-10-17T07:54:10.940232+00:00",
+    "installed": true,
+    "exactBundleAndInstallURLMatched": true,
+    "launched": true,
+    "foregroundActivationRequested": true,
+    "matchingPIDAndExecutableReadback": true,
+    "appArguments": [
+      "--page",
+      "5"
+    ],
+    "environmentKeys": [
+      "TERM"
+    ],
+    "visualScreenObserved": false,
+    "deviceHubOpened": false,
+    "audioRouteOrVolumeChanged": false,
+    "networkSettingsChanged": false,
+    "hardwareFunctionAcceptancePerformed": false,
+    "sourceManifestSHA256": "14932f7c509d46238c82f5f1d0d6728a44d67ed195f13168191ea7afc97b3347",
+    "transportReportedByCoreDevice": "wired",
+    "signedPackagePrepared": true,
+    "previousBlockedCheckpoint": "physical-update-before-retry-status.json",
+    "evidence": "docs/evidence/ipad-music-browser-weather-physical-update-summary.json"
+  },
+  "remaining": [
+    "Physical Apple reverse-geocoding success and new native music/real artwork/audio/AirPlay remain unverified.",
+    "Reduce Motion branch retained but no separate injected system Reduce Motion run.",
+    "Portrait remains unsupported by user choice; two landscape directions and largest Chinese text checked.",
+    "Historical repeated standby preview and widget-origin swipe double-action observations not expanded into this iteration.",
+    "Music playback-source comparison is queue content compatibility including duplicate counts, not strict native queue identity."
+  ],
+  "localization": {
+    "bilingualKeys": 737,
+    "missingOrFormatMismatch": 0
+  },
+  "git": {
+    "commitCreated": false,
+    "push": false,
+    "publicPublication": false,
+    "projectRegenerated": false
+  },
+  "previousBlockedPhysicalUpdate": {
+    "checkedUTC": "2026-10-17T07:35:52.830864+00:00",
+    "bundleIdentifier": "cn.vilhil.homeviewpad",
+    "signedPackagePrepared": true,
+    "sourceManifestSHA256": "59d358f6e2ed4b37ab79a4c44a548fc17d0bc9be9a8ab474119ee54bf3c1e20b",
+    "installed": false,
+    "launched": false,
+    "finalExactAppPreflightExitCode": 1,
+    "errors": [
+      {
+        "domain": "com.apple.dt.CoreDeviceError",
+        "code": 4016
+      }
+    ],
+    "userReportedUnlockedAndSameWiFi": true,
+    "finalInstallNotAttemptedBecauseDevelopmentRPCUnavailable": true,
+    "networkSettingsChanged": false,
+    "audioRouteOrVolumeChanged": false,
+    "deviceHubViewerOpenedByAgent": false,
+    "rootCauseEstablished": false,
+    "previousVersionFeedbackNotReused": true
+  },
+  "subsequentPhysicalUpdateEvidence": "ipad-music-browser-weather-physical-update-summary.json",
+  "physicalUpdateRefreshedUTC": "2026-10-17T07:56:26.681459+00:00"
+}

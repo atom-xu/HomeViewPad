@@ -14,6 +14,45 @@ struct HomeTile: Identifiable {
     var kind: HomeValueKind = .power
     var number: Double?
     var adjustment: HomeAdjustment?
+    var serviceID: UUID? = nil
+    var accessoryID: UUID? = nil
+    var serviceType: String? = nil
+    var categoryType: String? = nil
+    var characteristicType: String? = nil
+    var customTitle: String? = nil
+    var allowedValues: [Double]? = nil
+    var permittedOptions: [HomeCharacteristicOption]? = nil
+    var definition: HomeCharacteristicDefinition? { characteristicType.flatMap { HomeCharacteristicCatalog.definition(for: $0) } }
+    var control: HomeCharacteristicControl {
+        if definition?.control == .range, adjustment == nil, !options.isEmpty { return .choice }
+        return definition?.control ?? (kind == .power ? .toggle : kind.adjustable ? .range : .readOnly)
+    }
+    var controlTitle: String { definition?.title.tr ?? customTitle ?? kind.title }
+    var options: [HomeCharacteristicOption] { permittedOptions ?? definition?.options ?? [] }
+    var rightColumnOnly: Bool {
+        if categoryType == HMAccessoryCategoryTypeIPCamera || categoryType == HMAccessoryCategoryTypeVideoDoorbell { return true }
+        guard let serviceType else { return false }
+        return HomeServiceCatalog.definition(for: serviceType, categoryType: categoryType).rightColumnOnly
+    }
+    var quickToggle: Bool { kind == .power || characteristicType == HMCharacteristicTypeActive }
+    var displaySymbol: String {
+        guard let serviceType else { return symbol }
+        return HomeServiceCatalog.symbol(for: HomeServiceCatalog.definition(for: serviceType, categoryType: categoryType), characteristicType: characteristicType, number: number)
+    }
+    func formatted(_ number: Double) -> String {
+        if let option = options.first(where: { $0.value == number }) { return option.title }
+        return definition?.format(number) ?? kind.formatted(number)
+    }
+    func accepts(_ value: Double) -> Bool {
+        guard value.isFinite, definition?.accepts(value) ?? true,
+              allowedValues.map({ $0.contains(value) }) ?? true else { return false }
+        switch control {
+        case .readOnly: return false
+        case .toggle: return (value == 0 || value == 1) && (definition == nil || options.contains { $0.value == value })
+        case .range: return adjustment?.accepts(value) == true
+        case .choice, .command: return options.contains { $0.value == value }
+        }
+    }
     var isClimate: Bool { kind == .temperature || kind == .humidity || kind == .targetTemperature }
     var dashboardSlot: Int {
         if isClimate { return 0 }
@@ -32,7 +71,8 @@ struct HomeTile: Identifiable {
 }
 
 enum HomeValueKind: CaseIterable {
-    case power, temperature, humidity, brightness, targetTemperature, fanSpeed
+    case power, temperature, humidity, brightness, targetTemperature, fanSpeed, hue, saturation, colorTemperature
+    case state, measurement, setting, information, event
     init?(characteristicType: String) {
         switch characteristicType {
         case HMCharacteristicTypePowerState: self = .power
@@ -41,17 +81,30 @@ enum HomeValueKind: CaseIterable {
         case HMCharacteristicTypeBrightness: self = .brightness
         case HMCharacteristicTypeTargetTemperature: self = .targetTemperature
         case HMCharacteristicTypeRotationSpeed: self = .fanSpeed
-        default: return nil
+        case HMCharacteristicTypeHue: self = .hue
+        case HMCharacteristicTypeSaturation: self = .saturation
+        case HMCharacteristicTypeColorTemperature: self = .colorTemperature
+        default:
+            guard let definition = HomeCharacteristicCatalog.definition(for: characteristicType) else { return nil }
+            self = definition.kind
         }
     }
     var title: String {
         switch self {
-        case .power: return "Power"
-        case .temperature: return "Temperature"
-        case .humidity: return "Humidity"
-        case .brightness: return "Brightness"
-        case .targetTemperature: return "Target temperature"
-        case .fanSpeed: return "Fan speed"
+        case .power: return "Power".tr
+        case .temperature: return "Temperature".tr
+        case .humidity: return "Humidity".tr
+        case .brightness: return "Brightness".tr
+        case .targetTemperature: return "Target temperature".tr
+        case .fanSpeed: return "Fan speed".tr
+        case .hue: return "Hue".tr
+        case .saturation: return "Saturation".tr
+        case .colorTemperature: return "Color temperature".tr
+        case .state: return "State".tr
+        case .measurement: return "Reading".tr
+        case .setting: return "Setting".tr
+        case .information: return "Information".tr
+        case .event: return "Last event".tr
         }
     }
     var symbol: String {
@@ -61,15 +114,94 @@ enum HomeValueKind: CaseIterable {
         case .humidity: return "humidity.fill"
         case .brightness: return "lightbulb.fill"
         case .fanSpeed: return "fan.fill"
+        case .hue, .saturation: return "paintpalette.fill"
+        case .colorTemperature: return "sun.max.fill"
+        case .state: return "sensor.fill"
+        case .measurement: return "gauge.with.dots.needle.50percent"
+        case .setting: return "slider.horizontal.3"
+        case .information: return "info.circle"
+        case .event: return "button.programmable"
         }
     }
-    var adjustable: Bool { self == .brightness || self == .targetTemperature || self == .fanSpeed }
+    var adjustable: Bool { [.brightness, .targetTemperature, .fanSpeed, .hue, .saturation, .colorTemperature].contains(self) }
     func formatted(_ number: Double) -> String {
         guard number.isFinite else { return "Unavailable" }
         switch self {
         case .power: return number != 0 ? "On" : "Off"
         case .temperature, .targetTemperature: return String(format: "%.1f °C", number)
+        case .hue: return String(format: "%.0f°", number)
+        case .colorTemperature: return number > 0 ? String(format: "%.0f K", 1_000_000 / number) : "Unavailable"
+        case .state, .measurement, .setting, .information, .event: return String(format: "%g", number)
         default: return String(format: "%.0f %%", number)
+        }
+    }
+}
+
+/// A light has one dashboard card; its other characteristics belong in details.
+/// Match the HomeKit service, never the display name or room.
+enum HomeAccessoryPresentation {
+    static func primaryTiles(_ tiles: [HomeTile]) -> [HomeTile] {
+        let groups = Dictionary(grouping: tiles.filter { $0.serviceID != nil }, by: { $0.serviceID! })
+        let primaryIDs = Set(groups.values.compactMap { group in group.min { priority($0) < priority($1) }?.id })
+        let mainAccessories = Set(tiles.filter { tile in
+            guard let type = tile.serviceType else { return true }
+            let service = HomeServiceCatalog.definition(for: type, categoryType: tile.categoryType)
+            return !service.supportService && !service.rightColumnOnly
+        }.compactMap(\.accessoryID))
+        return tiles.filter { tile in
+            guard !tile.rightColumnOnly else { return false }
+            if let type = tile.serviceType, let accessory = tile.accessoryID,
+               HomeServiceCatalog.definition(for: type, categoryType: tile.categoryType).supportService,
+               mainAccessories.contains(accessory) { return false }
+            return tile.serviceID == nil || primaryIDs.contains(tile.id)
+        }
+    }
+
+    private static func priority(_ tile: HomeTile) -> String {
+        var preferred: [String] = [HMCharacteristicTypeCurrentLockMechanismState, HMCharacteristicTypeCurrentDoorState,
+            HMCharacteristicTypeCurrentPosition, HMCharacteristicTypeCurrentSecuritySystemState,
+            HMCharacteristicTypePowerState, HMCharacteristicTypeActive, HMCharacteristicTypeTargetTemperature,
+            HMCharacteristicTypeCurrentTemperature, HMCharacteristicTypeCurrentRelativeHumidity,
+            HMCharacteristicTypeMotionDetected, HMCharacteristicTypeOccupancyDetected, HMCharacteristicTypeContactState,
+            HMCharacteristicTypeSmokeDetected, HMCharacteristicTypeLeakDetected, HMCharacteristicTypeCarbonMonoxideDetected,
+            HMCharacteristicTypeCarbonDioxideDetected, HMCharacteristicTypeAirQuality, HMCharacteristicTypeCurrentLightLevel,
+            HMCharacteristicTypeBatteryLevel, HMCharacteristicTypeInputEvent]
+        if #available(iOS 18.0, *) { preferred.append(HMCharacteristicTypeCurrentMediaState) }
+        var signals: [String] = []
+        if let type = tile.serviceType {
+            switch HomeServiceCatalog.definition(for: type, categoryType: tile.categoryType).family {
+            case .thermostat: signals = [HMCharacteristicTypeTargetTemperature, HMCharacteristicTypeCurrentTemperature]
+            case .motion: signals = [HMCharacteristicTypeMotionDetected]
+            case .occupancy: signals = [HMCharacteristicTypeOccupancyDetected]
+            case .contact: signals = [HMCharacteristicTypeContactState]
+            case .smoke: signals = [HMCharacteristicTypeSmokeDetected]
+            case .leak: signals = [HMCharacteristicTypeLeakDetected]
+            case .carbonMonoxide: signals = [HMCharacteristicTypeCarbonMonoxideDetected, HMCharacteristicTypeCarbonMonoxideLevel]
+            case .carbonDioxide: signals = [HMCharacteristicTypeCarbonDioxideDetected, HMCharacteristicTypeCarbonDioxideLevel]
+            case .airQuality: signals = [HMCharacteristicTypeAirQuality]
+            case .lightSensor: signals = [HMCharacteristicTypeCurrentLightLevel]
+            case .battery: signals = [HMCharacteristicTypeBatteryLevel]
+            default: break
+            }
+        }
+        let index = tile.characteristicType.flatMap { signals.firstIndex(of: $0) }
+            ?? tile.characteristicType.flatMap { preferred.firstIndex(of: $0).map { $0 + 10 } }
+            ?? (tile.kind == .power ? 4 : tile.kind == .targetTemperature ? 6 : 100)
+        return String(format: "%03d", index) + tile.id.uuidString
+    }
+
+    static func details(for id: UUID, in tiles: [HomeTile]) -> [HomeTile] {
+        guard let selected = tiles.first(where: { $0.id == id }) else { return [] }
+        guard let service = selected.serviceID else { return [selected] }
+        return tiles.filter { tile in
+            if tile.serviceID == service { return true }
+            guard let accessory = selected.accessoryID, tile.accessoryID == accessory, let type = tile.serviceType else { return false }
+            if selected.rightColumnOnly && tile.rightColumnOnly { return true }
+            return [HMServiceTypeAccessoryInformation, HMServiceTypeBattery, HMServiceTypeFilterMaintenance].contains(type)
+        }.sorted { lhs, rhs in
+            let a = HomeValueKind.allCases.firstIndex(of: lhs.kind) ?? 0
+            let b = HomeValueKind.allCases.firstIndex(of: rhs.kind) ?? 0
+            return a == b ? lhs.id.uuidString < rhs.id.uuidString : a < b
         }
     }
 }
@@ -88,39 +220,46 @@ struct HomeAdjustment: Equatable {
         let increments = (value - minimum) / step
         return abs(increments - increments.rounded()) < 0.00001
     }
+    func snapped(_ value: Double) -> Double {
+        guard value.isFinite else { return minimum }
+        let count = floor((maximum - minimum) / step + 0.000001)
+        let index = min(count, max(0, ((value - minimum) / step).rounded()))
+        return minimum + index * step
+    }
 }
 enum HomeStatus: String, CaseIterable {
     case welcome, loading, ready, denied, empty, offline
     var title: String {
         switch self {
-        case .welcome: return "A little closer to home."
-        case .loading: return "Finding your home…"
-        case .ready: return "Your home, at a glance."
-        case .denied: return "Home access is off"
-        case .empty: return "Your home starts here"
-        case .offline: return "Home is taking a moment"
+        case .welcome: return "A little closer to home.".tr
+        case .loading: return "Finding your home…".tr
+        case .ready: return "Your home, at a glance.".tr
+        case .denied: return "Home access is off".tr
+        case .empty: return "Your home starts here".tr
+        case .offline: return "Home is taking a moment".tr
         }
     }
     var detail: String {
         switch self {
-        case .welcome: return "Connect Apple Home to see your rooms, accessories and scenes. Or explore a clearly labeled demo without sharing anything."
-        case .loading: return "Waiting for Apple Home. You can retry or explore the demo."
-        case .ready: return ""
-        case .denied: return "Allow HomeViewPad in Settings → Privacy & Security → HomeKit, then retry."
-        case .empty: return "Create a home and add accessories in Apple's Home app, then return here."
-        case .offline: return "Check your home Wi-Fi, accessory power and home hub. Retry when you're connected."
+        case .welcome: return "Connect Apple Home to see your rooms, accessories and scenes. Or explore a clearly labeled demo without sharing anything.".tr
+        case .loading: return "Waiting for Apple Home. You can retry or explore the demo.".tr
+        case .ready: return "".tr
+        case .denied: return "Allow HomePad in Settings → Privacy & Security → HomeKit, then retry.".tr
+        case .empty: return "Create a home and add accessories in Apple's Home app, then return here.".tr
+        case .offline: return "Check your home Wi-Fi, accessory power and home hub. Retry when you're connected.".tr
         }
     }
 }
 
 @MainActor final class HomeStore: NSObject, ObservableObject, HMHomeManagerDelegate, HMHomeDelegate, HMAccessoryDelegate {
+    var keepsDashboard: Bool { status == .ready || (status == .offline && (selectedHomeID != nil || !tiles.isEmpty)) }
     @Published var demo = false
     @Published var status: HomeStatus = .welcome
     @Published var tiles: [HomeTile] = []
     @Published var scenes: [String] = []
     @Published var cameras: [HMAccessory] = []
     @Published var homes: [HMHome] = []
-    @Published var homeName = "HomeViewPad"
+    @Published var homeName = "HomePad"
     @Published private(set) var selectedHomeID: UUID?
     @Published var error: String?
     @Published var busy = Set<UUID>()
@@ -148,12 +287,24 @@ enum HomeStatus: String, CaseIterable {
             HomeTile(id: UUID(uuidString: "00000000-0000-0000-0000-000000000005")!, name: "Thermostat", room: "Living room", symbol: "thermometer.medium", value: "22.0 °C", isOn: false, reachable: true, writable: true, kind: .targetTemperature, number: 22, adjustment: HomeAdjustment(minimum: 10, maximum: 30, step: 0.5))
         ] : []
     }
+    #if DEBUG
+    func configureControlValidation(offline: Bool) {
+        guard demo, status == .ready, !tiles.isEmpty else { return }
+        let service = UUID(uuidString: "00000000-0000-0000-0001-000000000001")!
+        tiles[0].serviceID = service
+        tiles.append(HomeTile(id: UUID(uuidString: "00000000-0000-0000-0000-000000000006")!, name: "Pendant brightness", room: "Kitchen", symbol: "lightbulb.fill", value: "60 %", isOn: false, reachable: true, writable: true, kind: .brightness, number: 60, adjustment: HomeAdjustment(minimum: 0, maximum: 100, step: 1), serviceID: service))
+        if offline {
+            for index in tiles.indices { tiles[index].reachable = false; tiles[index].writable = false; tiles[index].value = "Offline"; tiles[index].number = nil }
+            status = .offline
+        }
+    }
+    #endif
     func clearUnavailableHome(_ newStatus: HomeStatus) {
         generation = UUID(); timeout?.cancel()
         home?.delegate = nil; home?.accessories.forEach { $0.delegate = nil }
         home = nil; selectedHomeID = nil; homes = []; characteristics = [:]; failedReads = []
         tiles = []; cameras = []; scenes = []; busy = []; sceneBusy = false
-        notice = nil; error = nil; homeName = "HomeViewPad"; status = newStatus
+        notice = nil; error = nil; homeName = "HomePad"; status = newStatus
     }
     func disconnect() {
         generation = UUID(); timeout?.cancel()
@@ -163,7 +314,7 @@ enum HomeStatus: String, CaseIterable {
         manager = nil; home = nil; selectedHomeID = nil; homes = []; cameras = []; characteristics = [:]; failedReads = []
         busy = []; sceneBusy = false; tiles = []; scenes = []; error = nil; notice = nil
         UserDefaults.standard.set("welcome", forKey: "homeMode")
-        demo = false; status = .welcome; homeName = "HomeViewPad"
+        demo = false; status = .welcome; homeName = "HomePad"
     }
     func connect() {
         disconnect(); status = .loading
@@ -207,67 +358,125 @@ enum HomeStatus: String, CaseIterable {
         let token = generation
         characteristics = [:]
         tiles = home.accessories.flatMap { accessory in
-            accessory.services.flatMap { service in
-                service.characteristics.compactMap { c -> HomeTile? in
-                guard c.properties.contains(HMCharacteristicPropertyReadable), let kind = HomeValueKind(characteristicType: c.characteristicType) else { return nil }
-                characteristics[c.uniqueIdentifier] = c
-                if read, accessory.isReachable {
-                    c.readValue { [weak self] error in Task { @MainActor in
-                        guard let self, self.generation == token, !self.demo else { return }
-                        if error != nil { self.failedReads.insert(c.uniqueIdentifier) } else { self.failedReads.remove(c.uniqueIdentifier) }
-                        self.refresh(read: false)
-                    }}
-                    if c.properties.contains(HMCharacteristicPropertySupportsEventNotification) { c.enableNotification(true) { _ in } }
+            accessory.services.flatMap { service -> [HomeTile] in
+                let serviceDefinition = HomeServiceCatalog.definition(for: service.serviceType, categoryType: accessory.category.categoryType)
+                let values = service.characteristics.compactMap { c -> HomeTile? in
+                    let definition = HomeCharacteristicCatalog.definition(for: c.characteristicType)
+                    guard !HomeCharacteristicCatalog.excludedCharacteristicTypes.contains(c.characteristicType),
+                          c.properties.contains(HMCharacteristicPropertyReadable) || definition?.control == .command || (definition?.kind == .event && c.properties.contains(HMCharacteristicPropertySupportsEventNotification)),
+                          c.value == nil || c.value is NSNumber || c.value is String else { return nil }
+                    let snapshot = HomeCharacteristicSnapshot(id: c.uniqueIdentifier, type: c.characteristicType,
+                        title: c.localizedDescription, number: (c.value as? NSNumber)?.doubleValue, text: c.value as? String,
+                        readable: c.properties.contains(HMCharacteristicPropertyReadable),
+                        eventCapable: c.properties.contains(HMCharacteristicPropertySupportsEventNotification),
+                        writable: c.properties.contains(HMCharacteristicPropertyWritable),
+                        readFailed: failedReads.contains(c.uniqueIdentifier),
+                        minimum: c.metadata?.minimumValue?.doubleValue, maximum: c.metadata?.maximumValue?.doubleValue,
+                        step: c.metadata?.stepValue?.doubleValue, validValues: c.metadata?.validValues?.map(\.doubleValue),
+                        dynamicOptions: Self.inputOptions(for: c, service: service))
+                    guard let tile = HomeTileFactory.make(snapshot, serviceID: service.uniqueIdentifier,
+                        serviceType: service.serviceType, name: service.name, room: accessory.room?.name ?? "Home",
+                        accessoryID: accessory.uniqueIdentifier, categoryType: accessory.category.categoryType,
+                        reachable: accessory.isReachable) else { return nil }
+                    characteristics[c.uniqueIdentifier] = c
+                    if read, accessory.isReachable, snapshot.readable {
+                        c.readValue { [weak self] error in Task { @MainActor in
+                            guard let self, self.generation == token, !self.demo else { return }
+                            if error != nil { self.failedReads.insert(c.uniqueIdentifier) } else { self.failedReads.remove(c.uniqueIdentifier) }
+                            self.refresh(read: false)
+                        }}
+                    }
+                    if read, accessory.isReachable, c.properties.contains(HMCharacteristicPropertySupportsEventNotification) {
+                        c.enableNotification(true) { _ in }
+                    }
+                    return tile
                 }
-                let number = (c.value as? NSNumber)?.doubleValue
-                let valid = number?.isFinite == true && !failedReads.contains(c.uniqueIdentifier) && accessory.isReachable
-                let isOn = kind == .power && valid && number != 0
-                let value: String
-                if !accessory.isReachable { value = "Offline" }
-                else if failedReads.contains(c.uniqueIdentifier) { value = "Unavailable" }
-                else if let number { value = kind.formatted(number) } else { value = "Unavailable" }
-                let adjustment = kind.adjustable ? HomeAdjustment(minimum: c.metadata?.minimumValue?.doubleValue, maximum: c.metadata?.maximumValue?.doubleValue, step: c.metadata?.stepValue?.doubleValue) : nil
-                let canWrite = valid && c.properties.contains(HMCharacteristicPropertyWritable) && (kind == .power || adjustment != nil)
-                var symbol = kind.symbol
-                if kind == .power {
-                    if service.serviceType == HMServiceTypeLightbulb { symbol = "lightbulb.fill" }
-                    else if service.serviceType == HMServiceTypeFan || service.serviceType == HMServiceTypeVentilationFan { symbol = "fan.fill" }
-                    else if service.serviceType == HMServiceTypeOutlet { symbol = "powerplug.fill" }
-                }
-                return HomeTile(id: c.uniqueIdentifier, name: kind == .power ? service.name : "\(service.name) · \(kind.title)", room: accessory.room?.name ?? "Home", symbol: symbol, value: value, isOn: isOn, reachable: accessory.isReachable, writable: canWrite, kind: kind, number: valid ? number : nil, adjustment: adjustment)
-                }
+                guard values.isEmpty else { return values }
+                // A public service without readable/control values still has an honest
+                // type card. Infrastructure never masquerades as a power switch.
+                return [HomeTile(id: service.uniqueIdentifier, name: service.name, room: accessory.room?.name ?? "Home",
+                    symbol: serviceDefinition.symbol, value: accessory.isReachable ? "No controls exposed" : "Offline",
+                    isOn: false, reachable: accessory.isReachable, writable: false, kind: .information,
+                    serviceID: service.uniqueIdentifier, accessoryID: accessory.uniqueIdentifier,
+                    serviceType: service.serviceType, categoryType: accessory.category.categoryType)]
             }
-        }.sorted { ($0.room, $0.name) < ($1.room, $1.name) }
+        }.sorted { ($0.room, $0.name, $0.id.uuidString) < ($1.room, $1.name, $1.id.uuidString) }
         scenes = home.actionSets.map(\.name).sorted()
         cameras = home.accessories.filter { !($0.cameraProfiles ?? []).isEmpty }
         status = home.accessories.isEmpty ? .empty : (home.accessories.allSatisfy { !$0.isReachable } ? .offline : .ready)
     }
-    func toggle(_ tile: HomeTile) {
-        guard let tile = tiles.first(where: { $0.id == tile.id }), tile.kind == .power, tile.writable, tile.reachable, !busy.contains(tile.id) else { return }
-        if demo {
-            guard let index = tiles.firstIndex(where: { $0.id == tile.id }) else { return }
-            tiles[index].isOn.toggle(); tiles[index].value = tiles[index].isOn ? "On" : "Off"; return
+    private static func inputOptions(for characteristic: HMCharacteristic, service: HMService) -> [HomeCharacteristicOption] {
+        guard #available(iOS 18.0, *), characteristic.characteristicType == HMCharacteristicTypeActiveIdentifier else { return [] }
+        return (service.linkedServices ?? []).filter { $0.serviceType == HMServiceTypeInputSource }.compactMap { input in
+            guard let number = input.characteristics.first(where: { $0.characteristicType == HMCharacteristicTypeIdentifier })?.value as? NSNumber else { return nil }
+            let name = input.characteristics.first(where: { $0.characteristicType == HMCharacteristicTypeConfiguredName })?.value as? String
+            return HomeCharacteristicOption(value: number.doubleValue, title: name ?? input.name)
+        }.sorted { $0.value < $1.value }
+    }
+    func quickToggle(for tile: HomeTile) -> HomeTile? {
+        if let type = tile.serviceType {
+            let family = HomeServiceCatalog.definition(for: type, categoryType: tile.categoryType).family
+            guard [.light, .switchDevice, .outlet, .fan, .thermostat, .heaterCooler, .humidifier,
+                   .airPurifier, .valve, .faucet, .irrigation, .speaker, .microphone, .television,
+                   .programmableSwitch, .other].contains(family) else { return nil }
         }
-        write(!tile.isOn, to: tile)
+        let values = HomeAccessoryPresentation.details(for: tile.id, in: tiles)
+        return values.first { $0.kind == .power } ?? values.first { $0.characteristicType == HMCharacteristicTypeActive }
+    }
+    func canToggle(_ tile: HomeTile) -> Bool {
+        tile.control == .toggle && tile.writable && tile.reachable && !busy.contains(tile.id)
+            && tile.accepts(tile.isOn ? 0 : 1)
+    }
+    func toggle(_ tile: HomeTile) {
+        guard let current = tiles.first(where: { $0.id == tile.id }), canToggle(current) else { return }
+        setValue(current.id, to: current.isOn ? 0 : 1)
     }
     func adjust(_ id: UUID, to value: Double) {
-        guard let tile = tiles.first(where: { $0.id == id }), tile.kind.adjustable,
-              tile.writable, tile.reachable, !busy.contains(id), tile.adjustment?.accepts(value) == true else { return }
+        guard let tile = tiles.first(where: { $0.id == id }), tile.control == .range else { return }
+        setValue(id, to: value)
+    }
+    func setValue(_ id: UUID, to value: Double) {
+        guard let tile = tiles.first(where: { $0.id == id }), tile.writable, tile.reachable,
+              !busy.contains(id), tile.accepts(value) else { return }
         if demo {
             guard let index = tiles.firstIndex(where: { $0.id == id }) else { return }
-            tiles[index].number = value; tiles[index].value = tile.kind.formatted(value)
+            if tile.control == .command { notice = "Demo action sent".tr; return }
+            tiles[index].number = value
+            tiles[index].isOn = tile.control == .toggle && value == 1
+            tiles[index].value = tile.formatted(value)
+            updateDemoCurrentState(for: tile, value: value)
             return
         }
-        write(NSNumber(value: value), to: tile)
+        write(tile.control == .toggle ? NSNumber(value: value == 1) : NSNumber(value: value), to: tile)
+    }
+    private func updateDemoCurrentState(for tile: HomeTile, value: Double) {
+        let pairs = [HMCharacteristicTypeTargetLockMechanismState: HMCharacteristicTypeCurrentLockMechanismState,
+            HMCharacteristicTypeTargetDoorState: HMCharacteristicTypeCurrentDoorState,
+            HMCharacteristicTypeTargetPosition: HMCharacteristicTypeCurrentPosition,
+            HMCharacteristicTypeTargetSecuritySystemState: HMCharacteristicTypeCurrentSecuritySystemState]
+        guard let type = tile.characteristicType, let current = pairs[type], let service = tile.serviceID else { return }
+        for index in tiles.indices where tiles[index].serviceID == service && tiles[index].characteristicType == current {
+            tiles[index].number = value; tiles[index].value = tiles[index].formatted(value)
+        }
     }
     private func write(_ value: Any, to tile: HomeTile) {
         guard manager?.authorizationStatus.contains(.authorized) == true, let c = characteristics[tile.id],
               c.service?.accessory?.isReachable == true, c.properties.contains(HMCharacteristicPropertyWritable) else { return }
-        error = nil; busy.insert(tile.id); let token = generation
-        c.writeValue(value) { [weak self] failure in Task { @MainActor in
+        error = nil; notice = nil; busy.insert(tile.id); let token = generation
+        let payload: Any
+        if c.metadata?.format == HMCharacteristicMetadataFormatBool, let number = value as? NSNumber {
+            payload = NSNumber(value: number.boolValue)
+        } else { payload = value }
+        c.writeValue(payload) { [weak self] failure in Task { @MainActor in
             guard let self, self.generation == token else { return }
             if let failure {
                 self.busy.remove(tile.id); self.error = failure.localizedDescription; self.refresh(); return
+            }
+            guard c.properties.contains(HMCharacteristicPropertyReadable) else {
+                self.busy.remove(tile.id)
+                self.notice = "Command sent. Waiting for the accessory state.".tr
+                self.refresh(read: true)
+                return
             }
             // Keep the control busy until read-back finishes so a second tap cannot use an old value.
             c.readValue { [weak self] readError in Task { @MainActor in
@@ -275,7 +484,7 @@ enum HomeStatus: String, CaseIterable {
                 self.busy.remove(tile.id)
                 if let readError {
                     self.failedReads.insert(tile.id)
-                    self.error = "The command was sent, but its current state could not be read: \(readError.localizedDescription)"
+                    self.error = L10n.format("The command was sent, but its current state could not be read: %@", readError.localizedDescription)
                 } else { self.failedReads.remove(tile.id) }
                 self.refresh(read: false)
             } }
@@ -286,15 +495,16 @@ enum HomeStatus: String, CaseIterable {
         if demo {
             for index in tiles.indices where tiles[index].writable && tiles[index].kind == .power {
                 tiles[index].isOn = name != "Good night"; tiles[index].value = tiles[index].isOn ? "On" : "Off"
+                if tiles[index].number != nil { tiles[index].number = tiles[index].isOn ? 1 : 0 }
             }
-            notice = "Demo scene: \(name)"; return
+            notice = L10n.format("Demo scene: %@", name.tr); return
         }
         guard manager?.authorizationStatus.contains(.authorized) == true, let scene = home?.actionSets.first(where: { $0.name == name }), let home else { return }
         error = nil; sceneBusy = true; let token = generation
         home.executeActionSet(scene) { [weak self] failure in Task { @MainActor in
             guard let self, self.generation == token else { return }
             self.sceneBusy = false
-            if let failure { self.error = failure.localizedDescription } else { self.notice = "Scene completed: \(name)" }
+            if let failure { self.error = failure.localizedDescription } else { self.notice = L10n.format("Scene completed: %@", name) }
             self.refresh()
         }}
     }
@@ -323,11 +533,14 @@ enum DashboardSwipe {
     }
 }
 enum DashboardPage: Int, CaseIterable {
-    case overview, home, clock, photos, settings
-    var title: String { ["Overview", "Home", "Clock", "Photos", "Settings"][rawValue] }
-    var symbol: String { ["square.grid.2x2.fill", "square.grid.2x2", "clock", "photo.on.rectangle.angled", "slider.horizontal.3"][rawValue] }
+    case overview, home, clock, photos, settings, music
+    // Preserve saved/test page identifiers while placing Music before Settings.
+    static let allCases: [DashboardPage] = [.overview, .home, .clock, .photos, .music, .settings]
+    var position: Int { Self.allCases.firstIndex(of: self) ?? 0 }
+    var title: String { ["Overview", "Home", "Clock", "Photos", "Settings", "Music"][rawValue].tr }
+    var symbol: String { ["square.grid.2x2.fill", "square.grid.2x2", "clock", "photo.on.rectangle.angled", "slider.horizontal.3", "music.note"][rawValue] }
     func adjacent(forward: Bool) -> DashboardPage {
-        DashboardPage(rawValue: min(Self.allCases.count - 1, max(0, rawValue + (forward ? 1 : -1))))!
+        Self.allCases[min(Self.allCases.count - 1, max(0, position + (forward ? 1 : -1)))]
     }
 }
 
@@ -341,8 +554,8 @@ enum DashboardWidget: Hashable {
             let climate = tiles.filter { $0.dashboardSlot == 0 }
             let ordered = climate.filter { $0.kind == .targetTemperature } + climate.filter { $0.kind != .targetTemperature }
             return ordered.isEmpty ? [.empty(0)] : ordered.map { .climate($0.id) }
-        case 1: return [.clock, .agenda]
-        case 2: return [.photo, .camera]
+        case 1: return [.clock]
+        case 2: return [.empty(2)]
         case 3: return scenes.isEmpty ? [.empty(3)] : scenes.map { .scene($0) }
         default:
             let controls = tiles.filter { $0.dashboardSlot == slot }.map { DashboardWidget.accessory($0.id) }

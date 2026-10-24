@@ -1,0 +1,52 @@
+{
+  "checkedAtUTC": "2026-10-16T02:44:38Z",
+  "scope": "Read-only closure audit of the remaining location UI case; physical iPad pairing takes priority",
+  "sourceManifestSHA256": "a626603005eaa5c11209453daaab4b2d4f2607c94dd4059056928da9f0d2e4f4",
+  "sourceFilesChecked": 38,
+  "sourceDrift": [],
+  "processCheck": {
+    "xcodebuildRunning": false,
+    "xctestOrUITestRunnerRunning": false,
+    "previewAppRunning": true,
+    "previewDevice": "iPad Pro 13-inch (M5) Simulator",
+    "previewLeftUntouched": true,
+    "systemTestManagerDaemonsPresent": true
+  },
+  "newTestRuns": 0,
+  "applicationChanges": false,
+  "permissionChanges": false,
+  "classification": "Observed system reverse-geocoding dependency failure; no implementation or assertion defect identified as the cause of these two failures. This does not prove a global service outage.",
+  "failureEvidence": [
+    {
+      "timeAsiaShanghai": "2026-10-16 10:00:19.221",
+      "error": "GEOErrorDomain -8: Received no results status from server",
+      "artifact": ".validation/local/settings-v2/location-system.log:53"
+    },
+    {
+      "timeAsiaShanghai": "2026-10-16 10:16:42.598",
+      "error": "NSURLErrorDomain -1001: request timed out at system regional dispatcher",
+      "artifact": ".validation/local/settings-v2/followup/location-error.log:3"
+    }
+  ],
+  "proven": [
+    "Unit tests: fresh and demo instances do not construct a location manager or request weather/location before an explicit choice.",
+    "Unit tests: passive refresh cannot request system permission; the explicit Use current location operation can. Already-authorized legacy following does not request broader permission.",
+    "Real simulator UI: passive display raised no location alert during the check; explicit Use current location raised Allow While Using App and the test selected it.",
+    "Observed failed geocode UI displayed location unavailable. Unit tests preserve an existing manual city and do not invent Philadelphia for a new or explicitly cleared configuration.",
+    "Complete-run manual New York selection/search, real Open-Meteo reading, unit preference persistence and explicit clear/relaunch all passed."
+  ],
+  "notProven": [
+    "Current-version end-to-end automatic city resolution followed by live weather: the current-city expectation failed, so its later live-reading assertion was not reached.",
+    "Physical iPad location permissions, GPS/city accuracy, regional dispatcher reliability and denial/revocation/background recovery on hardware.",
+    "Actual late geocoder callbacks after stop: generation and identity guards were reviewed in code; the cited manager-stub tests are not a physical callback test."
+  ],
+  "decision": "Keep testLocationPermissionUsesDetectedCity failed with strict city/live-reading assertions. Do not rerun an unchanged external failure merely to obtain green, and do not interrupt physical pairing. Manual city selection remains the tested alternative.",
+  "suiteStatus": {
+    "completePassed": 90,
+    "completeFailed": 2,
+    "followupPassed": 2,
+    "followupFailed": 1,
+    "distinctMethodsPassedAcrossRuns": 91,
+    "singleAllGreen92TestBundle": false
+  }
+}

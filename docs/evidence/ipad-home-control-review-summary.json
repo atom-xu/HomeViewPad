@@ -1,0 +1,165 @@
+{
+  "scope": "Read-only Home control experience review; no production or formal test source changes by this task.",
+  "date": "2026-10-23",
+  "report": "docs/HOME-CONTROL-REVIEW-10.md",
+  "toolchain": "Xcode 27.0 (27A266a)",
+  "runtime": "iPad Pro 11-inch (M5), iPadOS Simulator 26.5 (23F73)",
+  "reviewBaseline": {
+    "sourceFiles": 48,
+    "manifestSHA256": "fc53ce1ece2ed5857f6107bf9c00d77ce2f166e3cc4cae5f25b22a4678dd14d9",
+    "frozenCopyAllHashesMatch": true,
+    "initialSuiteFinishedWithoutSourceDrift": true
+  },
+  "existingSelectedTests": {
+    "unitPassed": 23,
+    "uiPassed": 9,
+    "uiFailed": 1,
+    "total": 33,
+    "passed": 32,
+    "failed": 1,
+    "skipped": 0,
+    "exitCode": 65,
+    "failedMethod": "testHomeLongPressPreviewFitsViewportAndPreservesControls",
+    "failureBoundary": "English Preview selector did not match Chinese system label 预览; later climate/edge/maximum-text preview steps not executed."
+  },
+  "frozenDiagnostic": {
+    "passed": 1,
+    "failed": 0,
+    "exitCode": 0,
+    "onlyExtraMethodInTemporaryUITestCopy": true,
+    "other47ManifestFilesIdentical": true,
+    "purpose": "Document current defects, not certify repairs. Found Chinese scene-card native preview inside viewport."
+  },
+  "findings": [
+    {
+      "id": "R1",
+      "priority": "high",
+      "evidence": "Reproduced in deterministic demo UI",
+      "issue": "Drawer room selection silently filters default Home cards."
+    },
+    {
+      "id": "R2",
+      "priority": "high",
+      "evidence": "Observed native screenshot using original synthetic saved-wallpaper fixture",
+      "issue": "Near-white background makes fixed-white controls unreadable."
+    },
+    {
+      "id": "R3",
+      "priority": "medium",
+      "evidence": "Reproduced in deterministic demo UI",
+      "issue": "New widget is entirely below viewport and not revealed."
+    },
+    {
+      "id": "R4",
+      "priority": "high",
+      "evidence": "Code confirmed; physical camera not tested",
+      "issue": "First-available camera action and snapshot resolver disagree; left/right camera card abilities differ."
+    },
+    {
+      "id": "R5",
+      "priority": "medium",
+      "evidence": "Observed menu/layout and code-confirmed product gap",
+      "issue": "Hidden editor/category switching, no reorder, immediate restore without undo."
+    },
+    {
+      "id": "R6",
+      "priority": "medium",
+      "evidence": "Reproduced in deterministic demo UI",
+      "issue": "Apply remains actionable with unchanged confirmed target value."
+    },
+    {
+      "id": "R7",
+      "priority": "medium",
+      "evidence": "Code confirmed; physical offline scenario not tested",
+      "issue": "All-offline Home status replaces entire independent dashboard."
+    }
+  ],
+  "screenshots": {
+    "exported": 26,
+    "inspectedUnique": 14,
+    "localRoot": ".validation/local/home-control-review-10",
+    "inspected": [
+      {
+        "path": "review-shots/chinese-home-landscape.png",
+        "sha256": "edd5a789471bb7c0826d23b5cf87032700918f316f43738990656a1e39cabdab"
+      },
+      {
+        "path": "review-shots/square-home-landscape-left.png",
+        "sha256": "29692c826e37f3b88b379b6382b9db08f517725613987dc8b7d4e693924726b3"
+      },
+      {
+        "path": "review-shots/square-home-landscape-right.png",
+        "sha256": "77121abda594a75e9c7e2a11d68499ee0cf22a4869585e1d1be3701bdf3c67b9"
+      },
+      {
+        "path": "review-shots/accessibility-large-text.png",
+        "sha256": "eb3d61f00b509dacf5e862d95628e041045f3cb8e1c43ac4ef1467dd28c633e2"
+      },
+      {
+        "path": "review-shots/home-same-height-rectangular-right-column-and-split-control-actions.png",
+        "sha256": "cb7256dceaa3a37bc865fac6d7ec99dc5dc41bf3125686fe730f5f85d9148291"
+      },
+      {
+        "path": "review-shots/large-camera-widget-after-context-resize.png",
+        "sha256": "adf92fab0255a1617d0b0521e2afa59e40baa3f97f256be56f0a1013ce68930d"
+      },
+      {
+        "path": "probe-shots/review-home-silently-retains-kitchen-filter-from-controls-drawer.png",
+        "sha256": "5c5d11aff75497c747fe06bc6bee3c1c2fb5010dcb6388e6b3cd91f3693dcf39"
+      },
+      {
+        "path": "probe-shots/review-just-added-clock-is-outside-viewport-without-reveal.png",
+        "sha256": "240969e4f0eea39260aaa0e6477922d0e16680c09027926ff31dce3607c26702"
+      },
+      {
+        "path": "probe-shots/review-adjustment-applied-but-same-draft-remains-actionable.png",
+        "sha256": "0dee4e9c0db70c5fda3e700154457fe52134499588ab22ad25ec07b76f7e7bea"
+      },
+      {
+        "path": "probe-shots/review-native-home-long-press-menu-on-chinese-simulator.png",
+        "sha256": "f998526cef7c04d05859f132cac61988232cede4fc7dd69d47650af90f8625f6"
+      },
+      {
+        "path": "review-shots/music-home-widget-shared-test-playback.png",
+        "sha256": "68da711c1eecd0a072ab072de8f5dbdd1ed68d4e9b8ad8174c85cc97ce17893a"
+      },
+      {
+        "path": "review-shots/custom-camera-shortcut-restored.png",
+        "sha256": "bd522794ad2b82817417c100a3fccc361b58922c2359eb70960ea9581c29dc9a"
+      },
+      {
+        "path": "review-shots/landscape-widget-overflow-and-right-shortcuts.png",
+        "sha256": "f3f554a71ecc750611a3ead8df19d23af306f4a93a7ce6e7621d1bfbcaa37fdc"
+      },
+      {
+        "path": "home-synthetic-light-wallpaper.png",
+        "sha256": "80a6e48aac44be756099eb957ff3c281c2ae9b0c13d05f04d2d60eeb11e39dd8"
+      }
+    ],
+    "originalNativePixels": true,
+    "notPublished": true
+  },
+  "concurrentWork": {
+    "currentSharedBranch": "codex/dynamic-screensaver",
+    "newBackgroundAerialStandbyCodeNotCovered": true,
+    "initialMixedCopyBuildFailurePreservedNotCountedAsRegression": true,
+    "otherWorkPreserved": true
+  },
+  "cleanup": {
+    "onlyDisposableReviewSimulator": true,
+    "wallpaperRemoved": true,
+    "terminateExitCode": 0,
+    "shutdownExitCode": 0
+  },
+  "limitations": [
+    "Selected tests only; not a full-suite pass.",
+    "No physical iPad installation or input.",
+    "No actual HomeKit accessory writes, camera snapshots/video, AirPlay or audible Music verification.",
+    "Synthetic/demo states never represent physical hardware results.",
+    "New concurrent background implementation requires separate validation."
+  ],
+  "gitCommit": false,
+  "push": false,
+  "publication": false,
+  "deployment": false
+}

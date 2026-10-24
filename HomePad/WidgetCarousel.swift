@@ -15,6 +15,8 @@ struct WidgetCarousel<Item: Hashable, Content: View>: View {
     let items: [Item]
     @Binding var selection: Int
     let size: CGFloat
+    var height: CGFloat? = nil
+    var allowsVerticalSwipe = true
     let radius: CGFloat
     let slot: Int
     let showNavigation: () -> Void
@@ -34,10 +36,10 @@ struct WidgetCarousel<Item: Hashable, Content: View>: View {
     var body: some View {
         ZStack {
             if !items.isEmpty {
-                content(items[index]).frame(width: size, height: size)
+                content(items[index]).frame(width: size, height: height ?? size)
                     .id(items[index]).transition(transition)
             }
-        }.frame(width: size, height: size)
+        }.frame(width: size, height: height ?? size)
             .clipShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
             .overlay(alignment: .trailing) {
                 if items.count > 1 && (indicatorVisible || draggingVertically) {
@@ -51,8 +53,8 @@ struct WidgetCarousel<Item: Hashable, Content: View>: View {
                         .padding(.trailing, max(7, size * 0.025))
                         .allowsHitTesting(false)
                         .accessibilityElement(children: .ignore)
-                        .accessibilityLabel("Widget position")
-                        .accessibilityValue("\(index + 1) of \(items.count)")
+                        .accessibilityLabel("Widget position".tr)
+                        .accessibilityValue(L10n.format("%lld of %lld", index + 1, items.count))
                         .accessibilityIdentifier("widgetPosition-\(slot)")
                 }
             }
@@ -64,20 +66,20 @@ struct WidgetCarousel<Item: Hashable, Content: View>: View {
                 indicatorVisible = false
             }
             .highPriorityGesture(DragGesture(minimumDistance: 30).updating($draggingVertically) { value, state, _ in
-                guard !dynamicTypeSize.isAccessibilitySize else { return }
+                guard allowsVerticalSwipe, !dynamicTypeSize.isAccessibilitySize else { return }
                 let direction = DashboardSwipe.classify(x: value.translation.width, y: value.translation.height)
                 state = direction == .up || direction == .down
             }.onEnded { value in
-                guard !dynamicTypeSize.isAccessibilitySize else { return }
+                guard allowsVerticalSwipe, !dynamicTypeSize.isAccessibilitySize else { return }
                 switch DashboardSwipe.classify(x: value.translation.width, y: value.translation.height) {
                 case .up: advance(forward: true)
                 case .down: advance(forward: false)
                 default: break
                 }
-            }, including: dynamicTypeSize.isAccessibilitySize ? .subviews : .all)
-            .accessibilityAction(named: "Next widget") { advance(forward: true) }
-            .accessibilityAction(named: "Previous widget") { advance(forward: false) }
-            .accessibilityAction(named: "Show navigation", showNavigation)
+            }, including: !allowsVerticalSwipe || dynamicTypeSize.isAccessibilitySize ? .subviews : .all)
+            .accessibilityAction(named: "Next widget".tr) { advance(forward: true) }
+            .accessibilityAction(named: "Previous widget".tr) { advance(forward: false) }
+            .accessibilityAction(named: "Show navigation".tr, showNavigation)
     }
     private func advance(forward: Bool) {
         guard items.count > 1 else { return }

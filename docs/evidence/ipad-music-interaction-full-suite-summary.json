@@ -1,0 +1,95 @@
+{
+  "scope": "Native music interaction refinement 02",
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "sdk": "27.0",
+    "simulator": "Independent iPad Pro 11-inch M5",
+    "runtime": "iPadOS 26.5 (23F73)"
+  },
+  "unfilteredExecution": {
+    "sourceManifestSHA256": "31b0cac357da7ed3e18af2e8ac66f6aaee886a485d3a538728eed669db124672",
+    "sourceFiles": 48,
+    "sourceUnchangedThroughoutRun": true,
+    "countSource": "Completed xcodebuild test-case log; result bundle could not be saved",
+    "total": 154,
+    "passed": 151,
+    "failed": 3,
+    "skipped": 0,
+    "unit": {
+      "passed": 121,
+      "failed": 0
+    },
+    "ui": {
+      "passed": 30,
+      "failed": 3
+    },
+    "failedTests": [
+      "HomePadUITests.HomePadUITests testLocationPermissionUsesDetectedCity",
+      "HomePadUITests.HomePadUITests testMusicBackNavigationRetainsLibraryAndExplicitHomePlayer",
+      "HomePadUITests.HomePadUITests testMusicFailedSelectionStaysInAlbumWithRealFailureFeedback"
+    ],
+    "exitCode": 73,
+    "resultBundleReadable": false,
+    "artifactFailure": "After all test methods finished, activity-log import failed with mkstemp No such file or directory; result Info.plist missing. Root cause unresolved.",
+    "retainedEvidence": "Complete log, parsed per-case results, frozen source and partial Staging diagnostics in ignored local validation directory",
+    "orientationRuntimeWarnings": 33
+  },
+  "followUp": {
+    "sourceManifestSHA256": "9caf096fb2a44385c2b3412607c4618ed3bcbce08f86bd84c0edde73a4064aa6",
+    "changedFilesSinceFullRun": [
+      "HomePadUITests/HomePadUITests.swift"
+    ],
+    "otherManifestFilesUnchanged": 47,
+    "change": "Wait for player and stable hittable Library button, then assert Cover Flow appears; original behavior assertions retained",
+    "failureEvidence": "Two new journeys tapped Library during the Dashboard entry transition and remained on the player; exact coordinate mechanism is unproven",
+    "commandScope": "All HomePadTests plus the four music UI journeys",
+    "temporaryDirectory": "Dedicated persistent temporary directory for this attempt",
+    "total": 125,
+    "passed": 125,
+    "failed": 0,
+    "skipped": 0,
+    "unit": {
+      "passed": 121,
+      "failed": 0
+    },
+    "ui": {
+      "passed": 4,
+      "failed": 0
+    },
+    "exitCode": 0,
+    "resultBundleReadable": true,
+    "summaryExportSucceeded": true,
+    "orientationRuntimeWarnings": 4,
+    "screenshotsExported": 7,
+    "screenshotsInspected": 7,
+    "uiJourneys": [
+      "Chinese maximum-accessibility player and album list",
+      "Source-aware return, album position, explicit Home player, unsubmitted draft versus submitted-search restoration and edge drag",
+      "Delayed failed selection stays in album with prior current track and retry controls",
+      "Shared Home/player playback controls, seek and Cover Flow browsing without page swipe"
+    ]
+  },
+  "coverageAcrossRecordedRuns": {
+    "distinctMethodsPassed": 153,
+    "totalMethods": 154,
+    "singleAllGreenFullSuite": false,
+    "remainingFailure": "Existing testLocationPermissionUsesDetectedCity timeout; not changed or rerun in focused follow-up"
+  },
+  "fixture": "Double-gated DEBUG synthetic MusicKit data, visibly marked TEST DATA; no audio or account playback claim",
+  "limitations": [
+    "Real library identifier normalization and account-backed interaction acceptance remain separate from synthetic fixture coverage",
+    "System Reduce Motion preference acceptance, remote AirPlay and physical audio for the newly installed package not verified",
+    "Physical installation succeeded but foreground launch was rejected while iPad was locked",
+    "Earlier full result-bundle artifact failure remains recorded; valid focused bundle does not repair that artifact"
+  ],
+  "physicalApplicationSourceUnchangedByTestOnlyFollowUp": true,
+  "commitPushPublication": false,
+  "finalIntegrity": {
+    "currentManifestFilesMatching": 48,
+    "signedDevicePackageFilesUnchanged": true,
+    "bilingualEntries": 639,
+    "evidenceJSONAndLinksValid": true,
+    "gitDiffCheckPassed": true,
+    "commitGuard": "2026-10-16 12:58 America/New_York: commits must remain pending"
+  }
+}

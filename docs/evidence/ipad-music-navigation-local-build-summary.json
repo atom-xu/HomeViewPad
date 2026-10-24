@@ -1,0 +1,43 @@
+{
+  "signedBuildSucceeded": true,
+  "strictSignatureVerified": true,
+  "profileIncludesDevice": true,
+  "bundleIdentifier": "cn.vilhil.homeviewpad",
+  "appVersion": "1.0",
+  "appBuild": "1",
+  "sourceManifestSHA256": "0b9b7c2bdb5b716723f27a69588dc81216db6ed0150d251c81c880cb8d5c5fbf",
+  "sourceUnchangedAfterBuild": true,
+  "installedThisIteration": true,
+  "installationDeferredByUser": false,
+  "scope": "HomePad music page navigation 04",
+  "device": {
+    "model": "iPad Pro 11-inch (4th generation)",
+    "runtime": "iPadOS 27.0.1 (24A446)"
+  },
+  "finalTestManifestSHA256": "215cb47cb52875c28d33cc075bee73a3767d111b123c6a5823171e452298a488",
+  "applicationSourceUnchangedAfterBuild": true,
+  "onlyUITestsChangedAfterBuild": true,
+  "package5FileHashesVerified": true,
+  "installSucceeded": true,
+  "ordinaryLaunchAttemptedThisIteration": true,
+  "screenViewerEnabled": false,
+  "networkSettingsChanged": false,
+  "userPreference": "保持代理开启，先完成测试",
+  "earlierConnectionDiagnosis": "Paired wireless developer connection returned CoreDevice4016/4000. Read-only DNS and route observations are consistent with proxy interference; no proxy-off comparison, so cause not confirmed.",
+  "simulatorAcceptanceDoesNotEstablishHardwareAcceptance": true,
+  "commitPushPublication": false,
+  "subsequentPhysicalUpdate": {
+    "userAuthorized": true,
+    "installedAndOrdinarilyLaunched": true,
+    "exactAppURLAndProcessReadback": true,
+    "summary": "ipad-music-navigation-physical-update-summary.json",
+    "updatedAt": "2026-10-17T12:12:04+08:00",
+    "earlierLocalCheckpointRetained": true
+  },
+  "initialLocalBuildCheckpoint": {
+    "installedThisIteration": false,
+    "installationDeferredByUser": true,
+    "installSucceeded": false,
+    "ordinaryLaunchAttemptedThisIteration": false
+  }
+}

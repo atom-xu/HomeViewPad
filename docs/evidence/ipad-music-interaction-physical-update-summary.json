@@ -1,0 +1,25 @@
+{
+  "scope": "Native music interaction refinement 02",
+  "sourceManifestSHA256": "31b0cac357da7ed3e18af2e8ac66f6aaee886a485d3a538728eed669db124672",
+  "nativeFiles": 48,
+  "device": {
+    "model": "iPad Pro 11-inch (4th generation)",
+    "runtime": "iPadOS 27.0.1 (24A446)"
+  },
+  "strictSignatureVerified": true,
+  "profileIncludesDevice": true,
+  "installSucceeded": true,
+  "exactAppReadbackSucceeded": true,
+  "appVersion": "1.0",
+  "launchSucceeded": false,
+  "launchLimitation": "System rejected foreground launch because the physical iPad is locked; user can open after unlocking",
+  "screenViewerEnabled": false,
+  "testDemoLanguageOverrides": false,
+  "physicalUIAndAudibleAcceptance": "Not yet verified for this new package; previous version audible acceptance is separate",
+  "fullRegression": "Completed full log: 151 passed / 3 failed of 154; result-bundle saving failed, exit 73. Test-only readiness follow-up: 125/125 passed with valid bundle. Existing automatic-city timeout remains.",
+  "commitPushPublication": false,
+  "appBuild": "1",
+  "installationURLMatchesReadback": true,
+  "testOnlyFollowUpManifestSHA256": "9caf096fb2a44385c2b3412607c4618ed3bcbce08f86bd84c0edde73a4064aa6",
+  "applicationSourceUnchangedByFollowUp": true
+}

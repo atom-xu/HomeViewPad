@@ -1,0 +1,31 @@
+{
+  "result": "Failed",
+  "totalTestCount": 68,
+  "passedTests": 66,
+  "failedTests": 2,
+  "skippedTests": 0,
+  "startTime": 1792112073.333,
+  "finishTime": 1792113499.692,
+  "sourceManifestSHA256": "b6ca47ec97de39762395b53ea28f396dea06a1c243ad181067bc8ed27dc93b4f",
+  "frozenFileCount": 35,
+  "sourceUnchanged": true,
+  "unitTests": {
+    "passed": 43,
+    "failed": 0
+  },
+  "uiTests": {
+    "passed": 23,
+    "failed": 2
+  },
+  "runtimeWarningCount": 25,
+  "runtimeWarning": "UIRequiresFullScreen will soon be ignored; support for all orientations will soon be required.",
+  "failingTests": [
+    "testBlackOverviewLayoutAndLiveWeatherDisclosure",
+    "testLiveWeatherDefaultCitySearchAndRestore"
+  ],
+  "device": "iPad Pro 11-inch (M5) Simulator",
+  "runtime": "iPadOS 26.5 (23F73)",
+  "xcode": "27.0 (27A266a)",
+  "scope": "Photo wallpaper and landscape-only candidate before settings simplification",
+  "hardwareVerified": false
+}

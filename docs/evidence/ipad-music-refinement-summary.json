@@ -1,0 +1,133 @@
+{
+  "scope": "Music refinement 08: player exits to selectable album cards, explicit queue entry, no search UI, harmonious native output header, four-edge Cover Flow fade. Empty queue behavior retained.",
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "sdk": "27.0",
+    "simulator": "isolated HomePad Acceptance, iPad Pro 11-inch M5 / iPadOS 26.5 (23F73)"
+  },
+  "sourceManifestSHA256": "7c794f69a68c8a3201aed9988764cab6051478e7223dba2c52210055d7f2666c",
+  "stages": [
+    {
+      "name": "return-repro",
+      "exitCode": 65,
+      "finishedUTC": "2026-10-17T08:03:08.589845+00:00",
+      "sourceDrift": [],
+      "manifestSHA256": "881f8a0e0079d11e3f613e814d6c1a1177d74cf89a2df8b4035bfcd107528780"
+    },
+    {
+      "name": "unit-repair",
+      "exitCode": 0,
+      "finishedUTC": "2026-10-17T08:08:40.526987+00:00",
+      "sourceDrift": [],
+      "manifestSHA256": "9e21395f1145e181ec4ae4eb4e1c9d96382b3feef8bfb67fcfd2f8cdd7b023dd"
+    },
+    {
+      "name": "ui-preflight",
+      "exitCode": 65,
+      "finishedUTC": "2026-10-17T08:12:45.294276+00:00",
+      "sourceDrift": [],
+      "manifestSHA256": "1d17356036402661245a91ed88abc5e1470564665b67d57dc463f08cbb24d7c4"
+    },
+    {
+      "name": "ui-fresh",
+      "exitCode": 75,
+      "finishedUTC": "2026-10-17T08:15:00.951796+00:00",
+      "sourceDrift": [],
+      "manifestSHA256": "1d17356036402661245a91ed88abc5e1470564665b67d57dc463f08cbb24d7c4"
+    },
+    {
+      "name": "ui-clean",
+      "exitCode": 0,
+      "finishedUTC": "2026-10-17T08:19:00.729032+00:00",
+      "sourceDrift": [],
+      "manifestSHA256": "1d17356036402661245a91ed88abc5e1470564665b67d57dc463f08cbb24d7c4"
+    },
+    {
+      "name": "full-final",
+      "status": "running; no result claimed yet"
+    }
+  ],
+  "rawEvidenceDirectory": ".validation/local/music-refinement-08/",
+  "limitations": [
+    "Simulator fixture is labeled TEST DATA; no native MusicKit player, account or audible sound.",
+    "MPVolumeView slider does not render in simulator; container and UI continuity checks cannot establish hardware volume control.",
+    "Real album cover quality, restored native queue, audio, AirPlay, VoiceOver and Reduce Motion require separate physical acceptance."
+  ],
+  "physical": {
+    "checkedUTC": "2026-10-17T08:28:33.696435+00:00",
+    "installed": true,
+    "exactBundleAndInstallURLMatched": true,
+    "launched": true,
+    "foregroundActivationRequested": true,
+    "matchingPIDAndExecutableReadback": true,
+    "appArguments": [
+      "--page",
+      "5"
+    ],
+    "environmentKeys": [
+      "TERM"
+    ],
+    "connection": "wired",
+    "visualScreenObserved": false,
+    "deviceHubOpened": false,
+    "audioRouteOrVolumeChanged": false,
+    "networkSettingsChanged": false,
+    "hardwareFunctionAcceptancePerformed": false,
+    "userAcceptance": {
+      "systemVolumeSliderVisibleAndDraggable": true,
+      "reportedOn": "2026-10-17",
+      "exactReply": "能看到滑杆，拖动正常",
+      "boundary": "Reported visible and draggable slider only; not an independently observed or measured output-volume/audio/AirPlay acceptance.",
+      "queuePlayerBackReachesSelectableAlbumsWithoutLoop": true,
+      "exactReturnReply": "到了专辑卡片页，不再循环",
+      "reportedReturnScope": "The explicit queue -> player -> left-top Back journey; no claim for every real source/focus/permission variant."
+    },
+    "staticScreenshotInspection": {
+      "mechanism": "Xcode27 devicectl device capture screenshot; no device viewer or remote input",
+      "firstCapture": "HomePad Clock, not music acceptance",
+      "userThenOpenedAlbumCards": true,
+      "secondCapture": "Real Apple Music album Cover Flow inspected at rest; full cover cards, vertical fade/shadow and aligned header circles visible",
+      "musicVisualAtRestObserved": true,
+      "animatedDraggingOrReturnObserved": false,
+      "privateOriginals": ".validation/local/music-refinement-08/physical-*-screen.png",
+      "originalHashes": {
+        "physical-current-screen.png": "31b60f1fd3576d7022bb80a2d7ee703bf8399626f861a9222063f8a020896684",
+        "physical-albums-screen.png": "e28239a5c2c8f08e7db86247c24e351dea8245d801d796106b7bd0fac57b83be"
+      },
+      "publicImagesCopied": false
+    }
+  },
+  "git": {
+    "committed": false,
+    "pushed": false,
+    "publiclyPublished": false
+  },
+  "package": {
+    "buildExitCode": 0,
+    "finishedUTC": "2026-10-17T08:26:01.345156+00:00",
+    "sourceManifestSHA256": "7c794f69a68c8a3201aed9988764cab6051478e7223dba2c52210055d7f2666c",
+    "sourceDrift": [],
+    "bundleIdentifier": "cn.vilhil.homeviewpad",
+    "strictSignaturePassed": true,
+    "profileUnexpired": true,
+    "profileIncludesPairedDevice": true
+  },
+  "changedCodeFiles": [
+    "HomePad/Localizable.xcstrings",
+    "HomePad/MusicPage.swift",
+    "HomePad/MusicValidationClient.swift",
+    "HomePadTests/RealMediaStoreTests.swift",
+    "HomePadUITests/HomePadUITests.swift"
+  ],
+  "readOnlyReview": {
+    "navigationHasNoImplicitQueueDestination": true,
+    "onlyLowerRightQueueEntry": true,
+    "searchUIRemoved": true,
+    "nativePlaybackLifecycleUnchanged": true,
+    "fixtureDebugDoubleFlagGuardRetained": true
+  },
+  "localization": {
+    "bilingualKeys": 739,
+    "missingOrFormatMismatches": 0
+  }
+}

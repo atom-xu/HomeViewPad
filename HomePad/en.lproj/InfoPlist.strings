@@ -1,0 +1,7 @@
+"NSCameraUsageDescription" = "Use the front camera for face-presence wake during standby. If you separately enable continuous foreground detection, it can also keep the display awake on other foreground pages. Frames stay on this iPad and are never recorded, saved or uploaded.";
+"NSMotionUsageDescription" = "Detect when this iPad is standing upright or moves to enter and leave foreground display standby.";
+"NSHomeKitUsageDescription" = "HomePad shows your home accessories and runs scenes you select. Camera video is shown only when you open a camera or choose it for a Home page card.";
+"NSPhotoLibraryUsageDescription" = "Display photos from the iPad albums you choose in HomePad. Your photo library is never changed.";
+"NSLocationWhenInUseUsageDescription" = "Show weather for your current city. Approximate coordinates are sent to Open-Meteo for weather.";
+"NSCalendarsFullAccessUsageDescription" = "Show upcoming events on this shared iPad screen only after you opt in.";
+"NSAppleMusicUsageDescription" = "Browse your music library and Apple Music, and play songs you choose in HomePad. Apple handles music requests and streaming.";
