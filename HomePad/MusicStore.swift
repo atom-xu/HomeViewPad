@@ -19,11 +19,18 @@ struct MusicNowPlaying {
     var duration: TimeInterval? = nil
     var position: TimeInterval = 0
     var queue: [MusicQueueEntry] = []
+
+    /// The playhead has its own observer. A clock tick must not rebuild Home,
+    /// Settings, Cover Flow, artwork or the complete playback queue.
+    func hasSamePresentation(as other: MusicNowPlaying) -> Bool {
+        title == other.title && artist == other.artist && artwork == other.artwork
+            && playing == other.playing && id == other.id && duration == other.duration && queue == other.queue
+    }
 }
 
 /// A readback of the application's real MusicKit queue, not the album currently
 /// being browsed. Entry IDs remain distinct even when a song appears twice.
-struct MusicQueueEntry: Identifiable {
+struct MusicQueueEntry: Identifiable, Equatable {
     var id: String
     var songID: MusicItemID?
     var title: String
@@ -31,6 +38,14 @@ struct MusicQueueEntry: Identifiable {
     var artwork: Artwork?
     var duration: TimeInterval?
     var isCurrent: Bool
+}
+
+@MainActor final class MusicPlaybackPosition: ObservableObject {
+    @Published private(set) var position: TimeInterval = 0
+    func update(_ value: TimeInterval) {
+        let next = value.isFinite ? max(0, value) : 0
+        if position != next { position = next }
+    }
 }
 
 struct HomePadMusicSubscription {
@@ -93,6 +108,8 @@ extension HomePadMusicClient {
     private var ownedPlayer: ApplicationMusicPlayer?
     private var observations: Set<AnyCancellable> = []
     private var playbackUpdate: ((MusicNowPlaying?) -> Void)?
+    private var cachedQueue: [MusicQueueEntry] = []
+    private var cachedCurrentEntryID: String?
     var authorization: MusicAuthorization.Status { MusicAuthorization.currentStatus }
 
     func requestAuthorization() async -> MusicAuthorization.Status { await MusicAuthorization.request() }
@@ -217,19 +234,23 @@ extension HomePadMusicClient {
         // Read the actual player clock. This never advances a synthetic timer;
         // MusicStore removes both subscriptions whenever access/foreground ends.
         Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
-            .sink { [weak self] _ in self?.publishPlayback() }
+            .sink { [weak self] _ in self?.publishPlayback(refreshQueue: false) }
             .store(in: &observations)
         publishPlayback()
     }
-    private func publishPlayback() {
+    private func publishPlayback(refreshQueue: Bool = true) {
         guard let update = playbackUpdate else { return }
         guard authorization == .authorized, let value = ownedPlayer, let entry = value.queue.currentEntry else {
+            cachedQueue = []; cachedCurrentEntryID = nil
             update(nil); return
         }
-        let queue = value.queue.entries.map { candidate in
-            MusicQueueEntry(id: candidate.id, songID: candidate.item?.id ?? candidate.transientItem?.id,
-                            title: candidate.title, artist: candidate.subtitle ?? "", artwork: candidate.artwork,
-                            duration: duration(of: candidate), isCurrent: candidate.id == entry.id)
+        if refreshQueue || cachedCurrentEntryID != entry.id {
+            cachedQueue = value.queue.entries.map { candidate in
+                MusicQueueEntry(id: candidate.id, songID: candidate.item?.id ?? candidate.transientItem?.id,
+                                title: candidate.title, artist: candidate.subtitle ?? "", artwork: candidate.artwork,
+                                duration: duration(of: candidate), isCurrent: candidate.id == entry.id)
+            }
+            cachedCurrentEntryID = entry.id
         }
         let duration = duration(of: entry)
         let time = value.playbackTime
@@ -237,7 +258,7 @@ extension HomePadMusicClient {
         update(MusicNowPlaying(title: entry.title, artist: entry.subtitle ?? "", artwork: entry.artwork,
                                playing: value.state.playbackStatus == .playing,
                                id: entry.item?.id ?? entry.transientItem?.id,
-                               duration: duration, position: position, queue: queue))
+                               duration: duration, position: position, queue: cachedQueue))
     }
     private func duration(of entry: MusicKit.MusicPlayer.Queue.Entry) -> TimeInterval? {
         let raw: TimeInterval?
@@ -249,7 +270,10 @@ extension HomePadMusicClient {
         guard let raw, raw.isFinite, raw > 0 else { return nil }
         return raw
     }
-    func stopObservingPlayback() { playbackUpdate = nil; observations.removeAll() }
+    func stopObservingPlayback() {
+        playbackUpdate = nil; observations.removeAll()
+        cachedQueue = []; cachedCurrentEntryID = nil
+    }
 }
 
 @MainActor final class MusicStore: ObservableObject {
@@ -286,7 +310,23 @@ extension HomePadMusicClient {
     @Published private(set) var queueIsShuffled = false
     @Published private(set) var results: [Song] = []
     @Published private(set) var subscription: HomePadMusicSubscription?
-    @Published private(set) var nowPlaying: MusicNowPlaying?
+    @Published private var playbackPresentation: MusicNowPlaying?
+    let playbackPosition = MusicPlaybackPosition()
+    private(set) var nowPlaying: MusicNowPlaying? {
+        get {
+            guard var value = playbackPresentation else { return nil }
+            value.position = playbackPosition.position
+            return value
+        }
+        set {
+            playbackPosition.update(newValue?.position ?? 0)
+            switch (playbackPresentation, newValue) {
+            case (nil, nil): break
+            case let (old?, next?) where old.hasSamePresentation(as: next): break
+            default: playbackPresentation = newValue
+            }
+        }
+    }
     @Published private(set) var loading = false
     @Published private(set) var playingRequest = false
     @Published private(set) var message: String?

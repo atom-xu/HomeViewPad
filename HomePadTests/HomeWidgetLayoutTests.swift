@@ -2,6 +2,58 @@ import XCTest
 @testable import HomePad
 
 final class HomeWidgetLayoutTests: XCTestCase {
+    func testReadbackBatchChangesValuesWithoutResortingOrReplacingOtherDevices() throws {
+        let ids = (0..<3).map { _ in UUID() }
+        let original = ids.enumerated().map { index, id in
+            HomeTile(id: id, name: "灯 \(index)", room: "客厅", symbol: "lightbulb.fill", value: "Off",
+                     isOn: false, reachable: true, writable: true)
+        }
+        var turnedOn = original[1]; turnedOn.value = "On"; turnedOn.isOn = true
+        let unknown = HomeTile(id: UUID(), name: "New device", room: "Home", symbol: "switch.2", value: "On",
+                               isOn: true, reachable: true, writable: true)
+        let result = HomeTileUpdates.replacing([turnedOn.id: turnedOn, unknown.id: unknown], in: original)
+        XCTAssertEqual(result.map(\.id), ids, "Readback must neither reorder cards nor insert a device from a different topology")
+        XCTAssertEqual(result[0], original[0]); XCTAssertEqual(result[2], original[2])
+        XCTAssertTrue(result[1].isOn)
+        XCTAssertEqual(HomeTileUpdates.replacing([:], in: result), result)
+        var offline = result[1]; offline.reachable = false; offline.writable = false; offline.value = "Offline"
+        XCTAssertEqual(HomeTileUpdates.replacing([offline.id: offline], in: result)[1], offline,
+                       "Coalescing must preserve actual unavailability rather than retaining the earlier On state")
+    }
+    @MainActor func testBurstOfHomeReadbacksProducesOneRefreshAndCancellationRejectsOldHome() async throws {
+        let scheduler = HomeRefreshScheduler()
+        var calls: [Bool] = []
+        for index in 0..<1_000 {
+            scheduler.schedule(read: index == 500) { calls.append($0) }
+        }
+        try await Task.sleep(for: .milliseconds(160))
+        XCTAssertEqual(calls, [true], "A burst must retain the strongest refresh intent without rebuilding per characteristic")
+        scheduler.schedule(read: false) { calls.append($0) }
+        scheduler.cancel()
+        scheduler.schedule(read: false) { calls.append($0) }
+        try await Task.sleep(for: .milliseconds(160))
+        XCTAssertEqual(calls, [true, false], "Only the new household generation may deliver after cancellation")
+    }
+
+    @MainActor func testCachedConfigurationFollowsEditsHomeSwitchesAndMalformedReplacement() throws {
+        let cache = HomeConfigurationCache()
+        let first = [HomeWidgetConfiguration(id: "clock", kind: .clock, size: .small)]
+        let second = [HomeWidgetConfiguration(id: "large", kind: .clock, size: .large)]
+        func encode(_ layouts: [String: [HomeWidgetConfiguration]]) throws -> String {
+            String(decoding: try JSONEncoder().encode(layouts), as: UTF8.self)
+        }
+        let original = try encode(["home-a": first, "home-b": second])
+        XCTAssertEqual(cache.widgetLayouts(from: original)["home-a"], first)
+        XCTAssertEqual(cache.widgetLayouts(from: original)["home-b"], second)
+        XCTAssertEqual(cache.widgetLayouts(from: try encode(["home-a": second]))["home-a"], second)
+        XCTAssertTrue(cache.widgetLayouts(from: "broken JSON").isEmpty, "An invalid new value must not retain the previous home's private layout")
+        XCTAssertEqual(cache.widgetLayouts(from: original)["home-a"], first)
+        XCTAssertTrue(cache.shortcuts(from: "[]").isEmpty, "A deliberately empty sidebar is distinct from defaults")
+        XCTAssertEqual(cache.shortcuts(from: "invalid").map(\.id), HomeShortcut.defaults.map(\.id))
+        XCTAssertEqual(cache.placements(for: second, columns: 3), HomeWidgetPacking.place(second, columns: 3))
+        XCTAssertEqual(cache.placements(for: second, columns: 1), HomeWidgetPacking.place(second, columns: 1))
+        XCTAssertEqual(cache.placements(for: first, columns: 1), HomeWidgetPacking.place(first, columns: 1))
+    }
     func testLegacyRightColumnContentMigratesOnceWithoutLosingHomeScopeOrOrder() {
         let light = HomeWidgetConfiguration(id: "lamp", kind: .accessory, target: "lamp-id", size: .medium)
         let camera = HomeWidgetConfiguration(id: "front", kind: .camera, target: "camera-id", size: .large)

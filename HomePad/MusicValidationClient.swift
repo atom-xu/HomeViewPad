@@ -1,5 +1,6 @@
 import Foundation
 import MusicKit
+import Combine
 
 /// Synthetic UI-test data is opt-in in Debug builds only. Normal application
 /// launches always construct the native MusicKit client, including on devices.
@@ -27,6 +28,7 @@ import MusicKit
     private var position: TimeInterval = 178
     private var playing = false
     private var update: ((MusicNowPlaying?) -> Void)?
+    private var performanceTicks: AnyCancellable?
 
     init() throws {
         let arguments = ProcessInfo.processInfo.arguments
@@ -106,8 +108,18 @@ import MusicKit
     }
     func pause() { playing = false; publish() }
     func stop() { playing = false; update?(nil) }
-    func observePlayback(_ update: @escaping (MusicNowPlaying?) -> Void) { self.update = update; publish() }
-    func stopObservingPlayback() { update = nil }
+    func observePlayback(_ update: @escaping (MusicNowPlaying?) -> Void) {
+        self.update = update
+        if ProcessInfo.processInfo.arguments.contains("--performance-audit") {
+            performanceTicks = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect().sink { [weak self] _ in
+                guard let self else { return }
+                if self.playing { self.position += 0.5 }
+                self.publish()
+            }
+        }
+        publish()
+    }
+    func stopObservingPlayback() { update = nil; performanceTicks = nil }
     private func entryID(_ index: Int) -> String { "validation-entry-\(currentSongs[index].id.rawValue)-\(index)" }
     private func publish() {
         guard currentSongs.indices.contains(currentIndex) else { update?(nil); return }

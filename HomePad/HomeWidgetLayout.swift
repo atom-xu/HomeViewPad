@@ -1,4 +1,41 @@
 import Foundation
+import Combine
+
+/// Parsing and packing are driven by saved input, not playback/clock/gesture
+/// updates. Each cache retains only the latest input and never writes defaults.
+@MainActor final class HomeConfigurationCache: ObservableObject {
+    private var layoutSource: String?
+    private var layouts: [String: [HomeWidgetConfiguration]] = [:]
+    private var shortcutSource: String?
+    private var savedShortcuts = HomeShortcut.defaults
+    private var packedWidgets: [HomeWidgetConfiguration]?
+    private var packedColumns = 0
+    private var packed: [HomeWidgetPlacement] = []
+
+    func widgetLayouts(from source: String) -> [String: [HomeWidgetConfiguration]] {
+        if source != layoutSource {
+            layoutSource = source
+            layouts = source.data(using: .utf8).flatMap { try? JSONDecoder().decode([String: [HomeWidgetConfiguration]].self, from: $0) } ?? [:]
+        }
+        return layouts
+    }
+
+    func shortcuts(from source: String) -> [HomeShortcut] {
+        if source != shortcutSource {
+            shortcutSource = source
+            savedShortcuts = source.data(using: .utf8).flatMap { try? JSONDecoder().decode([HomeShortcut].self, from: $0) } ?? HomeShortcut.defaults
+        }
+        return savedShortcuts
+    }
+
+    func placements(for widgets: [HomeWidgetConfiguration], columns: Int) -> [HomeWidgetPlacement] {
+        if packedWidgets != widgets || packedColumns != columns {
+            packedWidgets = widgets; packedColumns = columns
+            packed = HomeWidgetPacking.place(widgets, columns: columns)
+        }
+        return packed
+    }
+}
 
 /// Saved only on this iPad and namespaced by the selected HomeKit home.
 enum HomeWidgetSize: String, Codable, CaseIterable, Identifiable {

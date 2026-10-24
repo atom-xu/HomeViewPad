@@ -1,6 +1,46 @@
 import XCTest
 import UIKit
 final class HomePadUITests: XCTestCase {
+    func testPerformanceLaunchToResponsiveHome() {
+        app.terminate()
+        let options = XCTMeasureOptions(); options.iterationCount = 3
+        measure(metrics: [XCTApplicationLaunchMetric(waitUntilResponsive: true)], options: options) {
+            app.launch()
+            app.terminate()
+        }
+    }
+    func testPerformanceInteractionRecording() throws {
+        // Same deterministic account data and 0.5-second readback cadence for
+        // before/after recordings; no MusicKit, HomeKit or audible playback.
+        app.terminate()
+        app.launchArguments += ["--music-fixture", "--performance-audit", "-music.connected", "YES",
+                                "-display.screenBehaviorV1", "followSystem", "-display.motionWake", "NO",
+                                "-display.faceWake", "NO", "-photoSlideshow", "NO", "-musicArtworkBackground", "YES"]
+        launchHome()
+        XCTAssertTrue(app.staticTexts["musicValidationData"].waitForExistence(timeout: 8))
+        app.buttons["homeMusicPlayback"].tap()
+        XCTAssertEqual(app.buttons["homeMusicPlayback"].label, "Pause")
+        // Keep input and XCTest synchronization identical between candidates.
+        for _ in 0..<2 {
+            tab(4)
+            XCTAssertTrue(app.descendants(matching: .any)["settingsIndex"].waitForExistence(timeout: 5))
+            settingsCategory("settingsDisplay")
+            app.swipeUp(); app.swipeDown()
+            tab(1)
+            XCTAssertTrue(app.buttons["homeMusicOpen"].waitForExistence(timeout: 5))
+            XCTAssertEqual(app.buttons["homeMusicPlayback"].label, "Pause", "Returning to Home must retain the playing source")
+            app.buttons["homeMusicOpen"].tap()
+            waitForFixtureMusicPlayerEntry()
+            tapReadyMusicButton("musicLibrary")
+            XCTAssertTrue(app.descendants(matching: .any)["musicCoverFlow"].waitForExistence(timeout: 5))
+            let covers = app.descendants(matching: .any)["musicCoverFlow"]
+            covers.swipeLeft(); covers.swipeRight()
+            tab(1)
+        }
+        shot("Performance Home unchanged")
+        tab(4)
+        shot("Performance settings unchanged")
+    }
     var app: XCUIApplication!
     override func setUpWithError() throws {
         continueAfterFailure = false

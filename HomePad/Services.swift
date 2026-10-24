@@ -7,17 +7,27 @@ import Combine
     @Published var title = "Your room. Your soundtrack."
     @Published var message = "Choose an audio file, then select your HomePod with AirPlay."
     @Published var playing = false
-    let player = AVPlayer()
+    @Published private(set) var hasFile = false
+    private var ownedPlayer: AVPlayer?
+    var player: AVPlayer {
+        if let ownedPlayer { return ownedPlayer }
+        let player = AVPlayer()
+        ownedPlayer = player
+        observation = player.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
+            Task { @MainActor in
+                let next = player.timeControlStatus == .playing
+                if self?.playing != next { self?.playing = next }
+            }
+        }
+        return player
+    }
     private var scope: URL?
     private var observation: NSKeyValueObservation?
     private var itemObservation: NSKeyValueObservation?
     private var interruption: NSObjectProtocol?
     init() {
-        observation = player.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
-            Task { @MainActor in self?.playing = player.timeControlStatus == .playing }
-        }
         interruption = NotificationCenter.default.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: .main) { [weak self] _ in
-            Task { @MainActor in self?.player.pause(); self?.message = "Playback interrupted. Tap Play to resume." }
+            Task { @MainActor in self?.pause(); self?.message = "Playback interrupted. Tap Play to resume." }
         }
     }
     func load(_ url: URL) {
@@ -34,7 +44,7 @@ import Combine
                     if item === self?.player.currentItem, item.status == .failed { self?.message = item.error?.localizedDescription ?? "This audio file cannot be played." }
                 }
             }
-            player.replaceCurrentItem(with: item); title = url.deletingPathExtension().lastPathComponent
+            player.replaceCurrentItem(with: item); hasFile = true; title = url.deletingPathExtension().lastPathComponent
             message = "Ready · use AirPlay to choose a speaker"; player.play()
         } catch { stop(); message = error.localizedDescription }
     }
@@ -45,11 +55,14 @@ import Combine
             player.play()
         }
     }
+    func pause() { ownedPlayer?.pause() }
     func stop() {
-        player.pause(); itemObservation = nil; player.replaceCurrentItem(with: nil)
+        ownedPlayer?.pause(); itemObservation = nil; ownedPlayer?.replaceCurrentItem(with: nil)
         scope?.stopAccessingSecurityScopedResource(); scope = nil
-        playing = false; title = "Your room. Your soundtrack."
-        message = "Choose an audio file, then select your HomePod with AirPlay."
+        if hasFile { hasFile = false }
+        if playing { playing = false }
+        if title != "Your room. Your soundtrack." { title = "Your room. Your soundtrack." }
+        if message != "Choose an audio file, then select your HomePod with AirPlay." { message = "Choose an audio file, then select your HomePod with AirPlay." }
     }
 }
 struct AirPlayPicker: UIViewRepresentable {

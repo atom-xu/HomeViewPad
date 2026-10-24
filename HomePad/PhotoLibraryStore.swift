@@ -3,10 +3,72 @@ import Photos
 import PhotosUI
 import ImageIO
 
-struct PhotoAlbum: Identifiable, Equatable {
+struct PhotoAlbum: Identifiable, Equatable, Sendable {
     let id: String
     let title: String
     let count: Int
+}
+
+/// PHFetchResult explicitly supports thread-safe access. Only immutable fetch
+/// results and value metadata cross back from the query worker.
+struct PhotoLibraryQueryResult: @unchecked Sendable {
+    var albums: [PhotoAlbum]
+    var assets: PHFetchResult<PHAsset>?
+    var retainedPosition: Int?
+}
+
+struct PhotoLibraryQueryClient {
+    var authorization: @MainActor () -> PHAuthorizationStatus
+    var fetch: @Sendable (PHAuthorizationStatus, String?, String?) async throws -> PhotoLibraryQueryResult
+    var observe: @MainActor (any PHPhotoLibraryChangeObserver, Bool) -> Void
+
+    static let live = PhotoLibraryQueryClient(authorization: { PHPhotoLibrary.authorizationStatus(for: .readWrite) }, fetch: { status, selectedID, currentID in
+        let worker = Task.detached(priority: .userInitiated) { try query(status: status, selectedID: selectedID, currentID: currentID) }
+        return try await withTaskCancellationHandler { try await worker.value } onCancel: { worker.cancel() }
+    }, observe: { observer, enabled in
+        if enabled { PHPhotoLibrary.shared().register(observer) }
+        else { PHPhotoLibrary.shared().unregisterChangeObserver(observer) }
+    })
+
+    private static func options() -> PHFetchOptions {
+        let options = PHFetchOptions()
+        options.predicate = NSPredicate(format: "mediaType == %d", PHAssetMediaType.image.rawValue)
+        options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        options.includeHiddenAssets = false
+        return options
+    }
+    private static func query(status: PHAuthorizationStatus, selectedID: String?, currentID: String?) throws -> PhotoLibraryQueryResult {
+        try Task.checkCancellation()
+        let all = PHAsset.fetchAssets(with: .image, options: options())
+        var albums = [PhotoAlbum(id: PhotoLibraryStore.allPhotosID, title: status == .limited ? "Allowed photos" : "All photos", count: all.count)]
+        var selected = selectedID == PhotoLibraryStore.allPhotosID ? all : nil
+        if status == .authorized {
+            if let favorites = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil).firstObject {
+                let assets = PHAsset.fetchAssets(in: favorites, options: options())
+                albums.append(PhotoAlbum(id: PhotoLibraryStore.favoritesID, title: "Favorites", count: assets.count))
+                if selectedID == PhotoLibraryStore.favoritesID { selected = assets }
+            }
+            let collections = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
+            var named: [PhotoAlbum] = []
+            for index in 0..<collections.count {
+                try Task.checkCancellation()
+                let collection = collections.object(at: index)
+                let assets = PHAsset.fetchAssets(in: collection, options: options())
+                named.append(PhotoAlbum(id: collection.localIdentifier, title: collection.localizedTitle ?? "Untitled album", count: assets.count))
+                if selectedID == collection.localIdentifier { selected = assets }
+            }
+            albums += named.sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+        }
+        var retained: Int?
+        if let currentID, let selected {
+            for index in 0..<selected.count {
+                if index % 100 == 0 { try Task.checkCancellation() }
+                if selected.object(at: index).localIdentifier == currentID { retained = index; break }
+            }
+        }
+        try Task.checkCancellation()
+        return PhotoLibraryQueryResult(albums: albums, assets: selected, retainedPosition: retained)
+    }
 }
 
 enum PhotoWallStyle: String, CaseIterable, Identifiable {
@@ -34,6 +96,7 @@ enum PhotoWallStyle: String, CaseIterable, Identifiable {
     @Published private(set) var photoCount = 0
     @Published private(set) var position = 0
     @Published private(set) var loading = false
+    @Published private(set) var libraryLoading = false
     @Published var message: String?
     @Published var slideshow: Bool { didSet { defaults.set(slideshow, forKey: "photoSlideshow") } }
     @Published var wallStyle: PhotoWallStyle {
@@ -43,6 +106,9 @@ enum PhotoWallStyle: String, CaseIterable, Identifiable {
         }
     }
     private let defaults: UserDefaults
+    private let query: PhotoLibraryQueryClient
+    private var libraryTask: Task<Void, Never>?
+    private var libraryGeneration = UUID()
     private let fileURL: URL
     private var selectionDirectory: URL { fileURL.deletingLastPathComponent().appending(path: "ambient-photos", directoryHint: .isDirectory) }
     private var manifestURL: URL { selectionDirectory.appending(path: "selection.json") }
@@ -55,12 +121,12 @@ enum PhotoWallStyle: String, CaseIterable, Identifiable {
     private var observing = false
     private var active = true
     private var currentAssetID: String?
-    static let allPhotosID = "homepad.allPhotos"
-    static let favoritesID = "homepad.favorites"
+    nonisolated static let allPhotosID = "homepad.allPhotos"
+    nonisolated static let favoritesID = "homepad.favorites"
     nonisolated static let selectionLimit = 24
 
-    init(defaults: UserDefaults = .standard, fileURL: URL = URL.documentsDirectory.appending(path: "ambient-photo.jpg")) {
-        self.defaults = defaults; self.fileURL = fileURL
+    init(defaults: UserDefaults = .standard, fileURL: URL = URL.documentsDirectory.appending(path: "ambient-photo.jpg"), query: PhotoLibraryQueryClient = .live) {
+        self.defaults = defaults; self.fileURL = fileURL; self.query = query
         selectedAlbumID = defaults.string(forKey: "photoAlbumID")
         slideshow = defaults.object(forKey: "photoSlideshow") as? Bool ?? true
         wallStyle = PhotoWallStyle(rawValue: defaults.string(forKey: "photoWallStyle") ?? "") ?? .wall
@@ -94,63 +160,55 @@ enum PhotoWallStyle: String, CaseIterable, Identifiable {
         refresh()
     }
     func refresh() {
-        authorization = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        cancelLibraryRefresh()
+        let status = query.authorization()
+        let previous = authorization
+        if authorization != status { authorization = status }
+        if previous != status { albums = [] }
+        // Re-check permission synchronously, but never query every album on
+        // the main actor. Drop library frames before an asynchronous re-read.
+        if selectedAlbumID != nil { assets = nil; invalidateImage() }
         guard authorized else {
             albums = []; assets = nil
             if selectedAlbumID != nil {
-                photoCount = 0; currentAssetID = nil; invalidateImage()
+                photoCount = 0; currentAssetID = nil
                 message = "Photo access is off. Allow access in Settings or choose photos."
             }
-            if observing { PHPhotoLibrary.shared().unregisterChangeObserver(self); observing = false }
+            if observing { query.observe(self, false); observing = false }
             return
         }
-        if !observing { PHPhotoLibrary.shared().register(self); observing = true }
-        let all = PHAsset.fetchAssets(with: .image, options: fetchOptions())
-        var available = [PhotoAlbum(id: Self.allPhotosID, title: authorization == .limited ? "Allowed photos" : "All photos", count: all.count)]
-        // Limited access exposes allowed assets, but not the user's album collections.
-        if authorization == .authorized {
-            if let favorites = favoritesCollection() {
-                available.append(PhotoAlbum(id: Self.favoritesID, title: "Favorites", count: PHAsset.fetchAssets(in: favorites, options: fetchOptions()).count))
+        guard active else { return }
+        if !observing { query.observe(self, true); observing = true }
+        let token = libraryGeneration, selectedID = selectedAlbumID, currentID = currentAssetID
+        let fetch = query.fetch
+        libraryLoading = true
+        libraryTask = Task { [weak self] in
+            do {
+                let result = try await fetch(status, selectedID, currentID)
+                guard let self, !Task.isCancelled, self.active, self.libraryGeneration == token,
+                      self.selectedAlbumID == selectedID else { return }
+                guard self.query.authorization() == status else { self.refresh(); return }
+                self.libraryTask = nil; self.libraryLoading = false
+                if self.albums != result.albums { self.albums = result.albums }
+                guard let selectedID else { return }
+                guard let album = result.albums.first(where: { $0.id == selectedID }) else {
+                    self.assets = nil; self.photoCount = 0; self.currentAssetID = nil; self.invalidateImage()
+                    self.message = "This album is no longer available. Choose an available album below."
+                    return
+                }
+                self.albumTitle = album.title; self.assets = result.assets
+                self.photoCount = result.assets?.count ?? 0
+                self.position = result.retainedPosition ?? 0
+                self.loadCurrentPhoto(retainingCurrent: false)
+            } catch {
+                guard let self, self.libraryGeneration == token else { return }
+                self.libraryTask = nil; self.libraryLoading = false
             }
-            let collections = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
-            var named: [PhotoAlbum] = []
-            collections.enumerateObjects { collection, _, _ in
-                let count = PHAsset.fetchAssets(in: collection, options: self.fetchOptions()).count
-                named.append(PhotoAlbum(id: collection.localIdentifier, title: collection.localizedTitle ?? "Untitled album", count: count))
-            }
-            available += named.sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
         }
-        albums = available
-        guard let selectedAlbumID else { return }
-        guard let album = albums.first(where: { $0.id == selectedAlbumID }) else {
-            assets = nil; photoCount = 0; currentAssetID = nil; invalidateImage()
-            message = "This album is no longer available. Choose an available album below."
-            return
-        }
-        albumTitle = album.title
-        if album.id == Self.allPhotosID { assets = all }
-        else if let collection = album.id == Self.favoritesID ? favoritesCollection() : PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [album.id], options: nil).firstObject {
-            assets = PHAsset.fetchAssets(in: collection, options: fetchOptions())
-        } else { assets = nil }
-        photoCount = assets?.count ?? 0
-        var retainedPosition: Int?
-        if let currentAssetID { assets?.enumerateObjects { asset, index, stop in
-            if asset.localIdentifier == currentAssetID { retainedPosition = index; stop.pointee = true }
-        } }
-        position = retainedPosition ?? 0
-        // Refreshes may follow deletions or limited-access changes. Clear all
-        // previously displayed library images before constructing the new wall.
-        loadCurrentPhoto(retainingCurrent: false)
     }
-    private func favoritesCollection() -> PHAssetCollection? {
-        PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil).firstObject
-    }
-    private func fetchOptions() -> PHFetchOptions {
-        let options = PHFetchOptions()
-        options.predicate = NSPredicate(format: "mediaType == %d", PHAssetMediaType.image.rawValue)
-        options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        options.includeHiddenAssets = false
-        return options
+    private func cancelLibraryRefresh() {
+        libraryGeneration = UUID(); libraryTask?.cancel(); libraryTask = nil
+        if libraryLoading { libraryLoading = false }
     }
     func select(_ album: PhotoAlbum) {
         guard active, albums.contains(where: { $0.id == album.id }) else { return }
@@ -172,7 +230,7 @@ enum PhotoWallStyle: String, CaseIterable, Identifiable {
             if selectedAlbumID == nil, !localFiles.isEmpty, frame == nil { loadCurrentPhoto() }
         } else { cancelPendingImport() }
     }
-    func cancelPendingImport() { cancelRequest(); loading = false }
+    func cancelPendingImport() { cancelLibraryRefresh(); cancelRequest(); loading = false }
     private func cancelRequest() {
         generation = UUID()
         requestTimeout?.cancel(); requestTimeout = nil
@@ -249,6 +307,7 @@ enum PhotoWallStyle: String, CaseIterable, Identifiable {
     /// keep the last selection; late callbacks after clear/background cannot save.
     func importImages(_ loaders: [() async throws -> Data?]) async {
         guard active, !loaders.isEmpty else { return }
+        cancelLibraryRefresh()
         cancelRequest(); let token = generation; loading = true; message = nil
         var newFiles: [URL] = []
         do {
@@ -309,7 +368,7 @@ enum PhotoWallStyle: String, CaseIterable, Identifiable {
         invalidateImage(); assets = nil; selectedAlbumID = nil; currentAssetID = nil; localFiles = []
         photoCount = 0; position = 0; albumTitle = "Photos"; message = nil; albums = []
         defaults.removeObject(forKey: "photoAlbumID")
-        if observing { PHPhotoLibrary.shared().unregisterChangeObserver(self); observing = false }
+        if observing { query.observe(self, false); observing = false }
     }
     nonisolated func photoLibraryDidChange(_ changeInstance: PHChange) {
         Task { @MainActor [weak self] in guard let self, self.active else { return }; self.refresh() }
@@ -357,6 +416,7 @@ struct PhotosPanel: View {
                 Button("Next photo".tr) { photos.next() }.disabled(photos.photoCount < 2 || photos.loading).accessibilityIdentifier("nextPhoto")
             }
             Section("iPad albums".tr) {
+                if photos.libraryLoading { ProgressView("Loading photos…".tr).accessibilityIdentifier("photoAlbumsLoading") }
                 if photos.authorized {
                     if photos.authorization == .limited {
                         Text("Limited access · only photos you allow are available. Album names require full access.".tr).font(.footnote)

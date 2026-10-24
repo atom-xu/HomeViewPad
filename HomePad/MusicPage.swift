@@ -849,7 +849,7 @@ struct MusicPage: View {
                 Button("Choose audio file".tr) { importAudio = true }.buttonStyle(.bordered)
                     .disabled(demo).accessibilityIdentifier("chooseAudioFile")
             }
-            if audio.player.currentItem != nil {
+            if audio.hasFile {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(audio.title).font(.headline)

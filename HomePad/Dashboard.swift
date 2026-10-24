@@ -2,6 +2,22 @@ import SwiftUI
 import PhotosUI
 import UniformTypeIdentifiers
 import HomeKit
+import os
+
+/// Opt-in signposts for reproducible performance recordings, never user data.
+enum HomePadPerformanceTrace {
+    private static let log = OSLog(subsystem: "org.homepad.performance", category: .pointsOfInterest)
+    private static let enabled: Bool = {
+        #if DEBUG
+        return ProcessInfo.processInfo.arguments.contains("--uitesting") && ProcessInfo.processInfo.arguments.contains("--performance-audit")
+        #else
+        return false
+        #endif
+    }()
+    static func event(_ name: StaticString) {
+        if enabled { os_signpost(.event, log: log, name: name) }
+    }
+}
 
 private let ink = Color(red: 0.36, green: 0.35, blue: 0.39)
 private let lavender = Color(red: 0.78, green: 0.76, blue: 0.88)
@@ -49,6 +65,7 @@ struct HomeShortcut: Codable, Identifiable {
     static let defaults = [HomeShortcut(id: "camera", kind: .camera), HomeShortcut(id: "music", kind: .music), HomeShortcut(id: "controls", kind: .controls)]
 }
 struct Dashboard: View {
+    @StateObject private var configurationCache = HomeConfigurationCache()
     @StateObject private var home = HomeStore()
     @StateObject private var display = DisplayCoordinator()
     @StateObject private var agendaStore = AgendaStore()
@@ -105,7 +122,7 @@ struct Dashboard: View {
         MusicArtworkBackdropPolicy.shows(on: page, enabled: musicArtworkBackground && !musicDemo && music.state == .ready,
                                          playing: music.nowPlaying?.playing == true,
                                          hasArtwork: music.nowPlaying?.artwork != nil || (music.isValidationFixture && music.nowPlaying != nil),
-                                         localFileSelected: audio.player.currentItem != nil)
+                                         localFileSelected: audio.hasFile)
     }
     private var aerialVisible: Bool {
         let clockStandby = display.isStandby && !display.standbyKeepsCurrentPage && standbyContent != "photos"
@@ -268,7 +285,7 @@ struct Dashboard: View {
                 }
                 if args.contains("--uitesting") && args.contains("--homekit-coverage-fixture") {
                     home.configureHomeKitValidation()
-                    let favorites = HomeAccessoryPresentation.primaryTiles(home.tiles).prefix(6).map {
+                    let favorites = home.primaryTiles.prefix(6).map {
                         HomeWidgetConfiguration(id: "fixture-\($0.name)", kind: .accessory, target: $0.id.uuidString, size: .small)
                     }
                     saveWidgets(favorites)
@@ -308,6 +325,7 @@ struct Dashboard: View {
         }
     }
     var body: some View {
+        let _ = HomePadPerformanceTrace.event("DashboardBody")
         configuredDashboard
         .onChange(of: showPersonal) { _, value in agendaStore.setEnabled(value) }
         .onChange(of: appLanguage) { _, _ in
@@ -349,7 +367,7 @@ struct Dashboard: View {
                 homeRefreshOnResume = false
             } else if value == .background || !airPlayPresented {
                 homeRefreshOnResume = true
-                musicNavigation.reset(); audio.player.pause(); navigationVisible = false
+                musicNavigation.reset(); audio.pause(); navigationVisible = false
             }
         }
         .onChange(of: home.status) { _, value in
@@ -389,7 +407,7 @@ struct Dashboard: View {
         if let target = home.quickToggle(for: tile) { home.toggle(target) }
         else { selectedAccessoryID = tile.id; panel = .accessory }
     }
-    private var visibleTiles: [HomeTile] { HomeAccessoryPresentation.primaryTiles(home.tiles) }
+    private var visibleTiles: [HomeTile] { home.primaryTiles }
     private var navigationAnimation: Animation { reduceMotion ? .easeOut(duration: 0.15) : .spring(duration: 0.46, bounce: 0.06) }
     private var pageTransition: AnyTransition {
         if reduceMotion { return .opacity }
@@ -623,9 +641,7 @@ struct Dashboard: View {
     }
     private var widgetNamespace: String { home.demo ? "demo" : home.selectedHomeID?.uuidString ?? "unconnected" }
     private var widgetLayouts: [String: [HomeWidgetConfiguration]] {
-        guard let data = widgetLayoutsData.data(using: .utf8),
-              let decoded = try? JSONDecoder().decode([String: [HomeWidgetConfiguration]].self, from: data) else { return [:] }
-        return decoded
+        configurationCache.widgetLayouts(from: widgetLayoutsData)
     }
     private var storedWidgets: [HomeWidgetConfiguration] { widgetLayouts[widgetNamespace] ?? HomeWidgetConfiguration.defaults }
     private var configuredWidgets: [HomeWidgetConfiguration] { storedWidgets.filter { !$0.kind.rightColumnOnly } }
@@ -645,12 +661,14 @@ struct Dashboard: View {
         let gap: CGFloat = 12
         let columns = dynamicTypeSize.isAccessibilitySize ? 1 : 3
         let cellWidth = max(1, (width - gap * CGFloat(columns - 1)) / CGFloat(columns))
-        let placements = HomeWidgetPacking.place(configuredWidgets, columns: columns)
+        let widgets = configuredWidgets
+        let widgetsByID = Dictionary(widgets.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let placements = configurationCache.placements(for: widgets, columns: columns)
         let rowCount = placements.map { $0.row + $0.rows }.max() ?? 0
         let contentHeight = max(1, CGFloat(rowCount) * (cellHeight + gap) - gap)
         return ScrollViewReader { proxy in
           ScrollView {
-            if configuredWidgets.isEmpty {
+            if widgets.isEmpty {
                 Button { panel = .widget } label: {
                     boardTile("plus", "Add widget", "Choose controls for this home".tr, width: width, height: cellHeight)
                 }.buttonStyle(.plain).accessibilityIdentifier("addHomeWidget")
@@ -664,7 +682,7 @@ struct Dashboard: View {
                         }
                     }.allowsHitTesting(false).accessibilityHidden(true)
                     ForEach(placements, id: \.id) { placement in
-                        if let configuration = configuredWidgets.first(where: { $0.id == placement.id }) {
+                        if let configuration = widgetsByID[placement.id] {
                             let widgetWidth = CGFloat(placement.columns) * (cellWidth + gap) - gap
                             let widgetHeight = CGFloat(placement.rows) * (cellHeight + gap) - gap
                             ZStack { configuredWidget(configuration, width: widgetWidth, height: widgetHeight) }
@@ -694,7 +712,7 @@ struct Dashboard: View {
               Task { @MainActor in
                   try? await Task.sleep(for: .milliseconds(350))
                   guard pendingWidgetReveal == id, configuredWidgets.contains(where: { $0.id == id }) else { return }
-                  let target = HomeWidgetPacking.place(configuredWidgets, columns: columns).first { $0.id == id }
+                  let target = configurationCache.placements(for: configuredWidgets, columns: columns).first { $0.id == id }
                   if let target {
                       withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.25)) {
                           proxy.scrollTo("home-row-\(target.row + target.rows - 1)", anchor: .bottom); highlightedWidget = id
@@ -857,7 +875,7 @@ struct Dashboard: View {
                 Button { addWidget(.clock) } label: { Label("Clock".tr, systemImage: "clock") }.accessibilityIdentifier("widgetOption-clock")
             }
             Section("Accessories".tr) {
-                ForEach(HomeAccessoryPresentation.primaryTiles(home.tiles)) { tile in
+                ForEach(home.primaryTiles) { tile in
                     Button { addWidget(.accessory, target: tile.id.uuidString) } label: {
                         Label("\(home.demo ? tile.name.tr : tile.name) · \(home.demo ? tile.room.tr : tile.room)", systemImage: tile.displaySymbol)
                     }.accessibilityIdentifier("widgetOption-accessory-\(tile.id.uuidString)")
@@ -874,8 +892,7 @@ struct Dashboard: View {
         }.accessibilityElement(children: .contain).accessibilityIdentifier("widgetPicker")
     }
     private var shortcuts: [HomeShortcut] {
-        guard let data = shortcutsData.data(using: .utf8), let saved = try? JSONDecoder().decode([HomeShortcut].self, from: data) else { return HomeShortcut.defaults }
-        return saved
+        configurationCache.shortcuts(from: shortcutsData)
     }
     private func saveShortcuts(_ items: [HomeShortcut]) {
         guard let data = try? JSONEncoder().encode(items), let string = String(data: data, encoding: .utf8) else { return }

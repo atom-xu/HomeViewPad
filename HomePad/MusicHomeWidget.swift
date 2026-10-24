@@ -29,7 +29,7 @@ struct MusicHomeWidget: View {
                                          hasArtwork: store.nowPlaying?.artwork != nil || (store.isValidationFixture && store.nowPlaying != nil),
                                          localFileSelected: fileSelected)
     }
-    private var fileSelected: Bool { !demo && audio.player.currentItem != nil }
+    private var fileSelected: Bool { !demo && audio.hasFile }
     private var hasPlayback: Bool { !demo && (store.nowPlaying != nil || fileSelected) }
     private var playing: Bool { fileSelected ? audio.playing : store.nowPlaying?.playing == true }
     private var title: String {
@@ -161,13 +161,18 @@ struct MusicSymbolButton: View {
 
 struct MusicPlaybackProgress: View {
     @ObservedObject var store: MusicStore
+    @ObservedObject private var playhead: MusicPlaybackPosition
     let value: MusicNowPlaying
     var compact = false
     var identifier = "musicSeek"
     @State private var draft: Double?
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    init(store: MusicStore, value: MusicNowPlaying, compact: Bool = false, identifier: String = "musicSeek") {
+        self.store = store; self.value = value; self.compact = compact; self.identifier = identifier
+        _playhead = ObservedObject(wrappedValue: store.playbackPosition)
+    }
     private var duration: Double { max(0, value.duration ?? 0) }
-    private var position: Double { min(max(0, draft ?? value.position), duration) }
+    private var position: Double { min(max(0, draft ?? playhead.position), duration) }
 
     var body: some View {
         VStack(spacing: compact ? 0 : 2) {

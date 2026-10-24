@@ -1,5 +1,14 @@
 # Validation
 
+## Performance13 checkpoint — 2026-10-23
+
+System hang reports on Boom pad / iPad Pro11-inch4th generation / iPadOS27.0.1 (24A446) captured 9113ms and6580ms hangs in HomeStore readback-triggered complete refresh/sort. The first performance candidate batches readbacks, updates values without re-sorting topology, isolates the playback clock and caches repeated configuration work. A strictly verified Release signed build was installed and ordinarily launched (`--page 1`) at15:56, with exact new installation/executable readback. The user confirmed smooth interaction and no new warning. This is bounded physical interaction acceptance, not a frame-rate or power claim.
+
+Xcode27.0 / isolated iPad Pro11-inchM5 / iPadOS26.5:215 unit methods executed,214 passed and the previously recorded Presence09 thirty-second test failed. Five selected Home, Music, Settings and launch UI methods passed. A prior identical-UI performance interaction journey passed and its Home/Settings screenshots were inspected. Responsive-launch samples (three each) were1.263s baseline and1.311s candidate; they do not demonstrate launch-time improvement. The simulator SwiftUI Hitches instrument was unsupported. The regression command's post-test simulator diagnostic collector timed out; assertions/results and raw diagnostic failure remain recorded separately.
+
+One481ms report after installation pointed to synchronous PhotoKit album enumeration during foreground return. The subsequent asynchronous-query code compiled and passed10 photo unit methods, including new cancellation/selection/permission guards. Its complete multi-photo UI journey failed at navigation from Photos to Settings after extensive system-animation waits. That follow-up is unresolved and uninstalled; do not treat it as part of the user-accepted signed candidate or as an all-green suite. No new commit/push. Raw versioned manifests, commands/results, signposts, signed package and readbacks: `.validation/local/performance-13/`.
+
+
 ## Home controls GitHub delivery preparation — 2026-10-23
 
 The user requested delivery of the installed HomePad update to `atom-xu/HomeViewPad`, targeting `main` and `codex/dynamic-screensaver`, and separately authorized a one-time exception to the current New York commit window. All62 inputs still match the tested/signed HomeKit12 candidate; all13 signed package files remain unchanged. Exact bundle readback on Boom pad still finds HomePad. No behavior, signing configuration or version metadata changed during this delivery; the existing native results below apply without rerunning unrelated tests. The29-path staged review excludes private signing files, binary/profile/credential material, design experiments and unrelated mini/power evidence. Actual commit time and remote branch identities are checked by Git readback; this preparation record does not replace physical accessory acceptance. Raw receipt: `.validation/local/homekit-release-20261023/`.
