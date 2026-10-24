@@ -213,6 +213,72 @@ final class AerialStoreTests: XCTestCase {
         store.setForeground(false); XCTAssertNil(store.player); XCTAssertNotNil(store.poster)
     }
 
+    @MainActor private func startNativePlayback(_ store: AerialStore) async throws -> AVQueuePlayer {
+        store.choose(clips[0]); await waitForDownload(store)
+        store.setPresentation(visible: true, reducedMotion: false, deterministic: true)
+        let player = try XCTUnwrap(store.player)
+        let deadline = Date.now.addingTimeInterval(6)
+        while (!store.videoFrameReady || !player.currentTime().seconds.isFinite || player.currentTime().seconds < 0.6) && Date.now < deadline {
+            try await Task.sleep(for: .milliseconds(25))
+        }
+        XCTAssertTrue(store.videoFrameReady); XCTAssertGreaterThan(player.currentTime().seconds, 0.5)
+        return player
+    }
+
+    @MainActor func testMusicCoverageKeepsMovingVideoThroughFadeThenResumesTheSamePausedFrame() async throws {
+        let (store, directory, defaults, suite) = try environment()
+        defer { store.setForeground(false); try? FileManager.default.removeItem(at: directory); defaults.removePersistentDomain(forName: suite) }
+        let player = try await startNativePlayback(store)
+        let before = player.currentTime().seconds
+        store.setPresentation(visible: true, reducedMotion: false, deterministic: true, covered: true)
+        XCTAssertTrue(store.player === player); XCTAssertTrue(store.videoFrameReady)
+        try await Task.sleep(for: .milliseconds(250))
+        XCTAssertGreaterThan(player.currentTime().seconds, before + 0.1, "The fading-out aerial still moves, rather than reverting to its opening poster")
+        try await Task.sleep(for: .milliseconds(700))
+        XCTAssertEqual(store.playbackState, "Paused"); XCTAssertTrue(store.videoFrameReady)
+        XCTAssertTrue(store.player === player); XCTAssertFalse(player.items().isEmpty)
+        let frozen = player.currentTime().seconds
+        try await Task.sleep(for: .milliseconds(200))
+        XCTAssertEqual(player.currentTime().seconds, frozen, accuracy: 0.04)
+        store.setPresentation(visible: true, reducedMotion: false, deterministic: true, covered: false)
+        XCTAssertTrue(store.player === player); XCTAssertTrue(store.videoFrameReady)
+        XCTAssertEqual(player.currentTime().seconds, frozen, accuracy: 0.06, "Uncover does not seek to zero or construct a replacement queue")
+        try await Task.sleep(for: .milliseconds(250))
+        XCTAssertGreaterThan(player.currentTime().seconds, frozen + 0.1)
+    }
+
+    @MainActor func testUncoverCancelsThePendingPauseAndActualHidingStillReleasesImmediately() async throws {
+        let (store, directory, defaults, suite) = try environment()
+        defer { store.setForeground(false); try? FileManager.default.removeItem(at: directory); defaults.removePersistentDomain(forName: suite) }
+        let player = try await startNativePlayback(store)
+        store.setPresentation(visible: true, reducedMotion: false, deterministic: true, covered: true)
+        try await Task.sleep(for: .milliseconds(150))
+        store.setPresentation(visible: true, reducedMotion: false, deterministic: true)
+        try await Task.sleep(for: .milliseconds(850))
+        XCTAssertTrue(store.player === player); XCTAssertEqual(player.timeControlStatus, .playing)
+        XCTAssertTrue(store.videoFrameReady)
+        store.setPresentation(visible: true, reducedMotion: false, deterministic: true, covered: true)
+        store.setPresentation(visible: false, reducedMotion: false, deterministic: true, covered: true)
+        XCTAssertNil(store.player); XCTAssertFalse(store.videoFrameReady); XCTAssertTrue(player.items().isEmpty)
+        try await Task.sleep(for: .milliseconds(900))
+        XCTAssertNil(store.player, "A cancelled coverage task cannot restore an offscreen decoder")
+    }
+
+    @MainActor func testAlreadyCoveredBackgroundDoesNotCreateAPlayerAndBackgroundCancelsCoverage() async throws {
+        let (store, directory, defaults, suite) = try environment()
+        defer { store.setForeground(false); try? FileManager.default.removeItem(at: directory); defaults.removePersistentDomain(forName: suite) }
+        store.choose(clips[0]); await waitForDownload(store)
+        store.setPresentation(visible: true, reducedMotion: false, deterministic: true, covered: true)
+        XCTAssertNil(store.player)
+        store.setPresentation(visible: true, reducedMotion: false, deterministic: true)
+        let player = try XCTUnwrap(store.player)
+        store.setPresentation(visible: true, reducedMotion: false, deterministic: true, covered: true)
+        store.setForeground(false)
+        XCTAssertNil(store.player); XCTAssertTrue(player.items().isEmpty)
+        try await Task.sleep(for: .milliseconds(900))
+        XCTAssertNil(store.player); XCTAssertFalse(store.videoFrameReady)
+    }
+
     func testNativeValidationRejectsNonVideoWithoutCreatingAPoster() async throws {
         let url = FileManager.default.temporaryDirectory.appending(path: "invalid-\(UUID()).mov")
         defer { try? FileManager.default.removeItem(at: url) }

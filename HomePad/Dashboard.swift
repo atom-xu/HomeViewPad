@@ -2,6 +2,22 @@ import SwiftUI
 import PhotosUI
 import UniformTypeIdentifiers
 import HomeKit
+import os
+
+/// Opt-in signposts for reproducible performance recordings, never user data.
+enum HomePadPerformanceTrace {
+    private static let log = OSLog(subsystem: "org.homepad.performance", category: .pointsOfInterest)
+    private static let enabled: Bool = {
+        #if DEBUG
+        return ProcessInfo.processInfo.arguments.contains("--uitesting") && ProcessInfo.processInfo.arguments.contains("--performance-audit")
+        #else
+        return false
+        #endif
+    }()
+    static func event(_ name: StaticString) {
+        if enabled { os_signpost(.event, log: log, name: name) }
+    }
+}
 
 private let ink = Color(red: 0.36, green: 0.35, blue: 0.39)
 private let lavender = Color(red: 0.78, green: 0.76, blue: 0.88)
@@ -10,6 +26,13 @@ private let paper = Color.white
 private struct MusicWidgetFrameKey: PreferenceKey {
     static let defaultValue: [CGRect] = []
     static func reduce(value: inout [CGRect], nextValue: () -> [CGRect]) { value += nextValue() }
+}
+
+private struct HomeCardFramesKey: PreferenceKey {
+    static let defaultValue: [String: CGRect] = [:]
+    static func reduce(value: inout [String: CGRect], nextValue: () -> [String: CGRect]) {
+        value.merge(nextValue(), uniquingKeysWith: { _, new in new })
+    }
 }
 
 enum Panel: String, Identifiable { case settings, music, agenda, camera, controls, photos, accessory, weather, shortcut, widget, layout; var id: String { rawValue } }
@@ -49,6 +72,7 @@ struct HomeShortcut: Codable, Identifiable {
     static let defaults = [HomeShortcut(id: "camera", kind: .camera), HomeShortcut(id: "music", kind: .music), HomeShortcut(id: "controls", kind: .controls)]
 }
 struct Dashboard: View {
+    @StateObject private var configurationCache = HomeConfigurationCache()
     @StateObject private var home = HomeStore()
     @StateObject private var display = DisplayCoordinator()
     @StateObject private var agendaStore = AgendaStore()
@@ -90,6 +114,10 @@ struct Dashboard: View {
     @State private var pendingWidgetReveal: String?
     @State private var highlightedWidget: String?
     @State private var restoreConfirmation = false
+    @State private var homeEditing = false
+    @State private var editSession = UUID()
+    @State private var homeCardFrames: [String: CGRect] = [:]
+    @State private var homeDragTarget: String?
     @State private var editingShortcutID: String?
     @State private var shortcutKind = HomeShortcutKind.camera
     @State private var shortcutTarget = ""
@@ -105,36 +133,45 @@ struct Dashboard: View {
         MusicArtworkBackdropPolicy.shows(on: page, enabled: musicArtworkBackground && !musicDemo && music.state == .ready,
                                          playing: music.nowPlaying?.playing == true,
                                          hasArtwork: music.nowPlaying?.artwork != nil || (music.isValidationFixture && music.nowPlaying != nil),
-                                         localFileSelected: audio.player.currentItem != nil)
+                                         localFileSelected: audio.hasFile)
     }
+    private var backgroundAnimation: Animation? { reduceMotion ? nil : .easeInOut(duration: AerialStore.musicFadeSeconds) }
     private var aerialVisible: Bool {
         let clockStandby = display.isStandby && !display.standbyKeepsCurrentPage && standbyContent != "photos"
         let pageShowsBackground = (!display.isStandby || display.standbyKeepsCurrentPage) && (page == .home || page == .clock)
-        return phase == .active && panel == nil && !wallpaperPickerPresented && !navigationVisible && !musicArtworkVisible
+        return phase == .active && !homeEditing && panel == nil && !wallpaperPickerPresented && !navigationVisible
             && (clockStandby || pageShowsBackground)
     }
     private func updateAerialPresentation() {
-        aerial.setPresentation(visible: aerialVisible, reducedMotion: reduceMotion, deterministic: home.demo)
+        aerial.setPresentation(visible: aerialVisible, reducedMotion: reduceMotion, deterministic: home.demo, covered: musicArtworkVisible)
     }
     private var dashboardSurface: some View {
         GeometryReader { geometry in
             let landscape = geometry.size.width > geometry.size.height
             ZStack {
-                Group {
+                ZStack {
+                    Group {
+                        if aerial.enabled {
+                            AerialWallpaperView(aerial: aerial).transition(.opacity)
+                        } else if let image = wallpaper.image {
+                            Image(uiImage: image).resizable().scaledToFill()
+                                .frame(width: geometry.size.width, height: geometry.size.height).clipped()
+                                .accessibilityLabel("Wallpaper".tr).accessibilityValue(wallpaper.accessibilityValue)
+                                .accessibilityIdentifier("customWallpaper")
+                                .id(wallpaper.imageID).transition(.opacity)
+                        } else { AmbientWallpaper(teal: tealWallpaper).id(tealWallpaper).transition(.opacity) }
+                    }
+                    // Keep the saved background mounted while music fades in
+                    // and out. No intermediate empty/black wallpaper frame.
                     if musicArtworkVisible {
                         MusicPageBackdrop(artwork: music.nowPlaying?.artwork, trackID: music.nowPlaying?.id, fixture: music.isValidationFixture)
-                            .transition(.opacity)
-                    } else if aerial.enabled {
-                        AerialWallpaperView(aerial: aerial)
-                    } else if let image = wallpaper.image {
-                        Image(uiImage: image).resizable().scaledToFill()
-                            .frame(width: geometry.size.width, height: geometry.size.height).clipped()
-                            .accessibilityLabel("Wallpaper".tr).accessibilityValue(wallpaper.accessibilityValue)
-                            .accessibilityIdentifier("customWallpaper")
-                    } else { AmbientWallpaper(teal: tealWallpaper) }
+                            .transition(.opacity).zIndex(1)
+                    }
                 }.ignoresSafeArea().allowsHitTesting(false)
-                    .animation(reduceMotion ? nil : .easeInOut(duration: 0.45), value: tealWallpaper)
-                    .animation(reduceMotion ? nil : .easeInOut(duration: 0.5), value: musicArtworkVisible)
+                    .animation(backgroundAnimation, value: tealWallpaper)
+                    .animation(backgroundAnimation, value: wallpaper.imageID)
+                    .animation(backgroundAnimation, value: aerial.enabled)
+                    .animation(backgroundAnimation, value: musicArtworkVisible)
                 Color.black.opacity(display.nightActive ? 0.45 : 0).ignoresSafeArea().allowsHitTesting(false)
                 // Only uncovered wallpaper receives taps. Widget taps retain their own actions.
                 Color.clear.contentShape(Rectangle())
@@ -194,7 +231,7 @@ struct Dashboard: View {
                 .simultaneousGesture(TapGesture().onEnded { display.noteInteraction() })
                 .simultaneousGesture(DragGesture(minimumDistance: 30).onEnded { _ in display.noteInteraction() })
                 .simultaneousGesture(DragGesture(minimumDistance: 30, coordinateSpace: .global).onEnded { value in
-                    guard !display.isStandby else { return }
+                    guard !display.isStandby, !homeEditing else { return }
                     guard music.state != .ready || !musicWidgetFrames.contains(where: { $0.contains(value.startLocation) }) else { return }
                     guard page != .music, panel != .music else { return }
                     switch DashboardSwipe.classify(x: value.translation.width, y: value.translation.height) {
@@ -205,7 +242,7 @@ struct Dashboard: View {
                 // Music owns its gesture sequence. Disabling root paging at
                 // recognition avoids a second page change after Music's onEnded.
                 // A standby drag only wakes; activity tracking remains separate.
-                }, including: page == .music || panel == .music || display.isStandby ? .subviews : .all)
+                }, including: page == .music || panel == .music || display.isStandby || homeEditing ? .subviews : .all)
         }
         .ignoresSafeArea()
         .statusBarHidden(true)
@@ -213,6 +250,12 @@ struct Dashboard: View {
         .task { await wallpaper.restore() }
         .onChange(of: aerialVisible, initial: true) { _, _ in updateAerialPresentation() }
         .onChange(of: reduceMotion) { _, _ in updateAerialPresentation() }
+        .onChange(of: musicArtworkVisible) { _, _ in updateAerialPresentation() }
+        .onPreferenceChange(HomeCardFramesKey.self) { frames in
+            guard homeEditing, frames != homeCardFrames else { return }
+            var transaction = Transaction(animation: nil); transaction.disablesAnimations = true
+            withTransaction(transaction) { homeCardFrames = frames }
+        }
         .onPreferenceChange(MusicWidgetFrameKey.self) { musicWidgetFrames = $0 }
         .overlay { if phase == .background || (phase == .inactive && !airPlayPresented) { paper.ignoresSafeArea().overlay { Label("HomePad".tr, systemImage: "house.fill").font(.largeTitle).foregroundStyle(ink) } } }
         .preferredColorScheme(display.nightActive ? .dark : .light)
@@ -236,7 +279,7 @@ struct Dashboard: View {
                 .preferredColorScheme(panel == .accessory ? .dark : nil)
                 .presentationBackground(panel == .accessory ? .ultraThinMaterial : .regularMaterial)
                 .modifier(SceneConfirmation(name: $sceneToRun, enabled: true, demo: home.demo, run: home.runScene))
-                .overlay { if phase == .background || (phase == .inactive && !airPlayPresented) { paper.ignoresSafeArea().overlay { Text("HomePad".tr).font(.largeTitle) } } }.presentationDetents([.large])
+                .overlay { if phase == .background || (phase == .inactive && !airPlayPresented) { paper.ignoresSafeArea().overlay { Text("HomePad".tr).font(.largeTitle) } } }.presentationDetents(panelDetents)
         }
         .confirmationDialog("Restore default widgets?".tr, isPresented: Binding(get: { restoreConfirmation && panel == nil }, set: { restoreConfirmation = $0 }), titleVisibility: .visible) {
             Button("Restore layout".tr, role: .destructive) { saveWidgets(HomeWidgetConfiguration.defaults); widgetOffsets = Array(repeating: 0, count: 6) }.accessibilityIdentifier("confirmRestoreWidgets")
@@ -244,6 +287,11 @@ struct Dashboard: View {
         } message: { Text("This replaces the left column layout. Right column cards are kept.".tr) }
         .modifier(SceneConfirmation(name: $sceneToRun, enabled: panel == nil, demo: home.demo, run: home.runScene))
         .alert("Home needs attention".tr, isPresented: Binding(get: { home.error != nil }, set: { if !$0 { home.error = nil } })) { Button("OK".tr) { home.error = nil } } message: { Text(home.error ?? "") }
+    }
+    private var panelDetents: Set<PresentationDetent> {
+        guard panel == .accessory, !dynamicTypeSize.isAccessibilitySize, let id = selectedAccessoryID else { return [.large] }
+        let controls = HomeAccessoryPresentation.quickControls(for: id, in: home.tiles)
+        return controls.contains { $0.control == .range } ? [.height(600), .large] : [.medium, .large]
     }
     private var configuredDashboard: some View {
         presentedDashboard
@@ -268,7 +316,7 @@ struct Dashboard: View {
                 }
                 if args.contains("--uitesting") && args.contains("--homekit-coverage-fixture") {
                     home.configureHomeKitValidation()
-                    let favorites = HomeAccessoryPresentation.primaryTiles(home.tiles).prefix(6).map {
+                    let favorites = home.primaryTiles.prefix(6).map {
                         HomeWidgetConfiguration(id: "fixture-\($0.name)", kind: .accessory, target: $0.id.uuidString, size: .small)
                     }
                     saveWidgets(favorites)
@@ -308,6 +356,7 @@ struct Dashboard: View {
         }
     }
     var body: some View {
+        let _ = HomePadPerformanceTrace.event("DashboardBody")
         configuredDashboard
         .onChange(of: showPersonal) { _, value in agendaStore.setEnabled(value) }
         .onChange(of: appLanguage) { _, _ in
@@ -334,6 +383,7 @@ struct Dashboard: View {
             display.noteInteraction()
             updatePresentationSuspension()
         }
+        .onChange(of: homeEditing) { _, _ in display.noteInteraction(); updatePresentationSuspension() }
         .onChange(of: musicPickerPresented) { _, _ in display.noteInteraction(); updatePresentationSuspension() }
         .onChange(of: airPlayPresented) { _, _ in display.noteInteraction(); updatePresentationSuspension() }
         .onChange(of: phase) { _, value in
@@ -349,14 +399,16 @@ struct Dashboard: View {
                 homeRefreshOnResume = false
             } else if value == .background || !airPlayPresented {
                 homeRefreshOnResume = true
-                musicNavigation.reset(); audio.player.pause(); navigationVisible = false
+                if value == .background { endHomeEditing() }
+                musicNavigation.reset(); audio.pause(); navigationVisible = false
             }
         }
         .onChange(of: home.status) { _, value in
             updateCameraAccess()
+            if !home.keepsDashboard { endHomeEditing() }
             if !home.demo && value != .ready && panel == .camera { panel = nil; selectedCamera = nil }
         }
-        .onChange(of: widgetNamespace) { _, _ in migrateLegacyWidgets(); pendingWidgetReveal = nil; highlightedWidget = nil }
+        .onChange(of: widgetNamespace) { _, _ in endHomeEditing(); migrateLegacyWidgets(); pendingWidgetReveal = nil; highlightedWidget = nil }
         .onChange(of: home.homeName) { _, _ in widgetOffsets = Array(repeating: 0, count: 6) }
         .onChange(of: home.selectedHomeID) { _, _ in
             cameraSnapshots.clear(); updateCameraAccess()
@@ -380,7 +432,7 @@ struct Dashboard: View {
         return page == .overview || page == .photos
     }
     private func updatePresentationSuspension() {
-        display.setPresentationSuspended(panel != nil || wallpaperPickerPresented || musicPickerPresented || airPlayPresented || navigationVisible || sceneToRun != nil || home.error != nil)
+        display.setPresentationSuspended(homeEditing || panel != nil || wallpaperPickerPresented || musicPickerPresented || airPlayPresented || navigationVisible || sceneToRun != nil || home.error != nil)
     }
     private func updateCameraAccess() {
         cameraSnapshots.setAccess(allowed: phase == .active && !home.demo && home.status == .ready)
@@ -389,7 +441,7 @@ struct Dashboard: View {
         if let target = home.quickToggle(for: tile) { home.toggle(target) }
         else { selectedAccessoryID = tile.id; panel = .accessory }
     }
-    private var visibleTiles: [HomeTile] { HomeAccessoryPresentation.primaryTiles(home.tiles) }
+    private var visibleTiles: [HomeTile] { home.primaryTiles }
     private var navigationAnimation: Animation { reduceMotion ? .easeOut(duration: 0.15) : .spring(duration: 0.46, bounce: 0.06) }
     private var pageTransition: AnyTransition {
         if reduceMotion { return .opacity }
@@ -409,6 +461,7 @@ struct Dashboard: View {
     }
     private func selectPage(_ destination: DashboardPage) {
         display.noteInteraction()
+        if destination != .home { endHomeEditing() }
         pageForward = destination.position >= page.position
         withAnimation(navigationAnimation) { page = destination; navigationVisible = false }
     }
@@ -506,19 +559,76 @@ struct Dashboard: View {
                 }.scrollIndicators(.hidden)
                     .accessibilityIdentifier("homePortraitScroll")
             }
-            VStack {
-                Spacer()
-                HStack { Spacer(); Button { panel = .layout } label: {
-                    Image(systemName: "slider.horizontal.3").font(.system(size: 18, weight: .medium)).frame(width: 44, height: 44)
-                        .modifier(GlassSurface(radius: 22))
-                }.buttonStyle(.plain).accessibilityLabel("Edit Home".tr).accessibilityIdentifier("editHomeLayout") }
-            }.padding(24)
-            if home.demo {
+            if homeEditing {
+                VStack { Spacer(); HStack { Spacer(); homeEditingToolbar } }.padding(24)
+            }
+            if home.demo && !homeEditing {
                 demoMark.padding(.leading, dynamicTypeSize.isAccessibilitySize ? 24 : (size.width - contentWidth) / 2 + 12)
                     .padding(.top, 24).allowsHitTesting(false)
             }
         }.frame(width: size.width, height: size.height)
             .accessibilityElement(children: .contain).accessibilityIdentifier("homeDashboard")
+            .accessibilityAction(named: "Edit Home".tr) { beginHomeEditing() }
+    }
+    private func requestHomeEditing() {
+        let requestedHome = widgetNamespace
+        Task { @MainActor in
+            // Finish UIKit's context-menu dismissal before replacing its
+            // source view's gestures and accessibility children.
+            try? await Task.sleep(for: .milliseconds(350))
+            guard !Task.isCancelled, phase == .active, page == .home, widgetNamespace == requestedHome else { return }
+            beginHomeEditing()
+        }
+    }
+    private func beginHomeEditing() {
+        editSession = UUID(); homeEditing = true; navigationVisible = false
+        display.noteInteraction()
+    }
+    private func endHomeEditing() { homeEditing = false; editSession = UUID(); homeDragTarget = nil }
+    private var homeEditingToolbar: some View {
+        HStack(spacing: 8) {
+            if home.demo { demoMark }
+            Menu {
+                Button("Favorite controls".tr, systemImage: "square.grid.3x3") { panel = .widget }
+                    .accessibilityIdentifier("editAddControl")
+                Button("Right column".tr, systemImage: "rectangle") { editShortcut(nil) }
+                    .accessibilityIdentifier("editAddRightCard")
+            } label: { Image(systemName: "plus").frame(width: 44, height: 44) }
+                .accessibilityLabel("Add".tr).accessibilityIdentifier("homeEditAdd")
+            Button { panel = .layout } label: { Image(systemName: "list.bullet").frame(width: 44, height: 44) }
+                .accessibilityLabel("Reorder list".tr).accessibilityIdentifier("editHomeLayout")
+            Button("Done".tr) { endHomeEditing() }.font(.body.weight(.semibold))
+                .padding(.horizontal, 12).frame(minHeight: 44).accessibilityIdentifier("homeEditDone")
+        }.padding(6).modifier(GlassSurface(radius: 28)).buttonStyle(.plain)
+            .accessibilityElement(children: .contain).accessibilityIdentifier("homeEditingToolbar")
+    }
+    private func dragHomeCard(_ payload: String, lane: String, source: String, location: CGPoint, ended: Bool) {
+        guard homeEditing else { homeDragTarget = nil; return }
+        let prefix = lane + ":"
+        let target = homeCardFrames.first { key, frame in
+            key.hasPrefix(prefix) && key != prefix + source && frame.contains(location)
+        }?.key
+        homeDragTarget = target
+        if ended {
+            if let target { _ = dropHomeCard([payload], onto: String(target.dropFirst(prefix.count)), lane: lane) }
+            homeDragTarget = nil
+        }
+    }
+    private func dropHomeCard(_ payloads: [String], onto id: String, lane: String) -> Bool {
+        guard homeEditing, payloads.count == 1 else { return false }
+        let ids = lane == "controls" ? configuredWidgets.map(\.id) : shortcuts.map(\.id)
+        guard let order = HomeLayoutDrag.reorderedIDs(ids, payload: payloads[0], session: editSession,
+                                                     home: widgetNamespace, lane: lane, target: id) else { return false }
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.25)) {
+            if lane == "controls" {
+                let byID = Dictionary(uniqueKeysWithValues: configuredWidgets.map { ($0.id, $0) })
+                saveWidgets(order.compactMap { byID[$0] })
+            } else {
+                let byID = Dictionary(uniqueKeysWithValues: shortcuts.map { ($0.id, $0) })
+                saveShortcuts(order.compactMap { byID[$0] })
+            }
+        }
+        display.noteInteraction(); return true
     }
     private func fullScreenClock(size: CGSize) -> some View {
         let landscape = size.width > size.height
@@ -605,6 +715,7 @@ struct Dashboard: View {
         navigationAction("Controls", "switch.2", id: "allControls", horizontal: horizontal) { panel = .controls }
         navigationAction("Music", "music.note", id: "musicCard", horizontal: horizontal) { selectPage(.music) }
         navigationAction("Albums", "photo.stack", id: "wallAlbums", horizontal: horizontal) { panel = .photos }
+        navigationAction("Edit Home", "square.and.pencil", id: "beginHomeEditing", horizontal: horizontal) { selectPage(.home); beginHomeEditing() }
         navigationAction("Add widget", "plus.square", id: "addHomeWidget", horizontal: horizontal) { panel = .widget }
         navigationAction("Add shortcut", "plus", id: "addShortcut", horizontal: horizontal) { editShortcut(nil) }
         navigationAction("Restore default widgets", "arrow.counterclockwise", id: "restoreHomeWidgets", horizontal: horizontal) { restoreConfirmation = true }
@@ -623,9 +734,7 @@ struct Dashboard: View {
     }
     private var widgetNamespace: String { home.demo ? "demo" : home.selectedHomeID?.uuidString ?? "unconnected" }
     private var widgetLayouts: [String: [HomeWidgetConfiguration]] {
-        guard let data = widgetLayoutsData.data(using: .utf8),
-              let decoded = try? JSONDecoder().decode([String: [HomeWidgetConfiguration]].self, from: data) else { return [:] }
-        return decoded
+        configurationCache.widgetLayouts(from: widgetLayoutsData)
     }
     private var storedWidgets: [HomeWidgetConfiguration] { widgetLayouts[widgetNamespace] ?? HomeWidgetConfiguration.defaults }
     private var configuredWidgets: [HomeWidgetConfiguration] { storedWidgets.filter { !$0.kind.rightColumnOnly } }
@@ -640,17 +749,20 @@ struct Dashboard: View {
         layouts[widgetNamespace] = widgets
         guard let data = try? JSONEncoder().encode(layouts), let string = String(data: data, encoding: .utf8) else { return }
         widgetLayoutsData = string
+        configurationCache.savedValuesDidChange()
     }
     private func editableBoard(width: CGFloat, height: CGFloat?, cellHeight: CGFloat = 320, scrolls: Bool = true) -> some View {
         let gap: CGFloat = 12
         let columns = dynamicTypeSize.isAccessibilitySize ? 1 : 3
         let cellWidth = max(1, (width - gap * CGFloat(columns - 1)) / CGFloat(columns))
-        let placements = HomeWidgetPacking.place(configuredWidgets, columns: columns)
+        let widgets = configuredWidgets
+        let widgetsByID = Dictionary(widgets.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let placements = configurationCache.placements(for: widgets, columns: columns)
         let rowCount = placements.map { $0.row + $0.rows }.max() ?? 0
         let contentHeight = max(1, CGFloat(rowCount) * (cellHeight + gap) - gap)
         return ScrollViewReader { proxy in
           ScrollView {
-            if configuredWidgets.isEmpty {
+            if widgets.isEmpty {
                 Button { panel = .widget } label: {
                     boardTile("plus", "Add widget", "Choose controls for this home".tr, width: width, height: cellHeight)
                 }.buttonStyle(.plain).accessibilityIdentifier("addHomeWidget")
@@ -664,17 +776,29 @@ struct Dashboard: View {
                         }
                     }.allowsHitTesting(false).accessibilityHidden(true)
                     ForEach(placements, id: \.id) { placement in
-                        if let configuration = configuredWidgets.first(where: { $0.id == placement.id }) {
+                        if let configuration = widgetsByID[placement.id] {
                             let widgetWidth = CGFloat(placement.columns) * (cellWidth + gap) - gap
                             let widgetHeight = CGFloat(placement.rows) * (cellHeight + gap) - gap
-                            ZStack { configuredWidget(configuration, width: widgetWidth, height: widgetHeight) }
+                            ZStack {
+                                configuredWidget(configuration, width: widgetWidth, height: widgetHeight)
+                                    .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: 30, style: .continuous))
+                                    .contextMenu {
+                                        if !homeEditing { widgetContextMenu(configuration) }
+                                    } preview: {
+                                        widgetMenuPreview(configuration, width: widgetWidth, height: widgetHeight)
+                                    }
+                            }
                                 .frame(width: widgetWidth, height: widgetHeight)
-                                .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: 30, style: .continuous))
-                                .contextMenu {
-                                    widgetContextMenu(configuration)
-                                } preview: {
-                                    widgetMenuPreview(configuration, width: widgetWidth, height: widgetHeight)
-                                }
+                                .modifier(HomeEditingCard(editing: homeEditing, id: configuration.id, title: widgetName(configuration), width: widgetWidth, height: widgetHeight,
+                                    payload: HomeLayoutDrag(session: editSession, home: widgetNamespace, lane: "controls", id: configuration.id).encoded,
+                                    size: configuration.size, targeted: homeDragTarget == "controls:" + configuration.id,
+                                    remove: { saveWidgets(configuredWidgets.filter { $0.id != configuration.id }) },
+                                    resize: { resizeWidget(configuration.id, size: $0) },
+                                    drag: { payload, point, ended in dragHomeCard(payload, lane: "controls", source: configuration.id, location: point, ended: ended) }))
+                                .background { GeometryReader { geometry in
+                                    if homeEditing { Color.clear.preference(key: HomeCardFramesKey.self, value: ["controls:" + configuration.id: geometry.frame(in: .global)]) }
+                                }.allowsHitTesting(false) }
+                                .zIndex(homeDragTarget == "controls:" + configuration.id ? 1 : 0)
                                 .accessibilityElement(children: .contain)
                                 .accessibilityIdentifier("homeWidget-\(configuration.id)")
                                 .accessibilityValue(configuration.size.title)
@@ -684,6 +808,7 @@ struct Dashboard: View {
                         }
                     }
                 }.frame(width: width, height: contentHeight, alignment: .topLeading)
+                    .padding(.bottom, homeEditing ? 84 : 0)
                     .accessibilityElement(children: .contain).accessibilityIdentifier("homeWidgetCanvas")
             }
         }.scrollIndicators(.hidden).scrollDisabled(!scrolls)
@@ -694,7 +819,7 @@ struct Dashboard: View {
               Task { @MainActor in
                   try? await Task.sleep(for: .milliseconds(350))
                   guard pendingWidgetReveal == id, configuredWidgets.contains(where: { $0.id == id }) else { return }
-                  let target = HomeWidgetPacking.place(configuredWidgets, columns: columns).first { $0.id == id }
+                  let target = configurationCache.placements(for: configuredWidgets, columns: columns).first { $0.id == id }
                   if let target {
                       withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.25)) {
                           proxy.scrollTo("home-row-\(target.row + target.rows - 1)", anchor: .bottom); highlightedWidget = id
@@ -736,17 +861,7 @@ struct Dashboard: View {
                 .accessibilityIdentifier("contextPreviousWidget-\(configuration.id)")
             Divider()
         }
-        ForEach(HomeWidgetSize.allCases) { size in
-            Button { resizeWidget(configuration.id, size: size) } label: {
-                Label(size.title, systemImage: size == configuration.size ? "checkmark" : "rectangle")
-            }.accessibilityIdentifier("widgetSize-\(configuration.id)-\(size.rawValue)")
-        }
-        Divider()
-        Button("Add widget".tr) { panel = .widget }.accessibilityIdentifier("addHomeWidget")
-        Button("Restore default widgets".tr) { restoreConfirmation = true }.accessibilityIdentifier("restoreHomeWidgets")
-        Divider()
-        Button("Remove widget".tr, role: .destructive) { saveWidgets(configuredWidgets.filter { $0.id != configuration.id }) }
-            .accessibilityIdentifier("removeWidget-\(configuration.id)")
+        Button("Edit Home".tr) { requestHomeEditing() }.accessibilityIdentifier("contextEditHome")
     }
     private func resizeWidget(_ id: String, size: HomeWidgetSize) {
         var widgets = configuredWidgets
@@ -857,7 +972,7 @@ struct Dashboard: View {
                 Button { addWidget(.clock) } label: { Label("Clock".tr, systemImage: "clock") }.accessibilityIdentifier("widgetOption-clock")
             }
             Section("Accessories".tr) {
-                ForEach(HomeAccessoryPresentation.primaryTiles(home.tiles)) { tile in
+                ForEach(home.primaryTiles) { tile in
                     Button { addWidget(.accessory, target: tile.id.uuidString) } label: {
                         Label("\(home.demo ? tile.name.tr : tile.name) · \(home.demo ? tile.room.tr : tile.room)", systemImage: tile.displaySymbol)
                     }.accessibilityIdentifier("widgetOption-accessory-\(tile.id.uuidString)")
@@ -870,20 +985,21 @@ struct Dashboard: View {
                         .accessibilityIdentifier("widgetOption-scene-\(name)")
                 }
             }
-            Section { Text("Touch and hold a widget to change its size or remove it. Extra widgets scroll vertically.".tr).font(.footnote) }
+            Section { Text("Touch and hold a card to edit Home. Drag its handle to reorder. Extra cards scroll vertically.".tr).font(.footnote) }
         }.accessibilityElement(children: .contain).accessibilityIdentifier("widgetPicker")
     }
     private var shortcuts: [HomeShortcut] {
-        guard let data = shortcutsData.data(using: .utf8), let saved = try? JSONDecoder().decode([HomeShortcut].self, from: data) else { return HomeShortcut.defaults }
-        return saved
+        configurationCache.shortcuts(from: shortcutsData)
     }
     private func saveShortcuts(_ items: [HomeShortcut]) {
         guard let data = try? JSONEncoder().encode(items), let string = String(data: data, encoding: .utf8) else { return }
         shortcutsData = string
+        configurationCache.savedValuesDidChange()
     }
     private func shortcutColumn(width: CGFloat, cellHeight: CGFloat) -> some View {
         ScrollView {
             VStack(spacing: 12) { shortcutTiles(width: width, cellHeight: cellHeight) }
+                .padding(.bottom, homeEditing ? 84 : 0)
         }.scrollIndicators(.hidden).frame(width: width)
             .accessibilityElement(children: .contain).accessibilityIdentifier("shortcutColumn")
     }
@@ -894,7 +1010,7 @@ struct Dashboard: View {
                     SidebarCameraCard(accessory: camera(for: shortcut), snapshots: cameraSnapshots,
                                       title: shortcut.name.isEmpty ? (camera(for: shortcut)?.name ?? "Camera".tr) : shortcut.name,
                                       demo: home.demo,
-                                      active: phase == .active && !display.isStandby && panel == nil && !navigationVisible && sceneToRun == nil,
+                                      active: phase == .active && !display.isStandby && !homeEditing && panel == nil && !navigationVisible && sceneToRun == nil,
                                       width: width, height: cellHeight, open: { runShortcut(shortcut) })
                         .id("\(home.selectedHomeID?.uuidString ?? "none")-\(shortcut.id)")
                 } else if shortcut.kind == .music {
@@ -915,13 +1031,24 @@ struct Dashboard: View {
                     .modifier(GlassSurface(radius: 30))
                 }.buttonStyle(.plain) }
             }.accessibilityIdentifier("shortcut-\(shortcut.id)")
-                .disabled(shortcut.kind == .scene && (home.sceneBusy || !shortcutBelongsToCurrentHome(shortcut) || !home.scenes.contains(shortcut.target ?? "")))
                 .contextMenu {
-                    Button("Show navigation".tr) { withAnimation(navigationAnimation) { navigationVisible = true } }.accessibilityIdentifier("contextShowNavigation")
-                    Button("Edit".tr) { editShortcut(shortcut) }.accessibilityIdentifier("editShortcut-\(shortcut.id)")
-                    Button("Add shortcut".tr) { editShortcut(nil) }.accessibilityIdentifier("addShortcut")
-                    Button("Remove".tr, role: .destructive) { saveShortcuts(shortcuts.filter { $0.id != shortcut.id }) }.accessibilityIdentifier("removeShortcut-\(shortcut.id)")
+                    if !homeEditing {
+                        Button("Show navigation".tr) { withAnimation(navigationAnimation) { navigationVisible = true } }.accessibilityIdentifier("contextShowNavigation")
+                        Button("Edit Home".tr) { requestHomeEditing() }.accessibilityIdentifier("contextEditHome")
+                    }
                 }
+                .modifier(HomeEditingCard(editing: homeEditing, id: shortcut.id,
+                    title: shortcut.name.isEmpty ? shortcut.kind.title : shortcut.name, width: width, height: cellHeight,
+                    payload: HomeLayoutDrag(session: editSession, home: widgetNamespace, lane: "right", id: shortcut.id).encoded,
+                    targeted: homeDragTarget == "right:" + shortcut.id,
+                    remove: { saveShortcuts(shortcuts.filter { $0.id != shortcut.id }) },
+                    configure: { editShortcut(shortcut) },
+                    drag: { payload, point, ended in dragHomeCard(payload, lane: "right", source: shortcut.id, location: point, ended: ended) }))
+                .background { GeometryReader { geometry in
+                    if homeEditing { Color.clear.preference(key: HomeCardFramesKey.self, value: ["right:" + shortcut.id: geometry.frame(in: .global)]) }
+                }.allowsHitTesting(false) }
+                .disabled(!homeEditing && shortcut.kind == .scene && (home.sceneBusy || !shortcutBelongsToCurrentHome(shortcut) || !home.scenes.contains(shortcut.target ?? "")))
+
         }
         if shortcuts.isEmpty {
             Button { editShortcut(nil) } label: { boardTile("plus", "Add shortcut", "", width: width, height: cellHeight) }
@@ -1333,5 +1460,68 @@ private struct SceneConfirmation: ViewModifier {
         } message: {
             Text("Scenes can change multiple accessories, including locks or doors. Review the scene in Apple Home before running it.".tr)
         }
+    }
+}
+
+private struct HomeEditingCard: ViewModifier {
+    let editing: Bool
+    let id: String
+    let title: String
+    let width: CGFloat
+    let height: CGFloat
+    let payload: String
+    var size: HomeWidgetSize? = nil
+    var targeted = false
+    let remove: () -> Void
+    var resize: (HomeWidgetSize) -> Void = { _ in }
+    var configure: (() -> Void)? = nil
+    let drag: (String, CGPoint, Bool) -> Void
+    @GestureState private var translation = CGSize.zero
+    @ViewBuilder func body(content: Content) -> some View {
+        if editing {
+            ZStack(alignment: .top) {
+                content.disabled(true).allowsHitTesting(false).accessibilityHidden(true)
+                Color.clear.contentShape(Rectangle()).onTapGesture {}
+                chrome
+            }.frame(width: width, height: height)
+                .overlay { RoundedRectangle(cornerRadius: 30).stroke(targeted ? Color.white : .clear, lineWidth: 3).allowsHitTesting(false) }
+                .overlay {
+                    if translation != .zero {
+                        RoundedRectangle(cornerRadius: 30).stroke(.white.opacity(0.85), style: StrokeStyle(lineWidth: 3, dash: [8]))
+                            .offset(translation).allowsHitTesting(false)
+                    }
+                }
+        } else { content }
+    }
+    private var chrome: some View {
+        HStack(spacing: 6) {
+            Button {
+                remove()
+            } label: { symbol("minus") }
+                .accessibilityLabel(L10n.format("Remove %@ from Home", title))
+                .accessibilityIdentifier("homeRemove-\(id)")
+            Spacer(minLength: 0)
+            Menu {
+                if let size {
+                    ForEach(HomeWidgetSize.allCases) { option in
+                        Button { resize(option) } label: { Label(option.title, systemImage: size == option ? "checkmark" : "rectangle") }
+                            .accessibilityIdentifier("widgetSize-\(id)-\(option.rawValue)")
+                    }
+                }
+                if let configure { Button("Edit".tr, action: configure) }
+            } label: { symbol("ellipsis") }
+                .accessibilityLabel("Edit".tr).accessibilityIdentifier("homeCardOptions-\(id)")
+            symbol("line.3.horizontal")
+                .highPriorityGesture(DragGesture(minimumDistance: 4, coordinateSpace: .global)
+                    .updating($translation) { value, state, _ in state = value.translation }
+                    .onChanged { value in drag(payload, value.location, false) }
+                    .onEnded { value in drag(payload, value.location, true) })
+                .accessibilityLabel(L10n.format("Move %@", title)).accessibilityIdentifier("homeDrag-\(id)")
+        }.font(.system(size: 17, weight: .semibold)).buttonStyle(.plain)
+            .foregroundStyle(.white).environment(\.colorScheme, .dark).padding(8)
+    }
+    private func symbol(_ name: String) -> some View {
+        Image(systemName: name).frame(width: 36, height: 36).background(.regularMaterial, in: Circle())
+            .frame(width: 44, height: 44).contentShape(Rectangle())
     }
 }

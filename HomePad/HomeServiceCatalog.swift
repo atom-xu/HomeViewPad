@@ -129,9 +129,9 @@ enum HomeServiceCatalog {
         return result
     }()
 
-    static var categorySymbols: [String: String] {
+    static let categorySymbols: [String: String] = {
         Dictionary(uniqueKeysWithValues: allCategories.map { ($0.type, $0.symbol) })
-    }
+    }()
     private static let serviceLookup = Dictionary(uniqueKeysWithValues: allServices.map { ($0.type, $0) })
     private static let categoryLookup = Dictionary(uniqueKeysWithValues: allCategories.map { ($0.type, $0) })
 

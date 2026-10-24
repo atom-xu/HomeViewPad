@@ -64,6 +64,7 @@ struct SettingsHubView: View {
     }
 
     var body: some View {
+        let _ = HomePadPerformanceTrace.event("SettingsBody")
         NavigationStack(path: $path) {
             index
                 .navigationTitle("Settings".tr)

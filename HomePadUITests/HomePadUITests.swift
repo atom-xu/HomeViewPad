@@ -1,6 +1,46 @@
 import XCTest
 import UIKit
 final class HomePadUITests: XCTestCase {
+    func testPerformanceLaunchToResponsiveHome() {
+        app.terminate()
+        let options = XCTMeasureOptions(); options.iterationCount = 3
+        measure(metrics: [XCTApplicationLaunchMetric(waitUntilResponsive: true)], options: options) {
+            app.launch()
+            app.terminate()
+        }
+    }
+    func testPerformanceInteractionRecording() throws {
+        // Same deterministic account data and 0.5-second readback cadence for
+        // before/after recordings; no MusicKit, HomeKit or audible playback.
+        app.terminate()
+        app.launchArguments += ["--music-fixture", "--performance-audit", "-music.connected", "YES",
+                                "-display.screenBehaviorV1", "followSystem", "-display.motionWake", "NO",
+                                "-display.faceWake", "NO", "-photoSlideshow", "NO", "-musicArtworkBackground", "YES"]
+        launchHome()
+        XCTAssertTrue(app.staticTexts["musicValidationData"].waitForExistence(timeout: 8))
+        app.buttons["homeMusicPlayback"].tap()
+        XCTAssertEqual(app.buttons["homeMusicPlayback"].label, "Pause")
+        // Keep input and XCTest synchronization identical between candidates.
+        for _ in 0..<2 {
+            tab(4)
+            XCTAssertTrue(app.descendants(matching: .any)["settingsIndex"].waitForExistence(timeout: 5))
+            settingsCategory("settingsDisplay")
+            app.swipeUp(); app.swipeDown()
+            tab(1)
+            XCTAssertTrue(app.buttons["homeMusicOpen"].waitForExistence(timeout: 5))
+            XCTAssertEqual(app.buttons["homeMusicPlayback"].label, "Pause", "Returning to Home must retain the playing source")
+            app.buttons["homeMusicOpen"].tap()
+            waitForFixtureMusicPlayerEntry()
+            tapReadyMusicButton("musicLibrary")
+            XCTAssertTrue(app.descendants(matching: .any)["musicCoverFlow"].waitForExistence(timeout: 5))
+            let covers = app.descendants(matching: .any)["musicCoverFlow"]
+            covers.swipeLeft(); covers.swipeRight()
+            tab(1)
+        }
+        shot("Performance Home unchanged")
+        tab(4)
+        shot("Performance settings unchanged")
+    }
     var app: XCUIApplication!
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -2442,12 +2482,92 @@ final class HomePadUITests: XCTestCase {
         app.buttons["Clock"].tap()
     }
 
+    func testHomeInPlaceEditingReordersPersistsAndNeverOperatesDevices() {
+        XCTAssertFalse(app.buttons["homeRemove-slot-1"].exists)
+        let card = app.descendants(matching: .any)["homeWidget-slot-1"]
+        card.press(forDuration: 1.2)
+        tapReadyMusicButton("contextEditHome")
+        shot("Home immediately after edit context action")
+        XCTAssertTrue(app.buttons["homeEditDone"].waitForExistence(timeout: 4))
+        let power = app.buttons["accessory-Pendant lights"]
+        XCTAssertFalse(power.isEnabled)
+        let beforePower = power.label
+        power.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        XCTAssertEqual(power.label, beforePower, "Editing must consume touches without changing accessory state")
+        let drag = app.descendants(matching: .any)["homeDrag-slot-1"]
+        let target = app.descendants(matching: .any)["homeWidget-slot-0"]
+        drag.press(forDuration: 0.8, thenDragTo: target)
+        shot("Home after dragging clock onto climate")
+        let first = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in card.frame.minX < target.frame.minX }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [first], timeout: 5), .completed)
+        let cameraHandle = app.descendants(matching: .any)["homeDrag-camera"]
+        let musicHandle = app.descendants(matching: .any)["homeDrag-music"]
+        musicHandle.press(forDuration: 0.8, thenDragTo: cameraHandle)
+        XCTAssertLessThan(musicHandle.frame.minY, cameraHandle.frame.minY)
+        let rightCamera = app.descendants(matching: .any)["shortcut-camera"]
+        let rightMusic = app.descendants(matching: .any)["shortcut-music"]
+        shot("In-place Home edit controls keep approved card geometry")
+        XCTAssertTrue(app.buttons["homeRemove-slot-1"].isEnabled)
+        app.buttons["homeRemove-slot-1"].tap()
+        shot("Home after removing reordered clock")
+        XCTAssertTrue(card.waitForNonExistence(timeout: 4))
+        app.buttons["homeEditAdd"].tap(); app.buttons["editAddControl"].tap()
+        XCTAssertTrue(app.buttons["widgetOption-clock"].waitForExistence(timeout: 3))
+        XCTAssertFalse(app.buttons["widgetOption-camera"].exists)
+        app.buttons["widgetOption-clock"].tap()
+        XCTAssertTrue(app.buttons["homeEditDone"].waitForExistence(timeout: 4))
+        app.buttons["homeEditDone"].tap()
+        XCTAssertFalse(app.buttons["homeRemove-slot-0"].exists)
+        tab(2); tab(1)
+        XCTAssertLessThan(rightMusic.frame.minY, rightCamera.frame.minY)
+        XCTAssertFalse(card.exists)
+        XCTAssertTrue(app.buttons["accessory-Pendant lights"].isEnabled)
+        app.terminate()
+        for key in ["-homeWidgetLayouts", "-homeShortcuts"] {
+            if let index = app.launchArguments.firstIndex(of: key) { app.launchArguments.removeSubrange(index...index + 1) }
+        }
+        launchHome()
+        XCTAssertLessThan(rightMusic.frame.minY, rightCamera.frame.minY)
+        XCTAssertFalse(card.exists)
+        shot("Home leaves editing and preserves right column order")
+    }
+    func testHomeMinimalControlKeepsMetadataBehindDetails() {
+        app.terminate(); app.launchArguments += ["--homekit-coverage-fixture"]; launchHome()
+        app.buttons["accessory-Door lock"].tap()
+        XCTAssertTrue(app.staticTexts["accessoryDetailState"].waitForExistence(timeout: 4))
+        let readings = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "accessoryReading-"))
+        XCTAssertEqual(readings.count, 0)
+        XCTAssertTrue(app.buttons["accessoryInformation"].isHittable)
+        shot("Minimal lock control before details")
+        app.buttons["accessoryInformation"].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["accessoryInformationPage"].waitForExistence(timeout: 3))
+        XCTAssertGreaterThan(readings.count, 0)
+        shot("Accessory information in a separate destination")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(app.staticTexts["accessoryDetailState"].waitForExistence(timeout: 3))
+        XCTAssertEqual(readings.count, 0)
+    }
+    func testMusicBackdropFadesWithoutReplacingIndependentPages() {
+        launchMusicFixtureHome()
+        let playback = app.buttons["homeMusicPlayback"]
+        XCTAssertEqual(playback.label, "Play")
+        shot("Home saved background before music fade")
+        playback.tap(); XCTAssertEqual(playback.label, "Pause")
+        shot("Home music background fades in")
+        tab(2); shot("Clock shares playing music background")
+        tab(3); XCTAssertTrue(app.descendants(matching: .any)["photoWall"].waitForExistence(timeout: 5))
+        shot("Photo wall remains independent during music playback")
+        tab(1); playback.tap(); XCTAssertEqual(playback.label, "Play")
+        shot("Home music fades back to saved background")
+    }
+
     func testHomeFavoritesEditorRevealsAddsAndRequiresRestoreConfirmation() throws {
         XCTAssertFalse(app.buttons["cameraWidget"].exists)
         let sidebar = app.descendants(matching: .any)["shortcut-camera"]
         XCTAssertTrue(sidebar.exists)
         let widgets = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "homeWidget-"))
         let before = Set(widgets.allElementsBoundByIndex.map(\.identifier))
+        navigationAction("beginHomeEditing")
         app.buttons["editHomeLayout"].tap()
         XCTAssertTrue(app.descendants(matching: .any)["homeLayoutEditor"].waitForExistence(timeout: 4))
         app.buttons["layoutAddFavorite"].tap()
@@ -2471,6 +2591,7 @@ final class HomePadUITests: XCTestCase {
         let added = app.descendants(matching: .any)[addedID]
         app.descendants(matching: .any)["homeControlGrid"].swipeDown()
         XCTAssertLessThan(added.frame.minY, app.descendants(matching: .any)["homeWidget-slot-0"].frame.minY + 2)
+        app.buttons["homeEditDone"].tap()
         navigationAction("restoreHomeWidgets")
         XCTAssertTrue(app.buttons["confirmRestoreWidgets"].firstMatch.waitForExistence(timeout: 4))
         let cancel = app.buttons.matching(NSPredicate(format: "label IN %@", ["Cancel", "取消"])).firstMatch

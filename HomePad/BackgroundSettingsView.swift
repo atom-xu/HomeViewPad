@@ -2,6 +2,7 @@ import SwiftUI
 import AVFoundation
 
 struct AerialWallpaperView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject var aerial: AerialStore
     var body: some View {
         GeometryReader { geometry in
@@ -9,14 +10,19 @@ struct AerialWallpaperView: View {
                 if let image = aerial.poster {
                     Image(uiImage: image).resizable().scaledToFill()
                         .frame(width: geometry.size.width, height: geometry.size.height).clipped()
+                        .id(aerial.currentID).transition(.opacity)
                 }
-                if let player = aerial.player { AerialPlayerLayer(player: player) }
+                if let player = aerial.player {
+                    AerialPlayerLayer(player: player).opacity(aerial.videoFrameReady ? 1 : 0)
+                }
                 Color.black.opacity(0.12)
                 if aerial.isValidationFixture {
                     VStack { Spacer(); Text("TEST DATA · AERIAL".tr).font(.caption.bold()).padding(10)
                         .background(.black.opacity(0.7), in: Capsule()).padding(20) }
                 }
             }.frame(width: geometry.size.width, height: geometry.size.height).clipped()
+                .animation(reduceMotion ? nil : .easeInOut(duration: 0.8), value: aerial.currentID)
+                .animation(reduceMotion ? nil : .easeInOut(duration: 0.5), value: aerial.videoFrameReady)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Apple Aerial".tr)

@@ -104,6 +104,27 @@ extension HomePadUITests {
         tab(1); XCTAssertFalse(background.exists)
     }
 
+    func testMusicFadePausesAndResumesTheActualAerialSurface() {
+        launchAerialFixture(extra: ["--music-fixture", "-music.connected", "YES", "-musicArtworkBackground", "YES"])
+        selectAerial("12E0343D-2CD9-48EA-AB57-4D680FB6D0C7")
+        tab(1)
+        let background = app.descendants(matching: .any)["aerialWallpaper"]
+        let playing = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in (background.value as? String)?.contains("Playing") == true }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [playing], timeout: 8), .completed)
+        XCTAssertTrue(app.staticTexts["musicValidationData"].exists)
+        shot("Actual synthetic aerial before music coverage")
+        app.buttons["homeMusicPlayback"].tap()
+        XCTAssertEqual(app.buttons["homeMusicPlayback"].label, "Pause")
+        let paused = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in (background.value as? String)?.contains("Paused") == true }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [paused], timeout: 5), .completed)
+        shot("Music covers the retained paused aerial surface")
+        app.buttons["homeMusicPlayback"].tap()
+        XCTAssertEqual(app.buttons["homeMusicPlayback"].label, "Play")
+        let resumed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in (background.value as? String)?.contains("Playing") == true }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [resumed], timeout: 5), .completed)
+        shot("Music fades away to the resumed aerial surface")
+    }
+
     func testAerialCancelAndFailureRetainStaticBackground() {
         launchAerialFixture(extra: ["--aerial-fixture-slow"])
         let first = app.buttons["aerial-12E0343D-2CD9-48EA-AB57-4D680FB6D0C7"]

@@ -1,5 +1,36 @@
 # Validation
 
+## Performance13 checkpoint — 2026-10-23
+
+System hang reports on Boom pad / iPad Pro11-inch4th generation / iPadOS27.0.1 (24A446) captured 9113ms and6580ms hangs in HomeStore readback-triggered complete refresh/sort. The first performance candidate batches readbacks, updates values without re-sorting topology, isolates the playback clock and caches repeated configuration work. A strictly verified Release signed build was installed and ordinarily launched (`--page 1`) at15:56, with exact new installation/executable readback. The user confirmed smooth interaction and no new warning. This is bounded physical interaction acceptance, not a frame-rate or power claim.
+
+Xcode27.0 / isolated iPad Pro11-inchM5 / iPadOS26.5:215 unit methods executed,214 passed and the previously recorded Presence09 thirty-second test failed. Five selected Home, Music, Settings and launch UI methods passed. A prior identical-UI performance interaction journey passed and its Home/Settings screenshots were inspected. Responsive-launch samples (three each) were1.263s baseline and1.311s candidate; they do not demonstrate launch-time improvement. The simulator SwiftUI Hitches instrument was unsupported. The regression command's post-test simulator diagnostic collector timed out; assertions/results and raw diagnostic failure remain recorded separately.
+
+One481ms report after installation pointed to synchronous PhotoKit album enumeration during foreground return. The subsequent asynchronous-query code compiled and passed10 photo unit methods, including new cancellation/selection/permission guards. Its complete multi-photo UI journey failed at navigation from Photos to Settings after extensive system-animation waits. That follow-up is unresolved and uninstalled; do not treat it as part of the user-accepted signed candidate or as an all-green suite. No new commit/push. Raw versioned manifests, commands/results, signposts, signed package and readbacks: `.validation/local/performance-13/`.
+
+
+## iPad mini 家庭／音乐排查（2026-10-23，两项已恢复）
+
+用户报告mini的HomePad连接不上家庭且音乐无声。已有安装1.0(1)，iPadOS27.0.1(24A446)。Mac Device Hub预览可见真实歌曲、播放中与进度前进；系统AirPlay面板选中“iPad扬声器”，原生音量滑块约80%。本轮未改变音量、路由、歌曲或播放状态；只用Device Hub的“Quit and Keep Simulators Running”退出预览，并以进程不存在核对。要求用户保持当前歌曲且不改其他设置，用户确认“现在有声音了”。当前音乐听感问题解除，指向设备预览会话干扰；未证明Apple框架缺陷或所有输出场景都通过。
+
+用户另确认mini自带“家庭”App能看到并控制同一套设备。只读复制的HomePad偏好为homeMode=live且已有selectedHomeID；缓存Console中HomePad/HomeKit15:35:31曾处理家庭配置并通知delegate、报告framework in sync。这不等于当前App权限／配件控制已验证。随后用户明确确认“已经好了，是因为有一个家庭没有真实设备”，因此本次家庭阻塞结论为选中了没有真实配件的家庭，当前已恢复；这是用户使用确认，本任务没有代用户写入配件。未进行App改码、权限变更或账号调整。原始日志采集与当前状态分开，未改应用源码、权限、账号或真机配件，也未重装。并行性能开发文件保留。
+
+[诊断汇总](evidence/ipad-mini-home-audio-summary.json)，私有证据 `.validation/local/ipad-mini-home-audio-20261023T073955Z/`。CLI audio查询在该iPad不支持，不当作路由读回。应用无行为修改，本轮无新XCTest／XCUITest、Git提交或推送。
+
+## iPad mini 验签失败点与恢复（2026-10-23 15:35，Asia/Shanghai）
+
+用户追问具体原因。原生Console中目标mini此前14:25:25的 `online-auth-agent` 请求与已安装HomePad的URL／profile一致：获取设备身份失败，错误链为 `Failed to create BAA info.` → `Failed to create reference key attestation.` → `Failed to copy attestation key.` → `Failed to copy system key (2).`，随后 `Could not perform authorization attempt`。这把此前“需要联网验证”定位到设备身份认证材料获取失败，尚未确定系统密钥为何不可读，不能直接归因为网络、账号、iPadOS缺陷或硬件问题。
+
+随后设备系统版本由此前27.0(24A437)变为27.0.1(24A446)，本任务没有执行更新／重启。用户现已确认HomePad能打开；`devicectl device info processes` 独立读回PID760，executable与原mini安装路径完全匹配，设备connected／paired／localNetwork。**当前启动验证阻塞已解除**；不能仅凭先后顺序认定具体恢复动作。过渡期间三次CLI请求超时另存，不当作新的App验签拒绝。本轮未重签、重装、删数据、改账号、生成7天profile或改应用源码；无需新增行为套件。Console流式采集已停止。
+
+[最新汇总](evidence/ipad-mini-install-summary.json) 的 latestDiagnosis；原始命令结果及Console观察摘录在 `.validation/local/ipad-mini-trust-diagnosis-20261023T073044Z/`。以下15:24检查为恢复前历史状态；真实HomeKit／音乐／壁纸等硬件体验仍不在本次启动验证结论中。
+
+## iPad mini 连接复查（2026-10-23 15:24，Asia/Shanghai）
+
+用户要求重新检查新 mini 的连接。`devicectl` 连续读回 iPad mini (A17 Pro)／iPadOS27.0 (24A437) 为 connected、paired、localNetwork，开发者模式 Enabled，passcodeRequired=false、unlockedSinceBoot=true。HomePad `cn.vilhil.homeviewpad` 1.0(1) 仍在设备上。
+
+对现有安装执行普通启动，仍返回 CoreDevice10002／FBSOpenApplicationErrorDomain3 Security，原因列举签名无效、entitlements 不足或描述文件未获用户明确信任；命令无法区分三者。启动前后均无 HomePad 进程，因此连接恢复不代表启动验证通过。本轮未重装、未修改账号／设备设置、未生成7天描述文件，应用源码未改，无需新增行为测试。原始证据在 `.validation/local/ipad-mini-recheck-20261023T072435Z/`；汇总见 `docs/evidence/ipad-mini-install-summary.json` 的 latestRecheck。
+
 ## Home controls GitHub delivery preparation — 2026-10-23
 
 The user requested delivery of the installed HomePad update to `atom-xu/HomeViewPad`, targeting `main` and `codex/dynamic-screensaver`, and separately authorized a one-time exception to the current New York commit window. All62 inputs still match the tested/signed HomeKit12 candidate; all13 signed package files remain unchanged. Exact bundle readback on Boom pad still finds HomePad. No behavior, signing configuration or version metadata changed during this delivery; the existing native results below apply without rerunning unrelated tests. The29-path staged review excludes private signing files, binary/profile/credential material, design experiments and unrelated mini/power evidence. Actual commit time and remote branch identities are checked by Git readback; this preparation record does not replace physical accessory acceptance. Raw receipt: `.validation/local/homekit-release-20261023/`.
@@ -516,3 +547,39 @@ Xcode 27.0 (27A266a), iOS/iOS Simulator SDK 27.0, macOS 27.0 arm64: the HomePad 
 Both built Info.plists identify the iPad primary icon as `AppIcon`; both compiled asset catalogs contain its opaque 1024 px master. The packaged 120 / 152 px PNGs from both platforms were exported and all four were visually inspected. Device Release PNGs use Apple's CgBI optimization, which Pillow initially could not decode; Apple `pngcrush -revert-iphone-optimizations` converted validation copies only, after which their full opacity and pixels were inspected. Original project assets and packaged PNGs were not changed by inspection. Raw logs, result bundles, backup, configuration/input hashes and inspected PNGs are under `.validation/local/app-icon-original-20261017/`.
 
 This is a resource-only replacement with no app behavior/layout change; no XCTest/XCUITest was run by this task. The existing 13-inch preview simulator and 11-inch acceptance simulator (iPadOS 26.5) were left untouched while the latter ran another task's music navigation suite. No simulator UI/runtime execution or installation was performed for this change; system home-screen mask, dark/tinted/clear appearances and physical display color remain untested. No physical iPad installation, commit, push, publication or deployment.
+
+## Home simplicity 14 — 2026-10-23
+
+Scope: Home in-place editing, saved-background/music fades, and minimal accessory controls with separate Details. See `docs/HOME-SIMPLICITY-14.md` for scenarios and limitations.
+
+Environment: Xcode 27.0 (27A266a), SDK 27.0; independent iPad Pro 11-inch M5 / iPadOS 26.5 simulator `7D38A1EA-67CA-4523-A2D3-73FAA7EAF71C`, arm64. Two original synthetic Photos assets were seeded once using `scripts/seed_test_photos.py`; no user library or real music account was used. Demo/TEST DATA labels remain visible.
+
+Earlier full unit run (`final-core.xcresult`): 220 methods, 219 pass / one known failure, `DisplayCoordinatorTests.testPresence09UsesThirtySecondsWithoutRewritingTheConfiguredIdleDelay`, which still uses the saved 300-second idle delay instead of the independent 30-second rule. This iteration does not repair or accept that rule. Initial UI failures and diagnostic runs remain in the raw evidence; final results below supersede the repaired UI paths.
+
+Final frozen source: **21 focused unit methods and nine UI journeys pass, zero failures**, `acceptance.xcresult`. Actual command in `acceptance.log` uses `xcodebuild -project HomePad.xcodeproj -scheme HomePad -destination 'platform=iOS Simulator,id=7D38A1EA-67CA-4523-A2D3-73FAA7EAF71C,arch=arm64' -derivedDataPath /private/tmp/homepad-simplicity14-clean -collect-test-diagnostics never -parallel-testing-enabled NO -resultBundlePath .validation/local/home-simplicity-14/acceptance.xcresult <explicit only-testing selections> ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO test`. Selected unit classes: HomeWidgetLayoutTests and HomeAccessoryPresentationTests. UI selections:
+
+- FullscreenHomeReferenceGeometryAndHiddenNavigation
+- HomeDimmerCommitsOnReleaseAndOfflineKeepsIndependentCards
+- HomeFavoritesEditorRevealsAddsAndRequiresRestoreConfirmation
+- HomeInPlaceEditingReordersPersistsAndNeverOperatesDevices
+- HomeKitChineseLargestTextControlsRemainScrollableAndComplete
+- HomeLongPressPreviewFitsViewportAndPreservesControls
+- HomeMinimalControlKeepsMetadataBehindDetails
+- MusicBackdropFadesWithoutReplacingIndependentPages
+- WallpaperSelectionCancelReplacementRestoreAndRemoval
+
+Exported native screenshots in `screens/` were inspected for editing geometry, compact control/details separation, Chinese maximum text, complete long-press previews and full-screen custom wallpaper. Native recording `acceptance.mp4` and two extracted filmstrips show the synthetic music fade in and fade back to the retained background; the intentional independent empty Photos page is separate. This is not a real streaming-artwork/Aerial performance benchmark. System Reduce Motion toggle, full selected multi-photo wall/standby, live camera, HomeKit/HomePod and audible AirPlay are not newly verified by these fixtures. The unfiltered entire UI suite was not rerun.
+
+Device Release: `device-final-build.log` reports BUILD SUCCEEDED, `codesign --verify --deep --strict` passed. `final-source-manifest.json` freezes 65 tracked source/build/test inputs; all hashes remained unchanged through the final tests, signing and installation. `device-package.json` records the binary hash. `devicectl device install app --device 00008112-000A4861368A201E --timeout 120 --json-output .../install.json /private/tmp/homepad-simplicity14-device-derived/Build/Products/Release-iphoneos/HomePad.app` succeeded; `device info apps --bundle-id cn.vilhil.homeviewpad` confirms the new installation URL `96FEC8D3-0905-407C-A734-D24963AA1B45`, version 1.0 / build 1, on Boom pad / iPadOS 27.0.1 (24A446). Ordinary `--page 1` launch was denied with `Locked`; this is an installed package, not a successful foreground launch or physical manual acceptance. No live viewer was opened and no volume/route was changed. No commit/push.
+
+## Aerial / music transition 15 — 2026-10-24
+
+Scope: repair the opening-poster jump during music fade-in; retain the existing muted aerial player through the 0.8-second fade, pause in place while covered and resume without seeking. Actual page/background cleanup remains immediate. See [AERIAL-MUSIC-15.md](AERIAL-MUSIC-15.md).
+
+Environment: Xcode 27.0 (27A266a), SDK 27.0; reused independent `HomePad Simplicity 14`, iPad Pro 11-inch M5 / iPadOS 26.5 simulator `7D38A1EA-67CA-4523-A2D3-73FAA7EAF71C`, arm64. No other simulator was changed. The explicitly labeled Aerial/movie/music fixtures use a locally generated silent three-second video and synthetic music state; no real account or HomeKit manager.
+
+`xcodebuild -project HomePad.xcodeproj -scheme HomePad -destination 'platform=iOS Simulator,id=7D38A1EA-67CA-4523-A2D3-73FAA7EAF71C,arch=arm64' -derivedDataPath /private/tmp/homepad-aerial15-derived -collect-test-diagnostics never -parallel-testing-enabled NO -resultBundlePath .validation/local/aerial-music-15/regression.xcresult -only-testing:HomePadTests/AerialStoreTests -only-testing:HomePadTests/HomePadTests -only-testing:HomePadUITests/HomePadUITests/testMusicFadePausesAndResumesTheActualAerialSurface -only-testing:HomePadUITests/HomePadUITests/testMusicBackdropFadesWithoutReplacingIndependentPages ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO test` passed: **42 unit methods and two UI methods, zero failures**. Three new native-player tests cover continued time advancement during fade, retained identity/items/frame readiness while paused, same-position resume, rapid cancellation, no decoder when already covered, and immediate actual hiding/background cleanup. Existing Aerial failure/restore/shuffle tests also passed. The first combined UI run had a long wall-clock gap at its second tap; it is not a performance benchmark. The new combined Aerial/music UI journey was repeated with `test-without-building`, same build/destination/options, only that UI method and `recording-check.xcresult`: **one pass, 44.689 seconds**. No source edits between tests and signed build; all 65 tracked build/test inputs and package hash recorded afterward in `final-source-package.json`. This is a focused suite; the prior Presence09 failure and unrelated photo follow-up remain open.
+
+The eight exported native screenshots in `screenshots/` were inspected, including Aerial before coverage, covered paused state and resumed surface. Native `transition.mp4` and `fade-detail-filmstrip.png` (video time 48–55 seconds, six frames per second) were inspected: the aerial continues moving into the music fade, without swapping to the opening still; uncover resumes the video. The synthetic three-second loop itself is expected. This does not establish frame-time or energy performance on all assets.
+
+`xcodebuild -project HomePad.xcodeproj -scheme HomePad -configuration Release -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/homepad-aerial15-device-derived -allowProvisioningUpdates build` passed; `codesign --verify --deep --strict /private/tmp/homepad-aerial15-device-derived/Build/Products/Release-iphoneos/HomePad.app` passed. Binary SHA-256: `8b2681364dfa230409bc18c0436b3362b36f776dca0476191c2111026525e92c`. User connected/unlocked Boom pad over USB. Install, bundle readback and ordinary `--page 1` launch all succeeded: `cn.vilhil.homeviewpad`, version 1.0 / build 1, installation URL `file:///private/var/containers/Bundle/Application/3E0B3B0B-9632-46DC-B7FC-45F966DEF780/HomePad.app/`, Boom pad / iPadOS 27.0.1 (24A446). User physically tested starting and pausing music over the aerial and replied “切换正常，没有倒回”. This closes the reported transition defect; it does not accept unrelated HomeKit, camera, AirPlay, power or general performance work. No live viewer was opened and no route/volume changed. Evidence: `.validation/local/aerial-music-15/`. No commit/push.

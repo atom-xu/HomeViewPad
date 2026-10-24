@@ -2,7 +2,7 @@ import Foundation
 import HomeKit
 import Combine
 
-struct HomeTile: Identifiable {
+struct HomeTile: Identifiable, Equatable {
     let id: UUID
     var name: String
     var room: String
@@ -190,6 +190,30 @@ enum HomeAccessoryPresentation {
         return String(format: "%03d", index) + tile.id.uuidString
     }
 
+    /// Everyday controls stay on the selected service. Metadata, maintenance,
+    /// color tuning and secondary settings remain available in Details.
+    static func quickControls(for id: UUID, in tiles: [HomeTile]) -> [HomeTile] {
+        guard let selected = tiles.first(where: { $0.id == id }) else { return [] }
+        let candidates = details(for: id, in: tiles).filter {
+            $0.serviceID == selected.serviceID && $0.control != .readOnly && !$0.quickToggle
+                && ![.hue, .saturation, .colorTemperature].contains($0.kind)
+        }
+        var targets = [HMCharacteristicTypeTargetPosition, HMCharacteristicTypeHoldPosition,
+            HMCharacteristicTypeTargetLockMechanismState, HMCharacteristicTypeTargetDoorState,
+            HMCharacteristicTypeTargetHeatingCooling, HMCharacteristicTypeTargetHeaterCoolerState,
+            HMCharacteristicTypeTargetAirPurifierState, HMCharacteristicTypeTargetFanState,
+            HMCharacteristicTypeTargetHumidifierDehumidifierState, HMCharacteristicTypeTargetSecuritySystemState,
+            HMCharacteristicTypeVolume]
+        if #available(iOS 18.0, *) { targets += [HMCharacteristicTypeActiveIdentifier, HMCharacteristicTypeRemoteKey] }
+        let primary = candidates.filter {
+            [.brightness, .targetTemperature, .fanSpeed].contains($0.kind)
+                || $0.characteristicType.map { targets.contains($0) } == true
+        }
+        // Unknown supported families still expose one real control rather than
+        // inventing a universal switch; remaining capabilities are in Details.
+        return primary.isEmpty ? Array(candidates.prefix(1)) : primary
+    }
+
     static func details(for id: UUID, in tiles: [HomeTile]) -> [HomeTile] {
         guard let selected = tiles.first(where: { $0.id == id }) else { return [] }
         guard let service = selected.serviceID else { return [selected] }
@@ -251,11 +275,43 @@ enum HomeStatus: String, CaseIterable {
     }
 }
 
+enum HomeTileUpdates {
+    static func replacing(_ updates: [UUID: HomeTile], in tiles: [HomeTile]) -> [HomeTile] {
+        guard !updates.isEmpty else { return tiles }
+        return tiles.map { updates[$0.id] ?? $0 }
+    }
+}
+
+/// A fixed window groups a burst without indefinitely postponing updates.
+@MainActor final class HomeRefreshScheduler {
+    private var pending: Task<Void, Never>?
+    private var needsRead = false
+    private var generation = UUID()
+    func schedule(read: Bool, perform: @escaping @MainActor (Bool) -> Void) {
+        needsRead = needsRead || read
+        guard pending == nil else { return }
+        let token = generation
+        pending = Task { [weak self] in
+            do { try await Task.sleep(for: .milliseconds(100)) } catch { return }
+            guard let self, self.generation == token else { return }
+            let read = self.needsRead
+            self.pending = nil; self.needsRead = false
+            perform(read)
+        }
+    }
+    func cancel() {
+        generation = UUID(); pending?.cancel(); pending = nil; needsRead = false
+    }
+}
+
 @MainActor final class HomeStore: NSObject, ObservableObject, HMHomeManagerDelegate, HMHomeDelegate, HMAccessoryDelegate {
     var keepsDashboard: Bool { status == .ready || (status == .offline && (selectedHomeID != nil || !tiles.isEmpty)) }
     @Published var demo = false
     @Published var status: HomeStatus = .welcome
-    @Published var tiles: [HomeTile] = []
+    @Published var tiles: [HomeTile] = [] {
+        didSet { primaryTiles = HomeAccessoryPresentation.primaryTiles(tiles) }
+    }
+    private(set) var primaryTiles: [HomeTile] = []
     @Published var scenes: [String] = []
     @Published var cameras: [HMAccessory] = []
     @Published var homes: [HMHome] = []
@@ -268,7 +324,11 @@ enum HomeStatus: String, CaseIterable {
     private var manager: HMHomeManager?
     private var home: HMHome?
     private var characteristics: [UUID: HMCharacteristic] = [:]
+    private var characteristicContexts: [UUID: (accessory: HMAccessory, service: HMService)] = [:]
+    private var pendingValueUpdates = Set<UUID>()
+    private var needsStructureRefresh = false
     private var generation = UUID()
+    private let refreshScheduler = HomeRefreshScheduler()
     private var failedReads = Set<UUID>()
     private var timeout: Task<Void, Never>?
 
@@ -300,6 +360,8 @@ enum HomeStatus: String, CaseIterable {
     }
     #endif
     func clearUnavailableHome(_ newStatus: HomeStatus) {
+        refreshScheduler.cancel()
+        characteristicContexts = [:]; pendingValueUpdates = []; needsStructureRefresh = false
         generation = UUID(); timeout?.cancel()
         home?.delegate = nil; home?.accessories.forEach { $0.delegate = nil }
         home = nil; selectedHomeID = nil; homes = []; characteristics = [:]; failedReads = []
@@ -307,6 +369,8 @@ enum HomeStatus: String, CaseIterable {
         notice = nil; error = nil; homeName = "HomePad"; status = newStatus
     }
     func disconnect() {
+        refreshScheduler.cancel()
+        characteristicContexts = [:]; pendingValueUpdates = []; needsStructureRefresh = false
         generation = UUID(); timeout?.cancel()
         manager?.delegate = nil
         home?.delegate = nil
@@ -345,6 +409,8 @@ enum HomeStatus: String, CaseIterable {
     func select(_ selected: HMHome) {
         guard !demo, manager?.authorizationStatus.contains(.authorized) == true,
               homes.contains(where: { $0.uniqueIdentifier == selected.uniqueIdentifier }) else { return }
+        refreshScheduler.cancel()
+        characteristicContexts = [:]; pendingValueUpdates = []; needsStructureRefresh = false
         generation = UUID(); failedReads = []; busy = []; sceneBusy = false; notice = nil; error = nil
         home?.delegate = nil; home?.accessories.forEach { $0.delegate = nil }
         home = selected; selectedHomeID = selected.uniqueIdentifier; homeName = selected.name; selected.delegate = self
@@ -355,9 +421,11 @@ enum HomeStatus: String, CaseIterable {
     func refresh(read: Bool = true) {
         guard !demo, let home else { return }
         guard manager?.authorizationStatus.contains(.authorized) == true else { clearUnavailableHome(.denied); return }
+        refreshScheduler.cancel()
+        pendingValueUpdates = []; needsStructureRefresh = false
         let token = generation
-        characteristics = [:]
-        tiles = home.accessories.flatMap { accessory in
+        characteristics = [:]; characteristicContexts = [:]
+        let nextTiles = home.accessories.flatMap { accessory in
             accessory.services.flatMap { service -> [HomeTile] in
                 let serviceDefinition = HomeServiceCatalog.definition(for: service.serviceType, categoryType: accessory.category.categoryType)
                 let values = service.characteristics.compactMap { c -> HomeTile? in
@@ -365,25 +433,18 @@ enum HomeStatus: String, CaseIterable {
                     guard !HomeCharacteristicCatalog.excludedCharacteristicTypes.contains(c.characteristicType),
                           c.properties.contains(HMCharacteristicPropertyReadable) || definition?.control == .command || (definition?.kind == .event && c.properties.contains(HMCharacteristicPropertySupportsEventNotification)),
                           c.value == nil || c.value is NSNumber || c.value is String else { return nil }
-                    let snapshot = HomeCharacteristicSnapshot(id: c.uniqueIdentifier, type: c.characteristicType,
-                        title: c.localizedDescription, number: (c.value as? NSNumber)?.doubleValue, text: c.value as? String,
-                        readable: c.properties.contains(HMCharacteristicPropertyReadable),
-                        eventCapable: c.properties.contains(HMCharacteristicPropertySupportsEventNotification),
-                        writable: c.properties.contains(HMCharacteristicPropertyWritable),
-                        readFailed: failedReads.contains(c.uniqueIdentifier),
-                        minimum: c.metadata?.minimumValue?.doubleValue, maximum: c.metadata?.maximumValue?.doubleValue,
-                        step: c.metadata?.stepValue?.doubleValue, validValues: c.metadata?.validValues?.map(\.doubleValue),
-                        dynamicOptions: Self.inputOptions(for: c, service: service))
+                    let snapshot = characteristicSnapshot(c, service: service)
                     guard let tile = HomeTileFactory.make(snapshot, serviceID: service.uniqueIdentifier,
                         serviceType: service.serviceType, name: service.name, room: accessory.room?.name ?? "Home",
                         accessoryID: accessory.uniqueIdentifier, categoryType: accessory.category.categoryType,
                         reachable: accessory.isReachable) else { return nil }
                     characteristics[c.uniqueIdentifier] = c
+                    characteristicContexts[c.uniqueIdentifier] = (accessory, service)
                     if read, accessory.isReachable, snapshot.readable {
                         c.readValue { [weak self] error in Task { @MainActor in
                             guard let self, self.generation == token, !self.demo else { return }
                             if error != nil { self.failedReads.insert(c.uniqueIdentifier) } else { self.failedReads.remove(c.uniqueIdentifier) }
-                            self.refresh(read: false)
+                            self.scheduleRefresh(read: false, characteristicID: c.uniqueIdentifier)
                         }}
                     }
                     if read, accessory.isReachable, c.properties.contains(HMCharacteristicPropertySupportsEventNotification) {
@@ -400,10 +461,77 @@ enum HomeStatus: String, CaseIterable {
                     serviceID: service.uniqueIdentifier, accessoryID: accessory.uniqueIdentifier,
                     serviceType: service.serviceType, categoryType: accessory.category.categoryType)]
             }
-        }.sorted { ($0.room, $0.name, $0.id.uuidString) < ($1.room, $1.name, $1.id.uuidString) }
-        scenes = home.actionSets.map(\.name).sorted()
-        cameras = home.accessories.filter { !($0.cameraProfiles ?? []).isEmpty }
-        status = home.accessories.isEmpty ? .empty : (home.accessories.allSatisfy { !$0.isReachable } ? .offline : .ready)
+        }
+        // Sorting is a topology operation. Generate UUID strings once, not in
+        // every comparison; value readbacks below preserve this stable order.
+        let sortedTiles = nextTiles.map { (tile: $0, key: ($0.room, $0.name, $0.id.uuidString)) }
+            .sorted { $0.key < $1.key }.map(\.tile)
+        if tiles != sortedTiles { tiles = sortedTiles }
+        let nextScenes = home.actionSets.map(\.name).sorted()
+        if scenes != nextScenes { scenes = nextScenes }
+        let nextCameras = home.accessories.filter { !($0.cameraProfiles ?? []).isEmpty }
+        if cameras.map(\.uniqueIdentifier) != nextCameras.map(\.uniqueIdentifier) { cameras = nextCameras }
+        let nextStatus: HomeStatus = home.accessories.isEmpty ? .empty : (home.accessories.allSatisfy { !$0.isReachable } ? .offline : .ready)
+        if status != nextStatus { status = nextStatus }
+    }
+    private func characteristicSnapshot(_ c: HMCharacteristic, service: HMService) -> HomeCharacteristicSnapshot {
+        HomeCharacteristicSnapshot(id: c.uniqueIdentifier, type: c.characteristicType,
+            title: c.localizedDescription, number: (c.value as? NSNumber)?.doubleValue, text: c.value as? String,
+            readable: c.properties.contains(HMCharacteristicPropertyReadable),
+            eventCapable: c.properties.contains(HMCharacteristicPropertySupportsEventNotification),
+            writable: c.properties.contains(HMCharacteristicPropertyWritable), readFailed: failedReads.contains(c.uniqueIdentifier),
+            minimum: c.metadata?.minimumValue?.doubleValue, maximum: c.metadata?.maximumValue?.doubleValue,
+            step: c.metadata?.stepValue?.doubleValue, validValues: c.metadata?.validValues?.map(\.doubleValue),
+            dynamicOptions: Self.inputOptions(for: c, service: service))
+    }
+    private func scheduleRefresh(read: Bool, characteristicID: UUID? = nil) {
+        let token = generation
+        if let characteristicID, characteristicContexts[characteristicID] != nil { pendingValueUpdates.insert(characteristicID) }
+        else { needsStructureRefresh = true }
+        refreshScheduler.schedule(read: read) { [weak self] needsRead in
+            guard let self, self.generation == token, !self.demo else { return }
+            if needsRead || self.needsStructureRefresh { self.refresh(read: needsRead) }
+            else { self.applyPendingValueUpdates() }
+        }
+    }
+    private func applyPendingValueUpdates() {
+        guard let home, manager?.authorizationStatus.contains(.authorized) == true else {
+            clearUnavailableHome(.denied); return
+        }
+        var ids = pendingValueUpdates; pendingValueUpdates = []
+        if #available(iOS 18.0, *) {
+            // A television's input selector derives its names/values from
+            // linked Input Source services, whose readbacks arrive separately.
+            let inputServiceIDs = Set(ids.compactMap { id -> UUID? in
+                guard let context = characteristicContexts[id], context.service.serviceType == HMServiceTypeInputSource else { return nil }
+                return context.service.uniqueIdentifier
+            })
+            if !inputServiceIDs.isEmpty {
+                for (id, context) in characteristicContexts where characteristics[id]?.characteristicType == HMCharacteristicTypeActiveIdentifier {
+                    if (context.service.linkedServices ?? []).contains(where: { inputServiceIDs.contains($0.uniqueIdentifier) }) { ids.insert(id) }
+                }
+            }
+        }
+        let currentAccessoryIDs = Set(home.accessories.map(\.uniqueIdentifier))
+        var updated: [UUID: HomeTile] = [:]
+        for id in ids {
+            guard let c = characteristics[id], let context = characteristicContexts[id] else { continue }
+            let accessory = context.accessory, service = context.service
+            guard currentAccessoryIDs.contains(accessory.uniqueIdentifier),
+                  c.value == nil || c.value is NSNumber || c.value is String,
+                  let tile = HomeTileFactory.make(characteristicSnapshot(c, service: service),
+                      serviceID: service.uniqueIdentifier, serviceType: service.serviceType,
+                      name: service.name, room: accessory.room?.name ?? "Home",
+                      accessoryID: accessory.uniqueIdentifier, categoryType: accessory.category.categoryType,
+                      reachable: accessory.isReachable) else {
+                refresh(read: false); return
+            }
+            updated[id] = tile
+        }
+        // Readback does not rename/reorder services or re-enumerate the house.
+        // Publish at most one changed array for this batch.
+        let next = HomeTileUpdates.replacing(updated, in: tiles)
+        if next != tiles { tiles = next }
     }
     private static func inputOptions(for characteristic: HMCharacteristic, service: HMService) -> [HomeCharacteristicOption] {
         guard #available(iOS 18.0, *), characteristic.characteristicType == HMCharacteristicTypeActiveIdentifier else { return [] }
@@ -508,13 +636,22 @@ enum HomeStatus: String, CaseIterable {
             self.refresh()
         }}
     }
-    nonisolated func accessoryDidUpdateReachability(_ accessory: HMAccessory) { Task { @MainActor in self.refresh() } }
+    nonisolated func accessoryDidUpdateReachability(_ accessory: HMAccessory) { Task { @MainActor in
+        guard self.home?.accessories.contains(where: { $0 === accessory }) == true else { return }
+        self.scheduleRefresh(read: true)
+    } }
     nonisolated func accessory(_ accessory: HMAccessory, service: HMService, didUpdateValueFor characteristic: HMCharacteristic) { Task { @MainActor in
         guard self.home?.accessories.contains(where: { $0 === accessory }) == true else { return }
-        self.failedReads.remove(characteristic.uniqueIdentifier); self.refresh(read: false)
+        self.failedReads.remove(characteristic.uniqueIdentifier); self.scheduleRefresh(read: false, characteristicID: characteristic.uniqueIdentifier)
     } }
-    nonisolated func accessoryDidUpdateServices(_ accessory: HMAccessory) { Task { @MainActor in self.refresh() } }
-    nonisolated func accessoryDidUpdateName(_ accessory: HMAccessory) { Task { @MainActor in self.refresh(read: false) } }
+    nonisolated func accessoryDidUpdateServices(_ accessory: HMAccessory) { Task { @MainActor in
+        guard self.home?.accessories.contains(where: { $0 === accessory }) == true else { return }
+        self.scheduleRefresh(read: true)
+    } }
+    nonisolated func accessoryDidUpdateName(_ accessory: HMAccessory) { Task { @MainActor in
+        guard self.home?.accessories.contains(where: { $0 === accessory }) == true else { return }
+        self.scheduleRefresh(read: false)
+    } }
     nonisolated func home(_ home: HMHome, didAdd accessory: HMAccessory) { Task { @MainActor in guard home === self.home else { return }; accessory.delegate = self; self.refresh() } }
     nonisolated func home(_ home: HMHome, didRemove accessory: HMAccessory) { Task { @MainActor in self.refresh() } }
     nonisolated func homeDidUpdateName(_ home: HMHome) { Task { @MainActor in guard home === self.home else { return }; self.homeName = home.name } }

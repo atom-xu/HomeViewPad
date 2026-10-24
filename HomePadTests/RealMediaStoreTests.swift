@@ -3,9 +3,35 @@ import EventKit
 import MusicKit
 import SwiftUI
 import AVKit
+import Combine
 @testable import HomePad
 
 final class RealMediaStoreTests: XCTestCase {
+    @MainActor func testPlaybackClockDoesNotInvalidateWholeMusicStore() async throws {
+        let defaults = isolatedDefaults()
+        defer { defaults.removePersistentDomain(forName: defaultsSuite) }
+        let song = try syntheticSong(id: "progress-only")
+        let client = TestMusicClient(); client.libraryResults = [song]
+        let music = MusicStore(client: client, defaults: defaults)
+        music.connect(); await drainTasks()
+        music.playCollection([song], source: .library); await drainTasks()
+        var updates = 0
+        let observation = music.objectWillChange.sink { updates += 1 }
+        defer { observation.cancel() }
+        for index in 1...20 {
+            var snapshot = try XCTUnwrap(music.nowPlaying)
+            snapshot.position = Double(index) * 0.5
+            client.update?(snapshot)
+        }
+        XCTAssertEqual(music.nowPlaying?.position, 10, "The current playhead must remain available without refreshing Home and Settings")
+        XCTAssertEqual(updates, 0, "Clock-only readback should update the seek control, not the complete Dashboard")
+        var paused = try XCTUnwrap(music.nowPlaying)
+        paused.playing = false
+        client.update?(paused)
+        XCTAssertEqual(updates, 1, "Actual playback changes must still notify all presentation consumers")
+        music.setActive(false)
+        XCTAssertNil(music.nowPlaying, "Background privacy cleanup must still discard the private playback snapshot")
+    }
     func testUnknownSourcePlayerBackReachesAlbumCardsWithoutQueueCycle() {
         var navigation = MusicNavigationState()
         navigation.show(.queue)

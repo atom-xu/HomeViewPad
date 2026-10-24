@@ -3782,6 +3782,22 @@
         }
       }
     },
+    "Color": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "颜色"
+          }
+        }
+      }
+    },
     "Color temperature": {
       "localizations": {
         "en": {
@@ -4979,6 +4995,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "演示 · 无实时画面"
+          }
+        }
+      }
+    },
+    "Details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "详细信息"
           }
         }
       }
@@ -9224,6 +9256,22 @@
         }
       }
     },
+    "Move %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移动%@"
+          }
+        }
+      }
+    },
     "Move iPad": {
       "localizations": {
         "en": {
@@ -12953,6 +13001,22 @@
         }
       }
     },
+    "Remove %@ from Home": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove %@ from Home"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从首页移除%@"
+          }
+        }
+      }
+    },
     "Remove background photo": {
       "localizations": {
         "en": {
@@ -13013,6 +13077,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "移除组件"
+          }
+        }
+      }
+    },
+    "Reorder list": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reorder list"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "排序列表"
           }
         }
       }
@@ -16134,6 +16214,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "今日"
+          }
+        }
+      }
+    },
+    "Touch and hold a card to edit Home. Drag its handle to reorder. Extra cards scroll vertically.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touch and hold a card to edit Home. Drag its handle to reorder. Extra cards scroll vertically."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "长按卡片编辑首页，拖动把手调整顺序。更多卡片可上下滚动。"
           }
         }
       }

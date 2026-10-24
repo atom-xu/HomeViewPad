@@ -1,5 +1,36 @@
 # HomePad 本地初始化与交接
 
+## 当前交接：性能优化13（2026-10-23）
+
+- 用户报告首次加载／切页／设置卡顿，随后iPad开发者卡顿检测报告9000+ms。复制的系统报告为9113ms与6580ms，主线程重栈落在HomeStore读回回调反复全量refresh／排序。原始日志只保存在忽略目录 `.validation/local/performance-13/device-hangs/`，不提交设备原始诊断。
+- 已实现100ms固定窗口合并HomeKit读回，值变化仅更新对应卡片、保留排序；结构变化才全量重建，切家庭／撤权取消旧批次。音乐进度独立观察、原生队列缓存、布局解析／装箱缓存、主卡缓存及本地播放器延迟创建已接入。Release签名包于15:56普通启动在Boom pad，安装URL和独立PID匹配；用户明确确认“操作顺畅，暂无新提示”。未重置数据，未打开真机查看器或执行真实配件写入。
+- 安装候选的215单元中214通过，既有Presence09的30秒规则仍失败；5条Home／音乐／设置／启动UI通过。此前同UI布局的性能交互用例也通过并检查Home／设置截图。启动到可响应首页的模拟器样本为基线1.263s、候选1.311s，各3次，不能声称首次帧时间改善。SwiftUI Hitches不支持本模拟器；CPU／signpost记录与局限另存忽略目录。
+- 新包短时观察又出现一次481ms报告，栈指向PhotoLibraryStore前台恢复时同步枚举相册。已追加后台PhotoKit查询和权限／代际／后台／选中相册守卫，10项照片单元通过（含2个新的迟到结果／撤权用例）；但完整照片UI在“照片→设置”的导航步骤失败，前面有大量系统动画等待，原因尚未定位。**这一追加尚未安装到Boom pad，不算已验证完成**。保留未完成代码，不能覆盖用户已确认的安装候选身份。
+- 当前主工作区与隔离worktree均保留WIP；worktree为 `codex/performance-13`。没有新的Git提交／推送，前次时间例外不延用。用户本轮询问剩余开发，当前剩余项为相册优化回归／交付、感应独立30秒规则及硬件长期验证；HomePod独立队列、录像回看／对讲／通知属另行确定范围的增强，不自动开展。
+
+
+## iPad mini 家庭／音乐排查（2026-10-23，两项已恢复）
+
+用户报告mini的HomePad连接不上家庭且音乐无声。已有安装1.0(1)，iPadOS27.0.1(24A446)。Mac Device Hub预览可见真实歌曲、播放中与进度前进；系统AirPlay面板选中“iPad扬声器”，原生音量滑块约80%。本轮未改变音量、路由、歌曲或播放状态；只用Device Hub的“Quit and Keep Simulators Running”退出预览，并以进程不存在核对。要求用户保持当前歌曲且不改其他设置，用户确认“现在有声音了”。当前音乐听感问题解除，指向设备预览会话干扰；未证明Apple框架缺陷或所有输出场景都通过。
+
+用户另确认mini自带“家庭”App能看到并控制同一套设备。只读复制的HomePad偏好为homeMode=live且已有selectedHomeID；缓存Console中HomePad/HomeKit15:35:31曾处理家庭配置并通知delegate、报告framework in sync。这不等于当前App权限／配件控制已验证。随后用户明确确认“已经好了，是因为有一个家庭没有真实设备”，因此本次家庭阻塞结论为选中了没有真实配件的家庭，当前已恢复；这是用户使用确认，本任务没有代用户写入配件。未进行App改码、权限变更或账号调整。原始日志采集与当前状态分开，未改应用源码、权限、账号或真机配件，也未重装。并行性能开发文件保留。
+
+[诊断汇总](evidence/ipad-mini-home-audio-summary.json)，私有证据 `.validation/local/ipad-mini-home-audio-20261023T073955Z/`。CLI audio查询在该iPad不支持，不当作路由读回。应用无行为修改，本轮无新XCTest／XCUITest、Git提交或推送。
+
+## iPad mini 验签失败点与恢复（2026-10-23 15:35，Asia/Shanghai）
+
+用户追问具体原因。原生Console中目标mini此前14:25:25的 `online-auth-agent` 请求与已安装HomePad的URL／profile一致：获取设备身份失败，错误链为 `Failed to create BAA info.` → `Failed to create reference key attestation.` → `Failed to copy attestation key.` → `Failed to copy system key (2).`，随后 `Could not perform authorization attempt`。这把此前“需要联网验证”定位到设备身份认证材料获取失败，尚未确定系统密钥为何不可读，不能直接归因为网络、账号、iPadOS缺陷或硬件问题。
+
+随后设备系统版本由此前27.0(24A437)变为27.0.1(24A446)，本任务没有执行更新／重启。用户现已确认HomePad能打开；`devicectl device info processes` 独立读回PID760，executable与原mini安装路径完全匹配，设备connected／paired／localNetwork。**当前启动验证阻塞已解除**；不能仅凭先后顺序认定具体恢复动作。过渡期间三次CLI请求超时另存，不当作新的App验签拒绝。本轮未重签、重装、删数据、改账号、生成7天profile或改应用源码；无需新增行为套件。Console流式采集已停止。
+
+[最新汇总](evidence/ipad-mini-install-summary.json) 的 latestDiagnosis；原始命令结果及Console观察摘录在 `.validation/local/ipad-mini-trust-diagnosis-20261023T073044Z/`。以下15:24检查为恢复前历史状态；真实HomeKit／音乐／壁纸等硬件体验仍不在本次启动验证结论中。
+
+## iPad mini 连接复查（2026-10-23 15:24，Asia/Shanghai）
+
+用户要求重新检查新 mini 的连接。`devicectl` 连续读回 iPad mini (A17 Pro)／iPadOS27.0 (24A437) 为 connected、paired、localNetwork，开发者模式 Enabled，passcodeRequired=false、unlockedSinceBoot=true。HomePad `cn.vilhil.homeviewpad` 1.0(1) 仍在设备上。
+
+对现有安装执行普通启动，仍返回 CoreDevice10002／FBSOpenApplicationErrorDomain3 Security，原因列举签名无效、entitlements 不足或描述文件未获用户明确信任；命令无法区分三者。启动前后均无 HomePad 进程，因此连接恢复不代表启动验证通过。本轮未重装、未修改账号／设备设置、未生成7天描述文件，应用源码未改，无需新增行为测试。原始证据在 `.validation/local/ipad-mini-recheck-20261023T072435Z/`；汇总见 `docs/evidence/ipad-mini-install-summary.json` 的 latestRecheck。
+
 ## 新版源码交付 — 2026-10-23
 
 用户现已明确要求将安装到Boom pad的新版App源码提交到GitHub，目标为 `origin/main` 与 `origin/codex/dynamic-screensaver`（`atom-xu/HomeViewPad`）。本次包括Home常用控制11及HomeKit设备／图标／控制12的29份源码、测试、文档和脱敏摘要；设计素材、mini安装／功耗另项证据、个人签名配置与原始结果包不纳入。当前62输入与已签名安装候选完全一致，设备精确bundle回读通过；本次交付不改变App行为，也不重跑无关套件。
@@ -260,3 +291,23 @@ Xcode 已更新为 27.0，build 27A266a。首次检查曾遇到旧 CoreDevice/Co
 仅替换这一份应用资源；AppIcon 的 Contents.json、Debug／Release 既有绑定、工程、scheme、生成器、Info.plist、entitlements、签名与其他功能保持本轮开始时状态。Xcode 27.0（27A266a）／SDK 27.0 的独立 generic iOS Simulator Debug（arm64／x86_64）及 generic iOS Release（arm64）未签名构建均退出 0；实际包的 iPad 主图标引用与两份 Assets.car 的不透明 1024 原稿已核对，四张编译后小图已查看。设备 PNG 的 Apple CgBI 优化仅在验证副本中用 pngcrush 解码，未动项目资源或应用产物。40 份构建输入散列保持一致，既有源码警告未在图标任务中扩修。[验证摘要](evidence/ipad-app-icon-original-summary.json)。
 
 没有接管正用于预览／音乐完整测试的两个模拟器，没有为图标改动另跑 XCTest/XCUITest，也未验收系统桌面遮罩、特殊图标外观或真机色彩。本轮未安装模拟器／用户真机，未提交、推送或发布；其他任务原有未提交修改保留。
+
+### Home simplicity 14 handoff — 2026-10-23
+
+Completed the user's three requested Home changes: in-place add/remove/reorder, coordinated background fades, and common device controls separated from Details. Scope and implementation are in `docs/HOME-SIMPLICITY-14.md`. The approved landscape geometry is retained. Editing does not operate devices; camera/calendar remain in the right column, and left/right dragging cannot cross lanes or stale home/edit sessions. Saved edits explicitly invalidate the Home layout cache, fixing a reproduced immediate-removal refresh failure.
+
+The final frozen source passed 21 focused unit methods and nine native UI journeys on the independent `HomePad Simplicity 14` iPad Pro 11-inch M5 / iPadOS 26.5 simulator (arm64, Xcode 27.0 / SDK 27.0). Screenshots in both landscape directions, Chinese maximum accessibility text and native background-transition filmstrips were inspected. Raw commands/results and 65 unchanged build-input hashes: `.validation/local/home-simplicity-14/`. Earlier full unit execution passed 219/220; the pre-existing Presence09 independent 30-second-rule failure remains open. The prior asynchronous PhotoKit WIP and complete multi-photo wall/standby follow-up are not declared closed.
+
+A signed Release at `/private/tmp/homepad-simplicity14-device-derived/Build/Products/Release-iphoneos/HomePad.app` was installed on Boom pad `00008112-000A4861368A201E`, iPadOS 27.0.1 (24A446). CoreDevice app readback confirms `file:///private/var/containers/Bundle/Application/96FEC8D3-0905-407C-A734-D24963AA1B45/HomePad.app/`, version 1.0 / build 1. The attempt to launch ordinary Home (`--page 1`, no demo/test flags) was rejected by iPad lock state; user can unlock and open HomePad. No live viewer, hardware write, route/volume change or physical manual acceptance was performed. No commit or push; all prior performance, photo and unrelated design/mini evidence WIP is preserved.
+
+### Aerial / music transition 15 handoff — 2026-10-24
+
+Fixed the subsequently reported apparent aerial reversal during music fade-in. Immediate `aerialVisible = false` had released the queue and exposed its opening poster while music was still fading. Music coverage is now separate from actual hiding: the same muted player runs through the shared 0.8-second fade, pauses with its rendered layer retained, and resumes its existing queue/time on uncover. Rapid toggles cancel delayed pauses; actual offscreen/background/reduced-motion cleanup still releases playback, and covered backgrounds do not create a decoder or advance shuffle. No Home geometry or audio routing changes.
+
+42 focused unit methods plus two native UI methods passed on the same independent iPad Pro 11-inch M5 / iPadOS 26.5 arm64 simulator with Xcode 27.0 / SDK 27.0. The actual synthetic Aerial/music UI journey passed again during recording (44.689 seconds); screenshots and fade filmstrip were inspected. Results, commands and limitations: [VALIDATION.md](VALIDATION.md), [AERIAL-MUSIC-15.md](AERIAL-MUSIC-15.md), raw `.validation/local/aerial-music-15/`. Existing Presence09 failure, photo follow-up and all prior WIP remain unchanged.
+
+Signed Release `/private/tmp/homepad-aerial15-device-derived/Build/Products/Release-iphoneos/HomePad.app` passed strict signature verification and was installed on Boom pad via the user's USB connection. Bundle readback confirmed `cn.vilhil.homeviewpad`, 1.0 / 1, installation `3E0B3B0B-9632-46DC-B7FC-45F966DEF780`; ordinary Home launch succeeded. The user then confirmed music start/pause over the dynamic wallpaper: “切换正常，没有倒回”. This is physical acceptance of this transition only. No live viewer, volume/route change, commit or push; build/test inputs and installed binary hash are recorded in `final-source-package.json`.
+
+### Source publication authorization — 2026-10-24
+
+The user subsequently authorized committing and pushing the installed candidate. Destination: `origin` (`atom-xu/HomeViewPad`), current `codex/dynamic-screensaver` branch and the existing `main` publication branch, using ordinary fast-forward pushes. The real-time commit guard allowed the current New York weekday-after-22:00 window; no timestamp exception is required. All 65 source/build/test input hashes match the tested and installed 15 package. The source snapshot includes performance13, Home simplicity14 and Aerial/music15, with their tests and validation notes. It also preserves the already included asynchronous PhotoKit work with its explicitly open full-photo regression limitation. The known Presence09 failure remains documented. Separate untracked icon drafts and raw/private device diagnostics stay local. No additional source changes, behavior claims, installation or hardware acceptance are introduced by the Git synchronization itself.

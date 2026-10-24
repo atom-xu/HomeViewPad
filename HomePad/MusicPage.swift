@@ -3,6 +3,7 @@ import MusicKit
 import UniformTypeIdentifiers
 import UIKit
 import MediaPlayer
+import ImageIO
 
 /// Only controls that own a horizontal drag opt out of Dashboard paging.
 struct MusicPageGestureFrameKey: PreferenceKey {
@@ -849,7 +850,7 @@ struct MusicPage: View {
                 Button("Choose audio file".tr) { importAudio = true }.buttonStyle(.bordered)
                     .disabled(demo).accessibilityIdentifier("chooseAudioFile")
             }
-            if audio.player.currentItem != nil {
+            if audio.hasFile {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(audio.title).font(.headline)
@@ -977,14 +978,18 @@ struct MusicPageBackdrop: View {
     let trackID: MusicItemID?
     var fixture = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var image: UIImage?
+    @State private var loadedURL: URL?
+    private var artworkURL: URL? { artwork?.url(width: 512, height: 512) }
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 Color(red: 0.13, green: 0.10, blue: 0.15)
-                if let artwork {
-                    ArtworkImage(artwork, width: max(geometry.size.width, geometry.size.height), height: max(geometry.size.width, geometry.size.height))
-                        .scaledToFill().blur(radius: 85).opacity(0.45)
-                        .id(trackID).transition(.opacity)
+                if let image {
+                    Image(uiImage: image).resizable().scaledToFill()
+                        .frame(width: geometry.size.width, height: geometry.size.height).clipped()
+                        .blur(radius: 65).opacity(0.45)
+                        .id(loadedURL).transition(.opacity)
                 } else if fixture, trackID != nil {
                     // Original deterministic colors, only for visibly labeled
                     // TEST DATA. Never used as a missing real artwork fallback.
@@ -995,8 +1000,32 @@ struct MusicPageBackdrop: View {
                 }
                 LinearGradient(colors: [.black.opacity(0.05), .black.opacity(0.4)], startPoint: .top, endPoint: .bottom)
             }.frame(width: geometry.size.width, height: geometry.size.height).clipped()
-                .animation(reduceMotion ? nil : .easeInOut(duration: 0.5), value: trackID)
+                .animation(reduceMotion ? nil : .easeInOut(duration: 0.8), value: trackID)
+                .animation(reduceMotion ? nil : .easeInOut(duration: 0.8), value: loadedURL)
         }.ignoresSafeArea().accessibilityHidden(true)
+            .task(id: artworkURL) {
+                guard let url = artworkURL else { image = nil; loadedURL = nil; return }
+                do {
+                    let (data, response) = try await URLSession.shared.data(from: url)
+                    guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw URLError(.badServerResponse) }
+                    let decoded = await Task.detached(priority: .utility) { Self.decode(data) }.value
+                    guard !Task.isCancelled else { return }
+                    image = decoded; loadedURL = url
+                } catch {
+                    guard !Task.isCancelled else { return }
+                    image = nil; loadedURL = nil
+                }
+            }
+    }
+    nonisolated private static func decode(_ data: Data) -> UIImage? {
+        guard let source = CGImageSourceCreateWithData(data as CFData, [kCGImageSourceShouldCache: false] as CFDictionary),
+              let thumbnail = CGImageSourceCreateThumbnailAtIndex(source, 0, [
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceCreateThumbnailWithTransform: true,
+                kCGImageSourceShouldCacheImmediately: true,
+                kCGImageSourceThumbnailMaxPixelSize: 512
+              ] as CFDictionary) else { return nil }
+        return UIImage(cgImage: thumbnail)
     }
 }
 

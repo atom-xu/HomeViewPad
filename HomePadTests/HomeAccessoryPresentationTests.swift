@@ -114,6 +114,35 @@ final class HomeAccessoryPresentationTests: XCTestCase {
         XCTAssertEqual(HomeValueKind(characteristicType: HMCharacteristicTypeTargetLockMechanismState), .state)
     }
 
+    func testQuickControlsSeparateDailyAdjustmentFromColorAndAccessoryMetadata() {
+        let service = identifier(101)
+        var power = tile(1, kind: .power, service: service); power.accessoryID = identifier(200)
+        let brightness = tile(2, kind: .brightness, service: service)
+        let hue = tile(3, kind: .hue, service: service)
+        var battery = tile(4, kind: .information, service: identifier(102))
+        battery.serviceType = HMServiceTypeBattery; battery.accessoryID = power.accessoryID
+        let values = [power, brightness, hue, battery]
+        XCTAssertEqual(HomeAccessoryPresentation.quickControls(for: power.id, in: values).map(\.id), [brightness.id])
+        XCTAssertEqual(Set(HomeAccessoryPresentation.details(for: power.id, in: values).map(\.id)), Set(values.map(\.id)),
+                       "Secondary information remains available through Details")
+        XCTAssertTrue(HomeAccessoryPresentation.quickControls(for: power.id, in: [power]).isEmpty)
+        XCTAssertTrue(HomeAccessoryPresentation.quickControls(for: identifier(999), in: values).isEmpty)
+    }
+    func testQuickControlsRetainRealLockAndCoverTargetsWithoutReadings() {
+        let service = identifier(101)
+        var state = tile(1, kind: .state, service: service)
+        state.characteristicType = HMCharacteristicTypeCurrentLockMechanismState
+        var lock = tile(2, kind: .state, service: service)
+        lock.characteristicType = HMCharacteristicTypeTargetLockMechanismState
+        XCTAssertEqual(HomeAccessoryPresentation.quickControls(for: state.id, in: [state, lock]).map(\.id), [lock.id])
+        XCTAssertTrue(HomeAccessoryPresentation.quickControls(for: state.id, in: [state]).isEmpty)
+        var target = tile(3, kind: .setting, service: service)
+        target.characteristicType = HMCharacteristicTypeTargetPosition
+        var stop = tile(4, kind: .setting, service: service)
+        stop.characteristicType = HMCharacteristicTypeHoldPosition
+        XCTAssertEqual(Set(HomeAccessoryPresentation.quickControls(for: target.id, in: [state, target, stop]).map(\.id)), [target.id, stop.id])
+    }
+
     private func identifier(_ value: Int) -> UUID {
         UUID(uuidString: String(format: "00000000-0000-0000-0000-%012d", value))!
     }

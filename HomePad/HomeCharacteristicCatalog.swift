@@ -219,7 +219,7 @@ enum HomeCharacteristicCatalog {
     /// These public characteristics are binary management/stream negotiation data,
     /// not dashboard states or arbitrary controls. Camera negotiation uses the
     /// public camera APIs; secret/TLV payloads are not exposed or editable here.
-    static var excludedCharacteristicTypes: Set<String> {
+    static let excludedCharacteristicTypes: Set<String> = {
         var types: Set<String> = [
             HMCharacteristicTypeLogs, HMCharacteristicTypeLockManagementControlPoint,
             HMCharacteristicTypeStreamingStatus, HMCharacteristicTypeSetupStreamEndpoint,
@@ -228,7 +228,7 @@ enum HomeCharacteristicCatalog {
         ]
         if #available(iOS 18.0, *) { types.insert(HMCharacteristicTypeWANStatusList) }
         return types
-    }
+    }()
 
     private static let definitionsByType = Dictionary(uniqueKeysWithValues: allDefinitions.map { ($0.type, $0) })
 

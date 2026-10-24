@@ -1,4 +1,49 @@
 import Foundation
+import Combine
+
+/// Parsing and packing are driven by saved input, not playback/clock/gesture
+/// updates. Each cache retains only the latest input and never writes defaults.
+@MainActor final class HomeConfigurationCache: ObservableObject {
+    private var layoutSource: String?
+    private var layouts: [String: [HomeWidgetConfiguration]] = [:]
+    private var shortcutSource: String?
+    private var savedShortcuts = HomeShortcut.defaults
+    private var packedWidgets: [HomeWidgetConfiguration]?
+    private var packedColumns = 0
+    private var packed: [HomeWidgetPlacement] = []
+
+    /// GeometryReader retains a rendered canvas independently of AppStorage.
+    /// Explicit user edits invalidate its snapshot even when no reveal, drag or
+    /// sheet state changes alongside the persisted JSON (notably removal).
+    func savedValuesDidChange() {
+        layoutSource = nil; shortcutSource = nil; packedWidgets = nil
+        objectWillChange.send()
+    }
+
+    func widgetLayouts(from source: String) -> [String: [HomeWidgetConfiguration]] {
+        if source != layoutSource {
+            layoutSource = source
+            layouts = source.data(using: .utf8).flatMap { try? JSONDecoder().decode([String: [HomeWidgetConfiguration]].self, from: $0) } ?? [:]
+        }
+        return layouts
+    }
+
+    func shortcuts(from source: String) -> [HomeShortcut] {
+        if source != shortcutSource {
+            shortcutSource = source
+            savedShortcuts = source.data(using: .utf8).flatMap { try? JSONDecoder().decode([HomeShortcut].self, from: $0) } ?? HomeShortcut.defaults
+        }
+        return savedShortcuts
+    }
+
+    func placements(for widgets: [HomeWidgetConfiguration], columns: Int) -> [HomeWidgetPlacement] {
+        if packedWidgets != widgets || packedColumns != columns {
+            packedWidgets = widgets; packedColumns = columns
+            packed = HomeWidgetPacking.place(widgets, columns: columns)
+        }
+        return packed
+    }
+}
 
 /// Saved only on this iPad and namespaced by the selected HomeKit home.
 enum HomeWidgetSize: String, Codable, CaseIterable, Identifiable {
@@ -91,5 +136,23 @@ enum HomeFavoriteMigration {
                                        target: widget.target, homeID: widget.kind == .camera ? homeID : nil))
         }
         return (widgets.filter { !$0.kind.rightColumnOnly }, result)
+    }
+}
+
+/// A drag belongs to one edit session, home and column. Dropping old/external
+/// text or dragging a camera into the square controls cannot change a layout.
+struct HomeLayoutDrag: Codable, Equatable {
+    let session: UUID
+    let home: String
+    let lane: String
+    let id: String
+    var encoded: String { (try? String(decoding: JSONEncoder().encode(self), as: UTF8.self)) ?? "" }
+    static func reorderedIDs(_ ids: [String], payload: String, session: UUID,
+                             home: String, lane: String, target: String) -> [String]? {
+        guard let data = payload.data(using: .utf8), let drag = try? JSONDecoder().decode(Self.self, from: data),
+              drag.session == session, drag.home == home, drag.lane == lane,
+              Set(ids).count == ids.count, drag.id != target,
+              let from = ids.firstIndex(of: drag.id), let to = ids.firstIndex(of: target) else { return nil }
+        var result = ids; result.insert(result.remove(at: from), at: to); return result
     }
 }

@@ -34,26 +34,14 @@ struct AccessoryAdjustmentView: View {
                                 .frame(width: 64, height: 64).accessibilityHidden(true)
                         }
                     }
-                    ForEach(values.filter { $0.control == .range }) { value in
-                        AccessoryValueControl(home: home, tile: value)
-                    }
-                    ForEach(values.filter { $0.control == .choice || $0.control == .command }) { value in
-                        AccessoryOptionControl(home: home, tile: value)
-                    }
-                    ForEach(values.filter { $0.control == .toggle && $0.id != home.quickToggle(for: tile)?.id }) { value in
-                        Toggle(isOn: Binding(get: { value.isOn }, set: { _ in home.toggle(value) })) {
-                            Text(value.controlTitle)
-                        }.tint(.yellow).disabled(!home.canToggle(value))
-                            .accessibilityIdentifier("accessoryToggle-\(value.characteristicType ?? value.id.uuidString)")
-                    }
-                    VStack(spacing: 0) {
-                        ForEach(values.filter { $0.control == .readOnly }) { value in
-                            LabeledContent(value.controlTitle, value: value.value.tr)
-                                .font(.body).padding(.vertical, 12)
-                                .foregroundStyle(value.needsAttention ? Color.orange : .white)
-                                .accessibilityIdentifier("accessoryReading-\(value.characteristicType ?? value.id.uuidString)")
-                            if value.id != values.last?.id { Divider().overlay(.white.opacity(0.08)) }
-                        }
+                    let primary = HomeAccessoryPresentation.quickControls(for: id, in: home.tiles)
+                    controls(primary)
+                    let colors = values.filter { [.hue, .saturation, .colorTemperature].contains($0.kind) && $0.control != .readOnly }
+                    if !colors.isEmpty {
+                        NavigationLink {
+                            ScrollView { controls(colors).padding(28) }.navigationTitle("Color".tr)
+                        } label: { Label("Color".tr, systemImage: "circle.lefthalf.filled") }
+                            .buttonStyle(.bordered).accessibilityIdentifier("accessoryColor")
                     }
                     if let error = home.error {
                         Text(error).foregroundStyle(.orange).accessibilityIdentifier("accessoryWriteError")
@@ -61,10 +49,13 @@ struct AccessoryAdjustmentView: View {
                     if let notice = home.notice {
                         Text(notice).font(.footnote).foregroundStyle(.secondary).accessibilityIdentifier("accessoryCommandNotice")
                     }
-                    if !home.demo {
-                        Button("Refresh status".tr) { home.refresh() }.buttonStyle(.bordered)
-                            .accessibilityIdentifier("accessoryRefresh")
-                    }
+                    NavigationLink {
+                        information
+                    } label: {
+                        Label("Details".tr, systemImage: "gearshape")
+                            .font(.body).foregroundStyle(.secondary).padding(.vertical, 8)
+                    }.accessibilityIdentifier("accessoryInformation")
+
                 }.padding(28).frame(maxWidth: 560).frame(maxWidth: .infinity)
             } else {
                 Text("This accessory is unavailable. Close this panel and refresh your home.".tr).padding(32)
@@ -73,6 +64,37 @@ struct AccessoryAdjustmentView: View {
             .background { Color.black.opacity(0.28).ignoresSafeArea() }
             .accessibilityElement(children: .contain).accessibilityIdentifier("accessoryDetails")
     }
+    @ViewBuilder private func controls(_ items: [HomeTile]) -> some View {
+        ForEach(items.filter { $0.control == .range }) { AccessoryValueControl(home: home, tile: $0) }
+        ForEach(items.filter { $0.control == .choice || $0.control == .command }) { AccessoryOptionControl(home: home, tile: $0) }
+        ForEach(items.filter { $0.control == .toggle }) { value in
+            Toggle(isOn: Binding(get: { value.isOn }, set: { _ in home.toggle(value) })) {
+                Text(value.controlTitle)
+            }.tint(.yellow).disabled(!home.canToggle(value))
+                .accessibilityIdentifier("accessoryToggle-\(value.characteristicType ?? value.id.uuidString)")
+        }
+    }
+    private var information: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                if let tile = home.tiles.first(where: { $0.id == id }) {
+                    controls(values.filter { $0.control != .readOnly && $0.id != home.quickToggle(for: tile)?.id })
+                }
+                ForEach(values.filter { $0.control == .readOnly }) { value in
+                    LabeledContent(value.controlTitle, value: value.value.tr)
+                        .foregroundStyle(value.needsAttention ? Color.orange : .white)
+                        .accessibilityIdentifier("accessoryReading-\(value.characteristicType ?? value.id.uuidString)")
+                }
+                if let error = home.error { Text(error).foregroundStyle(.orange) }
+                if let notice = home.notice { Text(notice).foregroundStyle(.secondary) }
+                if !home.demo {
+                    Button("Refresh status".tr) { home.refresh() }.buttonStyle(.bordered)
+                        .accessibilityIdentifier("accessoryRefresh")
+                }
+            }.padding(28).frame(maxWidth: 560).frame(maxWidth: .infinity)
+        }.navigationTitle("Details".tr).accessibilityIdentifier("accessoryInformationPage")
+    }
+
 }
 
 private struct AccessoryOptionControl: View {

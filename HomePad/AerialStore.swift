@@ -69,6 +69,7 @@ private final class AerialDownloadProgress: NSObject, URLSessionDownloadDelegate
     @Published private(set) var poster: UIImage?
     @Published private(set) var player: AVQueuePlayer?
     @Published private(set) var playbackState = "Paused"
+    @Published private(set) var videoFrameReady = false
     @Published private(set) var shuffleInterval: Double
     let clips: [AerialClip]
     let isValidationFixture: Bool
@@ -78,6 +79,10 @@ private final class AerialDownloadProgress: NSObject, URLSessionDownloadDelegate
     private var request = UUID()
     private var downloadTask: Task<Void, Never>?
     private var rotationTask: Task<Void, Never>?
+    private var coverageTask: Task<Void, Never>?
+    private var covered = false
+    private var pausedForCoverage = false
+    static let musicFadeSeconds: Double = 0.8
     private var looper: AVPlayerLooper?
     private var statusObservation: NSKeyValueObservation?
     private var loopObservation: NSKeyValueObservation?
@@ -222,8 +227,8 @@ private final class AerialDownloadProgress: NSObject, URLSessionDownloadDelegate
         refreshPlayback()
     }
 
-    func setPresentation(visible: Bool, reducedMotion: Bool, deterministic: Bool) {
-        self.visible = visible; self.reducedMotion = reducedMotion; self.deterministic = deterministic
+    func setPresentation(visible: Bool, reducedMotion: Bool, deterministic: Bool, covered: Bool = false) {
+        self.visible = visible; self.reducedMotion = reducedMotion; self.deterministic = deterministic; self.covered = covered
         refreshPlayback()
     }
 
@@ -237,7 +242,7 @@ private final class AerialDownloadProgress: NSObject, URLSessionDownloadDelegate
     }
 
     func advanceShuffle() {
-        guard foreground, visible, !reducedMotion, shuffling else { return }
+        guard foreground, visible, !covered, !reducedMotion, shuffling else { return }
         let available = clips.filter { downloaded.contains($0.id) }
         guard available.count > 1 else { return }
         let candidates = available.filter { $0.id != currentID }
@@ -251,7 +256,7 @@ private final class AerialDownloadProgress: NSObject, URLSessionDownloadDelegate
 
     private func scheduleRotation() {
         rotationTask?.cancel(); rotationTask = nil
-        guard foreground, visible, !reducedMotion, shuffling, downloaded.count > 1 else { return }
+        guard foreground, visible, !covered, !reducedMotion, shuffling, downloaded.count > 1 else { return }
         let interval = shuffleInterval
         rotationTask = Task { [weak self] in
             do { try await Task.sleep(for: .seconds(interval)) } catch { return }
@@ -263,8 +268,10 @@ private final class AerialDownloadProgress: NSObject, URLSessionDownloadDelegate
     private func refreshPlayback() {
         scheduleRotation()
         guard foreground, visible, !reducedMotion, enabled else { stopPlayer(); return }
-        if playingID == currentID, player != nil { return }
+        if playingID == currentID, player != nil { updateCoverage(); return }
         stopPlayer()
+        // Do not create a decoder underneath an already opaque music page.
+        guard !covered else { return }
         let token = playbackGeneration
         let queue = AVQueuePlayer()
         queue.isMuted = true; queue.volume = 0; queue.allowsExternalPlayback = false
@@ -276,7 +283,8 @@ private final class AerialDownloadProgress: NSObject, URLSessionDownloadDelegate
             let playing = queue.timeControlStatus == .playing
             Task { @MainActor [weak self] in
                 guard let self, self.playbackGeneration == token else { return }
-                self.playbackState = playing ? "Playing" : "Starting"
+                if playing { self.videoFrameReady = true }
+                self.playbackState = self.pausedForCoverage ? "Paused" : playing ? "Playing" : "Starting"
             }
         }
         loopObservation = loop.observe(\.status, options: [.new]) { [weak self] loop, _ in
@@ -290,12 +298,34 @@ private final class AerialDownloadProgress: NSObject, URLSessionDownloadDelegate
         player = queue; queue.play()
     }
 
+    private func updateCoverage() {
+        guard let player else { return }
+        guard covered else {
+            coverageTask?.cancel(); coverageTask = nil; pausedForCoverage = false
+            player.play()
+            return
+        }
+        guard coverageTask == nil, !pausedForCoverage else { return }
+        let token = playbackGeneration
+        coverageTask = Task { [weak self, weak player] in
+            do { try await Task.sleep(for: .seconds(Self.musicFadeSeconds)) } catch { return }
+            guard let self, let player, !Task.isCancelled, self.playbackGeneration == token,
+                  self.foreground, self.visible, self.covered, self.player === player else { return }
+            self.coverageTask = nil; self.pausedForCoverage = true
+            player.pause(); self.playbackState = "Paused"
+            // Keep the existing layer and its last rendered frame. Never swap
+            // to the opening poster while the music overlay is fading.
+        }
+    }
+
     private func stopPlayer() {
+        coverageTask?.cancel(); coverageTask = nil; pausedForCoverage = false
+        videoFrameReady = false
         playbackGeneration = UUID()
         statusObservation = nil; loopObservation = nil
         player?.pause(); looper?.disableLooping(); looper = nil
         player?.removeAllItems(); player = nil; playingID = nil; playbackState = "Paused"
     }
 
-    deinit { downloadTask?.cancel(); rotationTask?.cancel() }
+    deinit { downloadTask?.cancel(); rotationTask?.cancel(); coverageTask?.cancel() }
 }

@@ -1,8 +1,50 @@
 import XCTest
 import UIKit
+import Photos
 @testable import HomePad
 
 final class PhotoSelectionTests: XCTestCase {
+    @MainActor func testAsyncLibraryQueryRejectsOlderSelectionAndClear() async throws {
+        let fixture = try PhotoFixture(); defer { fixture.remove() }
+        let gate = LibraryQueryGate()
+        let store = PhotoLibraryStore(defaults: fixture.defaults, fileURL: fixture.directory.appending(path: "photo.jpg"), query: gate.client)
+        let a = PhotoAlbum(id: "a", title: "Album A", count: 1), b = PhotoAlbum(id: "b", title: "Album B", count: 2)
+        store.refresh()
+        await gate.waitForRequests(1)
+        XCTAssertTrue(store.libraryLoading, "The main actor remains available while the album query waits")
+        gate.finish(0, albums: [a, b]); await gate.drain()
+        XCTAssertEqual(store.albums, [a, b])
+        store.select(a); await gate.waitForRequests(2)
+        store.select(b); await gate.waitForRequests(3)
+        gate.finish(2, albums: [a, b]); await gate.drain()
+        XCTAssertEqual(store.selectedAlbumID, b.id); XCTAssertEqual(store.albumTitle, b.title)
+        gate.finish(1, albums: [a]); await gate.drain()
+        XCTAssertEqual(store.selectedAlbumID, b.id); XCTAssertEqual(store.albums, [a, b])
+        store.refresh(); await gate.waitForRequests(4)
+        store.clear(); gate.finish(3, albums: [a]); await gate.drain()
+        XCTAssertNil(store.selectedAlbumID); XCTAssertTrue(store.albums.isEmpty)
+        XCTAssertFalse(store.libraryLoading)
+    }
+
+    @MainActor func testAsyncLibraryQueryRechecksPermissionAndCannotReturnAfterBackground() async throws {
+        let fixture = try PhotoFixture(); defer { fixture.remove() }
+        let gate = LibraryQueryGate()
+        let store = PhotoLibraryStore(defaults: fixture.defaults, fileURL: fixture.directory.appending(path: "photo.jpg"), query: gate.client)
+        let privateAlbum = PhotoAlbum(id: "private", title: "Private album", count: 1)
+        store.refresh(); await gate.waitForRequests(1)
+        gate.finish(0, albums: [privateAlbum]); await gate.drain()
+        XCTAssertEqual(store.albums, [privateAlbum])
+        gate.status = .limited; store.refresh(); await gate.waitForRequests(2)
+        XCTAssertTrue(store.albums.isEmpty, "Full-access album names disappear before a limited-access query completes")
+        gate.status = .denied
+        gate.finish(1, albums: [privateAlbum]); await gate.drain()
+        XCTAssertEqual(store.authorization, .denied); XCTAssertTrue(store.albums.isEmpty)
+        XCTAssertFalse(store.libraryLoading)
+        gate.status = .authorized; store.refresh(); await gate.waitForRequests(3)
+        store.setActive(false); gate.finish(2, albums: [privateAlbum]); await gate.drain()
+        XCTAssertTrue(store.albums.isEmpty, "A late query cannot repopulate data after backgrounding")
+        XCTAssertFalse(store.libraryLoading)
+    }
     @MainActor func testMultiplePickedPhotosPersistInOrderAndRotateWithoutTouchingWallpaperOrOriginals() async throws {
         let fixture = try PhotoFixture()
         defer { fixture.remove() }
@@ -171,6 +213,33 @@ final class PhotoSelectionTests: XCTestCase {
         }
         return try XCTUnwrap(image.jpegData(compressionQuality: 0.8))
     }
+}
+
+@MainActor private final class LibraryQueryGate {
+    var status = PHAuthorizationStatus.authorized
+    private var requests: [CheckedContinuation<PhotoLibraryQueryResult, Error>?] = []
+    var client: PhotoLibraryQueryClient {
+        PhotoLibraryQueryClient(authorization: { self.status }, fetch: { _, _, _ in
+            try await self.read()
+        }, observe: { _, _ in })
+    }
+    private func read() async throws -> PhotoLibraryQueryResult {
+        // Intentionally ignore cancellation to exercise the store's delivery guard.
+        try await withCheckedThrowingContinuation { requests.append($0) }
+    }
+    func waitForRequests(_ count: Int) async {
+        for _ in 0..<100 {
+            if requests.count >= count { break }
+            await Task.yield()
+        }
+        XCTAssertEqual(requests.count, count)
+    }
+    func finish(_ index: Int, albums: [PhotoAlbum]) {
+        guard requests.indices.contains(index) else { return XCTFail("Query never started") }
+        requests[index]?.resume(returning: PhotoLibraryQueryResult(albums: albums))
+        requests[index] = nil
+    }
+    func drain() async { for _ in 0..<30 { await Task.yield() } }
 }
 
 @MainActor private struct PhotoFixture {

@@ -1,5 +1,13 @@
 # HomePad 开发经验
 
+### 多家庭连接与空家庭（2026-10-23）
+
+适用条件：iPad账号中有多个Apple Home家庭，其中某个家庭没有真实配件。mini系统“家庭”能看到并控制原有设备，HomePad已有live模式与保存的家庭ID；用户切换排查后明确确认问题已恢复、原因是一个家庭没有真实设备。排查时区分“当前选中空家庭”与权限拒绝、网络离线；先核对HomePad所选家庭及其配件，再调整网络或账号。此记录来自用户使用确认，未新增自动跳过空家庭逻辑，也不把空家庭自动判为故障。[本次证据](evidence/ipad-mini-home-audio-summary.json)。
+
+### 真机音乐听感与设备预览会话（2026-10-23）
+
+适用条件：Mac Device Hub正在查看实体iPad屏幕，HomePad歌曲进度正常但用户听不到声音。此次mini／iPadOS27.0.1的系统路由为iPad扬声器、原生音量约80%；保持同一歌曲和音量不变，仅退出Device Hub后，用户确认声音恢复。应把设备预览会话作为诊断变量，结束预览后单独验证实体扬声器听感；不要把进度条前进当作发声，也不能据此宣称所有屏幕预览都会静音或已定位Apple音频框架缺陷。仅本次当前播放结果已确认，其他路由和重现条件未验证。[本次证据](evidence/ipad-mini-home-audio-summary.json)。
+
 本文记录 HomePad 的开发约定与经过验证的实现经验。以原生 SwiftUI、公共 Apple API、本地数据和明确权限为边界；历史源码归属见 [CREDITS](../CREDITS.md)。
 
 ### 壁纸缩略图的裁切与无障碍范围（2026-10-23）
@@ -162,3 +170,11 @@ SwiftUI Form 的 DisclosureGroup 整体设置 accessibilityIdentifier 会把该�
 适用条件：本项目已明确约定“播放器返回可选专辑卡片，队列只从右下进入”。原先把未知播放来源当作队列返回目的地，单元用例复现 path 为 queue 而非 albums；queue Back 又回 player，于是循环。来源只用于焦点，不决定出口：统一 Albums 根路径，已知专辑对焦，未知／缺失专辑保持真实空态或首卡；队列仍显式进入。修复后全部170单元及真正执行的新返回／音量UI通过，新增边界继续覆盖资料库外歌曲与空队列。不要把重开空队列未经用户要求地扩成持久化功能；也不要移除后台／撤权清理来保住导航。
 
 本机再次遇到新UI方法未执行、失败行号对应旧源码。先保留旧结果；验证实际测试runner的Info.plist标识（大小写也要准确），仅在独立验收模拟器卸载该runner并更换外部derived后，新方法才实际执行。第一次重置准备守卫失败后误启动的尝试被主动中断，不能计为回归通过；串行依赖应在上一步成功后再启动，不清应用数据来绕过工具缓存。
+
+### Home layout cache invalidation after an explicit edit (2026-10-23)
+
+When the Home canvas is retained inside GeometryReader and its packing/JSON parsing uses `HomeConfigurationCache`, an AppStorage-only removal can save the correct reduced array while leaving the previous canvas visible. Reproduced with a six-card demo, drag reorder, then remove: the action ran and the persisted demo array had five entries, but the clock remained on screen. `savedValuesDidChange()` clears the cached inputs/packing and notifies the existing observable cache after each explicit widget/shortcut save. It does not publish while reading or on playback ticks. The native reorder → remove → add → Done → navigate → relaunch journey then passed, including immediate disappearance and persisted order; final 21 unit / nine UI regressions passed. Keep the user-visible removal assertion; a correct plist alone is insufficient acceptance. Evidence: `.validation/local/home-simplicity-14/ui-remove-trace.xcresult`, `ui-invalidation.xcresult`, `acceptance.xcresult`.
+
+### Aerial coverage during a music crossfade (2026-10-24)
+
+When a music backdrop fades over a running aerial, opaque coverage is different from leaving the page. Immediately clearing the AVQueuePlayer returns its visible layer to the opening poster while the overlay is still translucent, producing an apparent reversal. Keep that same player moving for the shared fade duration, then pause without removing its items or hiding the rendered layer. Uncover resumes the same time/queue; cancel pending pauses on rapid toggles, and still release immediately on true offscreen/background cleanup. Do not create a decoder underneath an already opaque music background, or advance shuffled clips while covered. Actual native player identity/time tests, combined Aerial/music UI recording and the user's Boom pad start/pause check verified this fix. A plain music/static-wallpaper fade fixture cannot cover the aerial lifecycle. Evidence: `.validation/local/aerial-music-15/` and [AERIAL-MUSIC-15.md](AERIAL-MUSIC-15.md).
