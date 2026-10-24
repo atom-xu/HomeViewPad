@@ -1,0 +1,41 @@
+{
+  "checkedUTC": "2026-10-23T07:54:24.044071+00:00",
+  "device": "iPad mini (A17 Pro)",
+  "runtime": "iPadOS27.0.1 (24A446)",
+  "audio": {
+    "initialUserReport": "HomePad music has no sound",
+    "observedPlaybackProgressAdvancing": true,
+    "selectedSystemRoute": "iPad speaker",
+    "volumeSliderObservedApproximate": 0.8,
+    "volumeChangedByAgent": false,
+    "audioRouteChangedByAgent": false,
+    "intervention": "Quit Device Hub using Quit and Keep Simulators Running; process absence independently confirmed. Current song left playing.",
+    "userConfirmedAudibleAfterIntervention": true,
+    "appResignedOrReinstalled": false,
+    "status": "resolved for current playback",
+    "interpretation": "The Device Hub viewing session was involved in the observed silence; no claim of an Apple framework defect or all-route audio acceptance."
+  },
+  "home": {
+    "userConfirmsAppleHomeCanSeeAndControlSameDevices": true,
+    "persistedHomeMode": "live",
+    "selectedHomeIDPresent": true,
+    "cachedConsoleHomeKitConfigResponseObserved": true,
+    "status": "resolved by user",
+    "appPermissionStatusEstablished": false,
+    "physicalHomePadControlAccepted": true,
+    "userConfirmedHomePadNowWorks": true,
+    "userConfirmedCause": "One selected home had no real accessories.",
+    "independentAccessoryWriteByAgent": false,
+    "acceptanceSource": "User reports 已经好了，是因为有一个家庭没有真实设备"
+  },
+  "boundaries": {
+    "applicationSourceChanged": false,
+    "accountChanged": false,
+    "privacyPermissionsChanged": false,
+    "homeAccessoryWriteByAgent": false,
+    "deviceRebooted": false,
+    "gitCommitOrPush": false
+  },
+  "rawEvidenceDirectory": ".validation/local/ipad-mini-home-audio-20261023T073955Z/",
+  "overallStatus": "Current Home connection and audible music both resolved; no app code change or reinstall."
+}

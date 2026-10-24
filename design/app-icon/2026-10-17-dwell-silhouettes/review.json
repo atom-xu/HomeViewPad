@@ -1,0 +1,129 @@
+{
+  "scope": "Independent design assets only. No application integration.",
+  "original_dwell_svg_identical": true,
+  "existing_app_icon_matches_pre_design_baseline": {
+    "HomePad/Assets.xcassets/AppIcon.appiconset/AppIcon.png": true,
+    "HomePad/Assets.xcassets/AppIcon.appiconset/Contents.json": true
+  },
+  "editable_paths_per_concept": {
+    "a": 3,
+    "b": 3,
+    "c": 3
+  },
+  "png_exports": [
+    {
+      "file": "exports/a-1024.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "opaque": true
+    },
+    {
+      "file": "exports/a-120.png",
+      "dimensions": [
+        120,
+        120
+      ],
+      "opaque": true
+    },
+    {
+      "file": "exports/a-60.png",
+      "dimensions": [
+        60,
+        60
+      ],
+      "opaque": true
+    },
+    {
+      "file": "exports/b-1024.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "opaque": true
+    },
+    {
+      "file": "exports/b-120.png",
+      "dimensions": [
+        120,
+        120
+      ],
+      "opaque": true
+    },
+    {
+      "file": "exports/b-60.png",
+      "dimensions": [
+        60,
+        60
+      ],
+      "opaque": true
+    },
+    {
+      "file": "exports/c-1024.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "opaque": true
+    },
+    {
+      "file": "exports/c-120.png",
+      "dimensions": [
+        120,
+        120
+      ],
+      "opaque": true
+    },
+    {
+      "file": "exports/c-60.png",
+      "dimensions": [
+        60,
+        60
+      ],
+      "opaque": true
+    },
+    {
+      "file": "exports/original-1024.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "opaque": true
+    },
+    {
+      "file": "exports/original-120.png",
+      "dimensions": [
+        120,
+        120
+      ],
+      "opaque": true
+    },
+    {
+      "file": "exports/original-60.png",
+      "dimensions": [
+        60,
+        60
+      ],
+      "opaque": true
+    }
+  ],
+  "visual_review": {
+    "comparison": "inspected large silhouettes and actual 60 px previews",
+    "desktop": "inspected light/dark 120 and 60 px previews",
+    "a": "recommended within this exploratory round",
+    "b": "folded room silhouette; may read as cube",
+    "c": "more typographic, less preferred; rounded core ends and widened white spacing after inspection"
+  },
+  "environment": {
+    "node": "v22.22.3",
+    "chromium": "135.0.7049.17",
+    "deviceScaleFactor": 1,
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "app_tests": "Not run; independent graphic assets only.",
+  "physical_ipad": "Not tested.",
+  "app_icon_binding": "Not changed.",
+  "git_commit_push_install": "Not performed."
+}

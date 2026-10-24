@@ -1,0 +1,7 @@
+{
+  "node": "v22.22.3",
+  "chromium": "135.0.7049.17",
+  "deviceScaleFactor": 1,
+  "platform": "darwin",
+  "architecture": "arm64"
+}

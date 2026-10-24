@@ -1,0 +1,276 @@
+{
+  "date": "2026-10-17",
+  "scope": "用户要求简单无宣传文案效果图；不修改App",
+  "mode": "concept-composites-based-on-app-screenshots",
+  "imageEditingTool": "built-in image_gen.imagegen; parent task performs all AI image generation",
+  "screenshots": [
+    {
+      "asset": "sources/home-original.png",
+      "original": ".validation/local/interaction-fixes-03/full-shots/chinese-home-landscape.png",
+      "note": "中文 Home 构图参考，保留演示标记",
+      "sha256": "1f4416759d72374ec5a903041388ccddeea0dda2acf030bc520e31a14a994d8d",
+      "copySha256": "1f4416759d72374ec5a903041388ccddeea0dda2acf030bc520e31a14a994d8d",
+      "capture": "iPad Pro 11-inch M5 / iPadOS 26.5 Simulator",
+      "evidenceManifest": ".validation/local/interaction-fixes-03/full-shots/manifest.json",
+      "attachments": [
+        {
+          "testIdentifier": "HomePadUITests/testChineseLanguageSwitchAndPersistence()",
+          "configurationName": "Test Scheme Action",
+          "deviceId": "0C68A7DD-B924-4636-9F30-A7B1CDF006B3",
+          "deviceName": "HomePad Acceptance",
+          "exportedFileName": "64797862-E229-421E-A39B-6FA211543DA4.png",
+          "isAssociatedWithFailure": false,
+          "suggestedHumanReadableName": "Chinese Home landscape_0_B793664F-26CB-4C78-8AD2-53277C47F88D.png",
+          "timestamp": 1792197066.879
+        }
+      ]
+    },
+    {
+      "asset": "sources/music-original.png",
+      "original": ".validation/local/music-page-navigation-04/final-shots/music-player-single-finger-page-navigation-and-explicit-page-entry-test-data.png",
+      "note": "音乐播放器构图参考，保留 TEST DATA",
+      "sha256": "74bcf367d7d7907c52675b2bf93fede286678499107b0512b94cb62fed2e2ed8",
+      "copySha256": "74bcf367d7d7907c52675b2bf93fede286678499107b0512b94cb62fed2e2ed8",
+      "capture": "iPad Pro 11-inch M5 / iPadOS 26.5 Simulator",
+      "evidenceManifest": ".validation/local/music-page-navigation-04/final-shots/manifest.json",
+      "attachments": [
+        {
+          "testIdentifier": "HomePadUITests/testMusicPlayerPageSwipeLeavesAndReturnsWithoutChangingPlayback()",
+          "configurationName": "Test Scheme Action",
+          "deviceId": "0C68A7DD-B924-4636-9F30-A7B1CDF006B3",
+          "deviceName": "HomePad Acceptance",
+          "exportedFileName": "FA06067F-4E24-4162-BB7F-62F5079CC04B.png",
+          "isAssociatedWithFailure": false,
+          "suggestedHumanReadableName": "Music player single finger page navigation and explicit page entry test data_0_751FB175-8889-4621-8101-8D3CE1BDFDAE.png",
+          "timestamp": 1792208511.256
+        }
+      ]
+    },
+    {
+      "asset": "sources/clock-original.png",
+      "original": ".validation/local/interaction-fixes-03/full-shots/clock-page.png",
+      "note": "时钟页面构图参考，保留 DEMO 与 Demo time",
+      "sha256": "bc58dfcc34ff243838344a16e76a88209259b6e9972c84ed6b8c167ad7757aee",
+      "copySha256": "bc58dfcc34ff243838344a16e76a88209259b6e9972c84ed6b8c167ad7757aee",
+      "capture": "iPad Pro 11-inch M5 / iPadOS 26.5 Simulator",
+      "evidenceManifest": ".validation/local/interaction-fixes-03/full-shots/manifest.json",
+      "attachments": [
+        {
+          "testIdentifier": "HomePadUITests/testHorizontalPagingAndIndependentWidgetSwitching()",
+          "configurationName": "Test Scheme Action",
+          "deviceId": "0C68A7DD-B924-4636-9F30-A7B1CDF006B3",
+          "deviceName": "HomePad Acceptance",
+          "exportedFileName": "7FF5D3FC-EB75-46D7-B0A4-9D2D0FC3E69D.png",
+          "isAssociatedWithFailure": false,
+          "suggestedHumanReadableName": "Clock page_0_CC82D838-642E-485D-9386-83E92080C7DB.png",
+          "timestamp": 1792197407.07
+        }
+      ]
+    },
+    {
+      "asset": "sources/photos-original.png",
+      "original": ".validation/local/interaction-fixes-03/full-shots/real-selected-photo-wall-with-two-synthetic-photos.png",
+      "note": "照片墙构图参考，原创合成渐变，保留 DEMO",
+      "sha256": "3b506611f04e5f5e366fe2bf7156fc93204dc125a535a56e6729d88dfbc48462",
+      "copySha256": "3b506611f04e5f5e366fe2bf7156fc93204dc125a535a56e6729d88dfbc48462",
+      "capture": "iPad Pro 11-inch M5 / iPadOS 26.5 Simulator",
+      "evidenceManifest": ".validation/local/interaction-fixes-03/full-shots/manifest.json",
+      "attachments": [
+        {
+          "testIdentifier": "HomePadUITests/testMultipleSelectedPhotosWallPersistenceCancellationAndStandby()",
+          "configurationName": "Test Scheme Action",
+          "deviceId": "0C68A7DD-B924-4636-9F30-A7B1CDF006B3",
+          "deviceName": "HomePad Acceptance",
+          "exportedFileName": "1278B819-7E9B-455E-ADA0-91970EE67D77.png",
+          "isAssociatedWithFailure": false,
+          "suggestedHumanReadableName": "Real selected-photo wall with two synthetic photos_0_B2C69F02-6F3B-4CE1-B293-B641DD935FB7.png",
+          "timestamp": 1792197844.183
+        }
+      ]
+    },
+    {
+      "asset": "sources/albums-original.png",
+      "original": ".validation/local/music-page-navigation-04/final-shots/music-cover-flow-native-test-albums.png",
+      "note": "Cover Flow居中三专辑构图参考，保留TEST DATA；用于概念编辑，不冒充真实资料库",
+      "sha256": "1c60761fdcfc4f513066ee60a713a86bc624bce69dc5ece353b468774ae3b14a",
+      "copySha256": "1c60761fdcfc4f513066ee60a713a86bc624bce69dc5ece353b468774ae3b14a",
+      "capture": "iPad Pro 11-inch M5 / iPadOS 26.5 Simulator",
+      "evidenceManifest": ".validation/local/music-page-navigation-04/final-shots/manifest.json",
+      "attachments": [
+        {
+          "testIdentifier": "HomePadUITests/testMusicHomeWidgetAndCoverFlowSharePlaybackWithoutPageSwipe()",
+          "configurationName": "Test Scheme Action",
+          "deviceId": "0C68A7DD-B924-4636-9F30-A7B1CDF006B3",
+          "deviceName": "HomePad Acceptance",
+          "exportedFileName": "05366650-4DEB-462C-A0B1-4E75FA1333AA.png",
+          "isAssociatedWithFailure": false,
+          "suggestedHumanReadableName": "Music Cover Flow native test albums_0_6F11F9C1-2A1B-44ED-9235-DD991407A73E.png",
+          "timestamp": 1792208350.883
+        }
+      ]
+    }
+  ],
+  "generatedAssets": [
+    {
+      "file": "exports/02-music.png",
+      "original": "/Users/atom/.codex/generated_images/01a147e1-2d71-71b0-821f-6bdafa5e2e5a/exec-027d8fa1-43f3-4617-bb6e-ccd0b370a473.png",
+      "sha256": "9bdd26c5884adc01a94d67f0dee125b49dd5c464e59e7aa60f3878490ba8d86b",
+      "copiedUnchanged": true,
+      "intent": "compositing concept with fictional playing state; no audio or account evidence"
+    },
+    {
+      "file": "exports/03-ambient.png",
+      "original": "/Users/atom/.codex/generated_images/01a147e1-2d71-71b0-821f-6bdafa5e2e5a/exec-254496fd-3901-4a01-87a2-470de6d97080.png",
+      "sha256": "ad609e321fb097125ceb7a8262845f9778f712954937e770175cee3c2cc18786",
+      "copiedUnchanged": true,
+      "intent": "compositing clock wallpaper concept; no physical standby claim"
+    },
+    {
+      "file": "exports/05-albums.png",
+      "original": "/Users/atom/.codex/generated_images/01a147e1-2d71-71b0-821f-6bdafa5e2e5a/exec-ce9aebb0-c46a-4ae4-aec5-378ab54e6091.png",
+      "sha256": "81d6f17396ec67cb765e40c58ae7ed6eb1f750004fb51adbe555fb77b76aed78",
+      "copiedUnchanged": true,
+      "intent": "Cover Flow album-selection concept based on native screenshot; fictional media, not a real library or playback result"
+    },
+    {
+      "file": "exports/01-home.png",
+      "original": "/Users/atom/.codex/generated_images/01a147e1-2d71-71b0-821f-6bdafa5e2e5a/exec-a4081d75-aa58-4c84-af98-5053bce2b19b.png",
+      "sha256": "b32014d2339d4c83b6dff5847bc7c3a399a70c2300854d4f5eaf49dbad39ba13",
+      "copiedUnchanged": true,
+      "intent": "compositing concept, not real hardware screenshot"
+    }
+  ],
+  "disclosure": "效果图属于AI概念合成，示意壁纸、摄像头画面与音乐内容，不代表真实硬件、个人家庭或账号的实测结果。原始演示/TEST DATA标签不得擦除。说明仅存本文件与README，不叠在图上。",
+  "officialComparisonSource": {
+    "product": "Apple HomeView",
+    "kind": "Apple official promotional dashboard image; neither HomeViewPad nor HomePad",
+    "page": "https://www.apple.com/apple-homeview/",
+    "assetURL": "https://www.apple.com/v/apple-homeview/a/images/overview/highlights/dashboard__d7v1zkoeeiwm_large_2x.jpg",
+    "htmlEvidence": ".validation/local/xiaohongshu-simple-20261017/apple-homeview.html",
+    "element": "picture#overview-highlights-dashboard-1; source in noscript includes large_2x",
+    "dimensions": [
+      2520,
+      1224
+    ],
+    "sha256": "4a597e9dbfa0672c329b73b7ca456c50cfec4e02466c26463ae7fa9721a89576",
+    "savedAsset": "assets/apple-homeview-dashboard-official.jpg",
+    "originalUnchanged": true,
+    "downloadDate": "2026-10-17",
+    "rights": "Apple official promotional image; used only as an attributed comparison reference. Not claimed original/MIT/AI generated.",
+    "usage": "Compare intact original product image against HomePad AI concept; no AI repaint, wallpaper replacement, values or native text edits.",
+    "displayTransform": "CSS proportional scale 85% (2520→2142 px), wall-only viewport crop; official black device bezel and UI remain complete. Original JPEG bytes preserved.",
+    "comparison": {
+      "top": "Apple HomeView official promotional product image",
+      "bottom": "HomePad AI concept effect image, not hardware capture",
+      "file": "exports/04-homeview-homepad.png",
+      "size": [
+        1440,
+        1920
+      ],
+      "externalText": false
+    }
+  },
+  "photoSources": [
+    {
+      "asset": "wallpaper.jpg",
+      "page": "https://unsplash.com/photos/a-lake-surrounded-by-trees-with-a-mountain-in-the-background-6icCeDATooM",
+      "author": "Filip Zrnzević",
+      "download": "https://images.unsplash.com/photo-1698349239564-f82472deaf1f?auto=format&fit=max&w=2560&q=90",
+      "license": "Unsplash License",
+      "licenseURL": "https://unsplash.com/license",
+      "sha256": "0b0d5897657d647d06f1bfa73277e70ba157d5af717784567b04f02ee56e1477",
+      "usage": "Licensed supporting photographic input for a concept render, not actual HomeKit video or user photos"
+    },
+    {
+      "asset": "camera-room.jpg",
+      "page": "https://unsplash.com/photos/cozy-living-room-with-sunlight-streaming-through-sheer-curtains-5T_XETRABHs",
+      "author": "Kevin Lieder",
+      "download": "https://images.unsplash.com/photo-1783110688413-77aadea9e511?auto=format&fit=max&w=2560&q=90",
+      "license": "Unsplash License",
+      "licenseURL": "https://unsplash.com/license",
+      "sha256": "b9129ce7053a6a6e161dca1730d2c106e7e0dbdab98bccd84bac04d3e5bba140",
+      "usage": "Licensed supporting photographic input for a concept render, not actual HomeKit video or user photos"
+    }
+  ],
+  "exports": [
+    {
+      "file": "exports/01-home.png",
+      "width": 1512,
+      "height": 1040,
+      "sha256": "b32014d2339d4c83b6dff5847bc7c3a399a70c2300854d4f5eaf49dbad39ba13",
+      "bytes": 2066041
+    },
+    {
+      "file": "exports/02-music.png",
+      "width": 1512,
+      "height": 1040,
+      "sha256": "9bdd26c5884adc01a94d67f0dee125b49dd5c464e59e7aa60f3878490ba8d86b",
+      "bytes": 1850454
+    },
+    {
+      "file": "exports/03-ambient.png",
+      "width": 1511,
+      "height": 1041,
+      "sha256": "ad609e321fb097125ceb7a8262845f9778f712954937e770175cee3c2cc18786",
+      "bytes": 2489370
+    },
+    {
+      "file": "exports/04-homeview-homepad.png",
+      "width": 1440,
+      "height": 1920,
+      "sha256": "1f1ae0bcb19415285fc3da329ec2617569b4bcc379072e6e18102f6b77af7a6c",
+      "bytes": 2297313
+    },
+    {
+      "file": "exports/05-albums.png",
+      "width": 1510,
+      "height": 1042,
+      "sha256": "81d6f17396ec67cb765e40c58ae7ed6eb1f750004fb51adbe555fb77b76aed78",
+      "bytes": 1851215
+    }
+  ],
+  "outputMethods": {
+    "ImageGenConceptEdits": [
+      "exports/01-home.png",
+      "exports/02-music.png",
+      "exports/03-ambient.png",
+      "exports/05-albums.png"
+    ],
+    "htmlCssComparison": "exports/04-homeview-homepad.png",
+    "contactSheet": "overview.png",
+    "externalMarketingText": false
+  },
+  "comparisonIdentity": "Apple HomeView官方宣传图对照HomePad AI概念UI；非kuscholar原版/改版沿革",
+  "validation": "validation.json",
+  "albumConcept": {
+    "file": "exports/05-albums.png",
+    "source": "sources/albums-original.png",
+    "promptRecord": "assets/imagegen-albums-prompt.json",
+    "promptRecordSha256": "fdc9b4db71e7175046da65b2b07b7896db6a96bccd2d95c814effb0feb4f5944",
+    "fictionalMusic": true,
+    "realLibraryEvidence": false,
+    "geometry": "原生Cover Flow截图为结构参考，摄影封面与暖棕背景为ImageGen概念编辑",
+    "previousFourPreserved": true
+  },
+  "imagegenPromptRecords": [
+    {
+      "file": "assets/imagegen-prompts.json",
+      "sha256": "8b0237febc6150f54d0f6c77c96ac51a3a7804039fb2385476ea1f6930427684"
+    },
+    {
+      "file": "assets/imagegen-additional-prompts.json",
+      "sha256": "c08321ff5ff829142b3ea8b1116edcbbebb5df3385ac4a2931c91a5fa7951e10"
+    },
+    {
+      "file": "assets/imagegen-albums-prompt.json",
+      "sha256": "fdc9b4db71e7175046da65b2b07b7896db6a96bccd2d95c814effb0feb4f5944"
+    }
+  ],
+  "overview": {
+    "file": "overview.png",
+    "width": 1920,
+    "height": 972,
+    "sha256": "cbca7bcfc213c47967cc0922bce4ef72ce48f2bfd0cb63367bd491d9a8bfb02e",
+    "externalText": false
+  }
+}

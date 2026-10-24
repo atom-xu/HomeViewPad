@@ -1,0 +1,30 @@
+[
+  {
+    "id": "01-warm-window",
+    "number": "01",
+    "name": "暖窗",
+    "concept": "把亮起的窗，收进一个完整的家。",
+    "structure": "连续屋形＋内凹窗洞"
+  },
+  {
+    "id": "02-light-corner",
+    "number": "02",
+    "name": "光隅",
+    "concept": "两片饱满的面，把一角暖光留给家。",
+    "structure": "斜向双块面＋圆润收口"
+  },
+  {
+    "id": "03-one-roof",
+    "number": "03",
+    "name": "同檐",
+    "concept": "两侧的空间，围出一扇亮着的窗。",
+    "structure": "双块面围合＋中央暖窗"
+  },
+  {
+    "id": "04-layered-home",
+    "number": "04",
+    "name": "叠居",
+    "concept": "让一侧稍稍转出来，家形仍然完整。",
+    "structure": "正面与侧面组成一个家"
+  }
+]

@@ -1,0 +1,86 @@
+{
+  "scope": "20-minute HomePad foreground/static-use observation on original Boom pad",
+  "outcome": "Twenty-minute observation completed; quantitative power measurement unavailable. CPU sampling recovered.",
+  "environment": {
+    "device": "Boom pad, iPad Pro 11-inch (4th generation)",
+    "runtime": "iPadOS 27.0.1 (24A446)",
+    "tools": "Xcode/Instruments 27.0 (27A266a)",
+    "application": "HomePad 1.0 (1), Release, Home controls 11 candidate",
+    "sourceInputsInInstalledCandidate": 56,
+    "installedAppMatchesPriorUpdateReadback": true,
+    "userConfirmedUnpluggedAndIdle": true,
+    "wirelessProfilingCanKeepAppleSiliconAwake": true
+  },
+  "recording": {
+    "startedLocal": "2026-10-23T14:42:04.979+08:00",
+    "endedLocal": "2026-10-23T15:02:15.213+08:00",
+    "nativeDurationSeconds": 1210.233741,
+    "analysisWindowSeconds": 1200,
+    "guiCounterReachedTwentyMinutes": true,
+    "recordingMode": "Deferred",
+    "applicationNotLaunchedOrRelaunchedByThisTest": true,
+    "iPadInputOrBrightnessOrPermissionsChangedByAgent": false
+  },
+  "cpu": {
+    "totalSamples": 42691,
+    "samplesInAnalysisWindow": 42312,
+    "sampledCPUSeconds": 42.312,
+    "estimatedAverageCPUPercentOneCore": 3.526,
+    "minOneMinuteAverageCPUPercentOneCore": 3.4516666666666667,
+    "maxOneMinuteAverageCPUPercentOneCore": 3.6833333333333336,
+    "mainThreadShareOfSampledCPUPercent": 97.84930988844773,
+    "firstCPUSampleSecond": 0.079116583,
+    "lastCPUSampleSecond": 1210.19411325,
+    "method": "Sum Running Time Profiler sample weights in each time window, divide by wall duration; 100% means one fully busy core. Statistical CPU estimate, not measured energy or whole-device CPU capacity."
+  },
+  "powerMetrics": {
+    "systemPowerRows": 0,
+    "processPowerImpactRows": 0,
+    "brightnessRows": 0,
+    "thermalRows": 0,
+    "chargingRows": 0,
+    "watts": null,
+    "batteryConsumptionPercentPerHour": null,
+    "thermalConclusion": null,
+    "emptyRowsDoNotMeanZeroPower": true
+  },
+  "collectorFailure": {
+    "application": "Mac Instruments",
+    "whenLocal": "2026-10-23T15:02:19.0974+08:00",
+    "exception": "EXC_BREAKPOINT / SIGTRAP",
+    "topFrame": "NetworkConnectionStatsModeling.receive(row:writer:context:)",
+    "cliAttachAttemptsFailed": 3,
+    "causeOfMissingPowerCountersEstablished": false,
+    "rawFileRecovered": true,
+    "rawFileBytes": 234284744,
+    "rawFileSHA256": "c643f7592eb94182b502b7002349d6bd9f1bf185210b8af99c6516ee7977b530",
+    "powerOnlyImportSucceededButMetricTablesEmpty": true,
+    "timeProfilerImportRecoveredCPUSamples": true,
+    "postWindowFiveSecondDiagnostic": "Device disconnected; exit zero is not treated as successful data capture."
+  },
+  "limitations": [
+    "Statistical CPU estimate normalized so one fully busy core is 100%; this is not energy, GPU/display power or total device CPU capacity.",
+    "The first 1200 seconds are used for the CPU result; the final 10.233741 seconds are excluded.",
+    "No reliable full-system power, battery discharge, brightness transition, charging state or thermal acceptance from this recording.",
+    "No baseline/control comparison, long-term endurance claim or hardware setting acceptance.",
+    "No app behavior changes or new XCTest/XCUITest suite in this observation; prior suite limitations remain."
+  ],
+  "artifacts": {
+    "minuteCSV": "ipad-standby-cpu-20261023.csv",
+    "cpuChart": "ipad-standby-cpu-20261023.png",
+    "rawEvidenceDirectory": ".validation/local/boom-standby-power-20261023T063212Z/",
+    "nativePowerRecoveryTrace": "recovered-power.trace",
+    "nativeCPURecoveryTrace": "recovered-cpu.trace"
+  },
+  "git": {
+    "committedByThisTask": false,
+    "pushedByThisTask": false
+  },
+  "applePowerProfilerReference": "https://developer.apple.com/documentation/xcode/measuring-your-app-s-power-use-with-power-profiler",
+  "laterDeviceUpdateNotCovered": {
+    "version": "HomeKit controls 12",
+    "installedAndLaunchReadbackFinishedUTC": "2026-10-23T07:12:18.998423+00:00",
+    "outsideRecordingWindow": true,
+    "reference": "ipad-homekit-controls-summary.json"
+  }
+}

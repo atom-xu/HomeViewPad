@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-16",
+  "brand": "VILHIL",
+  "source_svg_original": "/Users/atom/Desktop/软件项目/entroWEB/public/vilhil-mark-vi-20261013.svg",
+  "source_svg_sha256": "ebd6b2d0fe40ff81a4b18fa421fec0f5fb1be24484de33e2056112944a03ece9",
+  "source_vi_original": "/Users/atom/Desktop/vilhil/品牌/VilHil 视觉识别系统_8.16.pdf",
+  "source_vi_sha256": "9974dae47b6cefa0720aec52350719df606af3b841aad223c9a93b3794d5d57f",
+  "source_vi_pages": [
+    15,
+    19,
+    24,
+    25
+  ],
+  "source_viewbox": "0 0 278.398 208.801",
+  "unmodified_path_data": [
+    "M98.953 0h40.246L39.848 208.801H0L98.953 0Z",
+    "M179.445 0 278.398 208.801h-39.843L139.199 0h40.246Z",
+    "M119.352 139.199h39.695v69.602h-39.695z"
+  ],
+  "layout": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "mark_translate": [
+      212,
+      266
+    ],
+    "uniform_scale": 2.1551878964647733,
+    "mark_bounds": [
+      212,
+      266,
+      812,
+      716.0053879697412
+    ],
+    "clear_space": {
+      "left": 212,
+      "right": 212,
+      "top": 266,
+      "bottom": 307.9946120302589
+    }
+  },
+  "recommended": "01-graphite",
+  "variants": [
+    {
+      "id": "01-graphite",
+      "letter": "A",
+      "name": "深石墨",
+      "en": "Graphite",
+      "description": "石墨底色，微光白标。白天清楚，夜里安静。"
+    },
+    {
+      "id": "02-porcelain",
+      "letter": "B",
+      "name": "瓷白",
+      "en": "Porcelain",
+      "description": "柔和瓷白，深色图案。最贴近品牌黑白本色。"
+    },
+    {
+      "id": "03-daylight",
+      "letter": "C",
+      "name": "晨光",
+      "en": "Daylight",
+      "description": "取自 VI 的浅黄，让家的温度留在主屏。"
+    }
+  ],
+  "preview_mask": "superellipse n=4.6, illustration only; final system mask is not simulated exactly",
+  "integration": "Design assets only. No AppIcon binding, source, install, commit, push or publish."
+}

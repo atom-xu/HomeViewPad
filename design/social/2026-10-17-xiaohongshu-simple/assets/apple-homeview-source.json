@@ -1,0 +1,29 @@
+{
+  "product": "Apple HomeView",
+  "kind": "Apple official promotional dashboard image; neither HomeViewPad nor HomePad",
+  "page": "https://www.apple.com/apple-homeview/",
+  "assetURL": "https://www.apple.com/v/apple-homeview/a/images/overview/highlights/dashboard__d7v1zkoeeiwm_large_2x.jpg",
+  "htmlEvidence": ".validation/local/xiaohongshu-simple-20261017/apple-homeview.html",
+  "element": "picture#overview-highlights-dashboard-1; source in noscript includes large_2x",
+  "dimensions": [
+    2520,
+    1224
+  ],
+  "sha256": "4a597e9dbfa0672c329b73b7ca456c50cfec4e02466c26463ae7fa9721a89576",
+  "savedAsset": "assets/apple-homeview-dashboard-official.jpg",
+  "originalUnchanged": true,
+  "downloadDate": "2026-10-17",
+  "rights": "Apple official promotional image; used only as an attributed comparison reference. Not claimed original/MIT/AI generated.",
+  "usage": "Compare intact original product image against HomePad AI concept; no AI repaint, wallpaper replacement, values or native text edits.",
+  "displayTransform": "CSS proportional scale 85% (2520→2142 px), wall-only viewport crop; official black device bezel and UI remain complete. Original JPEG bytes preserved.",
+  "comparison": {
+    "top": "Apple HomeView official promotional product image",
+    "bottom": "HomePad AI concept effect image, not hardware capture",
+    "file": "exports/04-homeview-homepad.png",
+    "size": [
+      1440,
+      1920
+    ],
+    "externalText": false
+  }
+}

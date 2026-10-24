@@ -1,0 +1,109 @@
+{
+  "date": "2026-10-16",
+  "round": 3,
+  "user_decision": "Refine round-2 C Dwell; no final palette or AppIcon replacement authorized",
+  "source_svg": "source/original-c.svg",
+  "source_sha256": "4914e3f8958de647c4b76e422e1f9a562c2a6839f3b3f85516720d48578197bf",
+  "variants": [
+    {
+      "id": "01-clear",
+      "label": "C1",
+      "name": "清",
+      "tag": "干净平面",
+      "description": "收拢圆角与缝隙，让形状本身说话。",
+      "detail": "主圆角统一为 44 px；两道缝均为 56 px。无阴影、无渐变。",
+      "recommended": false,
+      "finish": "flat",
+      "geometry": {
+        "width": 560,
+        "roof_pitch_degrees": 36.86989764584402,
+        "virtual_apex": [
+          512,
+          224
+        ],
+        "vertical_gap": 56,
+        "horizontal_gap": 56,
+        "main_corner_radius": 44,
+        "roof_tip_radius": 12,
+        "optical_translation": [
+          8,
+          -10
+        ],
+        "pane_bottom": 758,
+        "gold_height": 184
+      }
+    },
+    {
+      "id": "02-soft",
+      "label": "C2",
+      "name": "润",
+      "tag": "细腻层次",
+      "description": "同一精修轮廓，添一点安静的光。",
+      "detail": "与 C1 保持同轮廓；以轻色阶和极弱承托增加层次，不加高光边框。",
+      "recommended": true,
+      "finish": "soft",
+      "geometry": {
+        "width": 560,
+        "roof_pitch_degrees": 36.86989764584402,
+        "virtual_apex": [
+          512,
+          224
+        ],
+        "vertical_gap": 56,
+        "horizontal_gap": 56,
+        "main_corner_radius": 44,
+        "roof_tip_radius": 12,
+        "optical_translation": [
+          8,
+          -10
+        ],
+        "pane_bottom": 758,
+        "gold_height": 184
+      }
+    },
+    {
+      "id": "03-balanced",
+      "label": "C3",
+      "name": "衡",
+      "tag": "更稳几何",
+      "description": "屋顶更舒展，缝隙更紧凑，重心更稳。",
+      "detail": "主体增至 584 px；坡度降至约 33.3°，缝宽 48 px、主圆角 48 px。",
+      "recommended": false,
+      "finish": "flat",
+      "geometry": {
+        "width": 584,
+        "roof_pitch_degrees": 33.326289687115214,
+        "virtual_apex": [
+          512,
+          248
+        ],
+        "vertical_gap": 48,
+        "horizontal_gap": 48,
+        "main_corner_radius": 48,
+        "roof_tip_radius": 14,
+        "optical_translation": [
+          8,
+          -10
+        ],
+        "pane_bottom": 746,
+        "gold_height": 192
+      }
+    }
+  ],
+  "recommended": "02-soft",
+  "sizes": [
+    1024,
+    120,
+    60
+  ],
+  "palette_status": "Exploratory consistent teal/warm-yellow baseline; not approved final colors",
+  "original_metrics": {
+    "width": 512,
+    "roof_pitch_degrees": 39.21760767763596,
+    "vertical_gap": 64,
+    "horizontal_gap": 40,
+    "corner_radii": "Left lower 44/48, roof base 28, gold 44; original quadratic construction"
+  },
+  "preview_mask": "superellipse 4.6, illustration only",
+  "integration": "No AppIcon, project, behavior, install, commit, push or publish changes"
+}

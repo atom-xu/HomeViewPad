@@ -1,0 +1,6 @@
+{
+  "browserVersion": "135.0.7049.17",
+  "nodeVersion": "v22.22.3",
+  "deviceScaleFactor": 1,
+  "renderer": "Playwright Chromium, headless"
+}

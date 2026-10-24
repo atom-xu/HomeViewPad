@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+<title id="title">HomePad silhouette study A</title>
+<desc id="desc">New HomePad concept, not a formal VILHIL mark. Three editable filled Bezier paths. Raster exploration interpreted and simplified by hand. Full opaque square master; rounded tile mask is for preview only.</desc>
+<defs>
+<linearGradient id="canvas" x1=".1" y1="0" x2=".8" y2="1"><stop stop-color="#FFFFFF"/><stop offset=".65" stop-color="#FAFBFA"/><stop offset="1" stop-color="#EFF2F1"/></linearGradient>
+<linearGradient id="body" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#7BD7BB"/><stop offset=".55" stop-color="#48BEA6"/><stop offset="1" stop-color="#2AA68F"/></linearGradient>
+<linearGradient id="roof" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#A5E5C4"/><stop offset="1" stop-color="#67CFA8"/></linearGradient>
+<linearGradient id="core" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#F7D79A"/><stop offset="1" stop-color="#ECC17A"/></linearGradient>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="145%" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="9" stdDeviation="10" flood-color="#32AA94" flood-opacity=".11"/></filter>
+</defs><rect width="1024" height="1024" fill="url(#canvas)"/>
+<g filter="url(#soft)"><g id="homepad-symbol" transform="translate(113.1 113) scale(.635)"><path data-part="body" fill="url(#body)" d="M448 234 H746 C818 234 864 267 864 314 C864 350 843 373 802 387 L455 502 C402 519 375 554 375 604 V703 C375 752 357 789 323 831 C301 859 286 891 279 919 C276 928 269 934 260 927 C238 905 225 870 225 826 V439 C225 316 322 234 448 234 Z"/><path data-part="roof" fill="url(#roof)" d="M963 359 C1005 359 1031 396 1031 469 V835 C1031 945 939 1020 824 1020 H409 C348 1020 315 981 315 947 C315 891 371 851 448 851 H747 C837 851 868 813 868 724 V485 C868 412 904 359 963 359 Z"/><path data-part="core" fill="url(#core)" d="M716 468 C785 468 828 518 828 590 V731 C828 785 801 812 747 812 H497 C446 812 419 785 419 734 V628 C419 587 438 557 478 542 L681 475 Q698 468 716 468 Z"/></g></g></svg>

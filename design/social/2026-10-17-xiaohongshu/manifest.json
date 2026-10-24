@@ -1,0 +1,242 @@
+{
+  "title": "HomePad 小红书素材",
+  "createdFor": "2026-10-17",
+  "size": [
+    1440,
+    1920
+  ],
+  "appSourceChangedByThisMaterialsTask": false,
+  "captureEnvironment": "2026-10-17 既有模拟器运行截图：交互修复03与音乐导航04；iPad Pro 11-inch M5 / iPadOS 26.5；各图按 manifest 中原测试来源区分；本轮素材任务未重跑原生测试",
+  "screenshots": [
+    {
+      "asset": "sources/home.png",
+      "source": ".validation/local/interaction-fixes-03/full-shots/chinese-home-landscape.png",
+      "sha256": "1f4416759d72374ec5a903041388ccddeea0dda2acf030bc520e31a14a994d8d",
+      "copySha256": "1f4416759d72374ec5a903041388ccddeea0dda2acf030bc520e31a14a994d8d",
+      "transform": "byte-for-byte original; browser reads EXIF orientation; CSS proportional scale only; no app UI repainting",
+      "note": "家庭页，中文演示数据",
+      "evidence": {
+        "manifest": ".validation/local/interaction-fixes-03/full-shots/manifest.json",
+        "attachments": [
+          {
+            "testIdentifier": "HomePadUITests/testChineseLanguageSwitchAndPersistence()",
+            "configurationName": "Test Scheme Action",
+            "deviceId": "0C68A7DD-B924-4636-9F30-A7B1CDF006B3",
+            "deviceName": "HomePad Acceptance",
+            "exportedFileName": "64797862-E229-421E-A39B-6FA211543DA4.png",
+            "isAssociatedWithFailure": false,
+            "suggestedHumanReadableName": "Chinese Home landscape_0_B793664F-26CB-4C78-8AD2-53277C47F88D.png",
+            "timestamp": 1792197066.879
+          }
+        ]
+      }
+    },
+    {
+      "asset": "sources/music-player.png",
+      "source": ".validation/local/music-page-navigation-04/repair-shots/music-player-single-finger-page-navigation-and-explicit-page-entry-test-data.png",
+      "sha256": "0b427457157b6647f84f66bdd9d2de4bbb4eebd218b8923babfd09ca11aa6bd3",
+      "copySha256": "0b427457157b6647f84f66bdd9d2de4bbb4eebd218b8923babfd09ca11aa6bd3",
+      "transform": "byte-for-byte original; browser reads EXIF orientation; CSS proportional scale only; no app UI repainting",
+      "note": "播放器，TEST DATA 合成曲目，不代表真实账号或音频",
+      "evidence": {
+        "manifest": ".validation/local/music-page-navigation-04/repair-shots/manifest.json",
+        "attachments": [
+          {
+            "testIdentifier": "HomePadUITests/testMusicPlayerPageSwipeLeavesAndReturnsWithoutChangingPlayback()",
+            "configurationName": "Test Scheme Action",
+            "deviceId": "0C68A7DD-B924-4636-9F30-A7B1CDF006B3",
+            "deviceName": "HomePad Acceptance",
+            "exportedFileName": "E050D827-BE9E-46E1-8147-17ED71E8F047.png",
+            "isAssociatedWithFailure": false,
+            "suggestedHumanReadableName": "Music player single finger page navigation and explicit page entry test data_0_7E996A16-A66C-4DDB-A16C-B90AB1955453.png",
+            "timestamp": 1792205114.79
+          }
+        ]
+      }
+    },
+    {
+      "asset": "sources/music-library.png",
+      "source": ".validation/local/interaction-fixes-03/music-readiness-shots/music-cover-flow-native-test-albums.png",
+      "sha256": "70a11aba60263e5a4cc4fd26e7e27eb38a77d926e90de53422fb5d3a0aadc855",
+      "copySha256": "70a11aba60263e5a4cc4fd26e7e27eb38a77d926e90de53422fb5d3a0aadc855",
+      "transform": "byte-for-byte original; browser reads EXIF orientation; CSS proportional scale only; no app UI repainting",
+      "note": "Cover Flow，TEST DATA 合成专辑，不代表真实资料库",
+      "evidence": {
+        "manifest": ".validation/local/interaction-fixes-03/music-readiness-shots/manifest.json",
+        "attachments": [
+          {
+            "testIdentifier": "HomePadUITests/testMusicHomeWidgetAndCoverFlowSharePlaybackWithoutPageSwipe()",
+            "configurationName": "Test Scheme Action",
+            "deviceId": "0C68A7DD-B924-4636-9F30-A7B1CDF006B3",
+            "deviceName": "HomePad Acceptance",
+            "exportedFileName": "E1FEF43F-994D-470F-B792-526539569D27.png",
+            "isAssociatedWithFailure": false,
+            "suggestedHumanReadableName": "Music Cover Flow native test albums_0_3B10DF97-DF12-4811-95E8-67292014217F.png",
+            "timestamp": 1792199143.996
+          }
+        ]
+      }
+    },
+    {
+      "asset": "sources/photos.png",
+      "source": ".validation/local/interaction-fixes-03/full-shots/real-selected-photo-wall-with-two-synthetic-photos.png",
+      "sha256": "3b506611f04e5f5e366fe2bf7156fc93204dc125a535a56e6729d88dfbc48462",
+      "copySha256": "3b506611f04e5f5e366fe2bf7156fc93204dc125a535a56e6729d88dfbc48462",
+      "transform": "byte-for-byte original; browser reads EXIF orientation; CSS proportional scale only; no app UI repainting",
+      "note": "照片墙，项目脚本原创合成渐变，演示时间",
+      "evidence": {
+        "manifest": ".validation/local/interaction-fixes-03/full-shots/manifest.json",
+        "attachments": [
+          {
+            "testIdentifier": "HomePadUITests/testMultipleSelectedPhotosWallPersistenceCancellationAndStandby()",
+            "configurationName": "Test Scheme Action",
+            "deviceId": "0C68A7DD-B924-4636-9F30-A7B1CDF006B3",
+            "deviceName": "HomePad Acceptance",
+            "exportedFileName": "1278B819-7E9B-455E-ADA0-91970EE67D77.png",
+            "isAssociatedWithFailure": false,
+            "suggestedHumanReadableName": "Real selected-photo wall with two synthetic photos_0_B2C69F02-6F3B-4CE1-B293-B641DD935FB7.png",
+            "timestamp": 1792197844.183
+          }
+        ]
+      }
+    },
+    {
+      "asset": "sources/clock.png",
+      "source": ".validation/local/interaction-fixes-03/full-shots/clock-page.png",
+      "sha256": "bc58dfcc34ff243838344a16e76a88209259b6e9972c84ed6b8c167ad7757aee",
+      "copySha256": "bc58dfcc34ff243838344a16e76a88209259b6e9972c84ed6b8c167ad7757aee",
+      "transform": "byte-for-byte original; browser reads EXIF orientation; CSS proportional scale only; no app UI repainting",
+      "note": "时钟页面，演示时间",
+      "evidence": {
+        "manifest": ".validation/local/interaction-fixes-03/full-shots/manifest.json",
+        "attachments": [
+          {
+            "testIdentifier": "HomePadUITests/testHorizontalPagingAndIndependentWidgetSwitching()",
+            "configurationName": "Test Scheme Action",
+            "deviceId": "0C68A7DD-B924-4636-9F30-A7B1CDF006B3",
+            "deviceName": "HomePad Acceptance",
+            "exportedFileName": "7FF5D3FC-EB75-46D7-B0A4-9D2D0FC3E69D.png",
+            "isAssociatedWithFailure": false,
+            "suggestedHumanReadableName": "Clock page_0_CC82D838-642E-485D-9386-83E92080C7DB.png",
+            "timestamp": 1792197407.07
+          }
+        ]
+      }
+    },
+    {
+      "asset": "sources/overview.png",
+      "source": ".validation/local/interaction-fixes-03/full-shots/black-overview-landscape-left.png",
+      "sha256": "648d90efe195777afd20c733f836c52b1d82d6bb4e6c30d64eba49f2e340fc77",
+      "copySha256": "648d90efe195777afd20c733f836c52b1d82d6bb4e6c30d64eba49f2e340fc77",
+      "transform": "byte-for-byte original; browser reads EXIF orientation; CSS proportional scale only; no app UI repainting",
+      "note": "总览，原创合成渐变，演示日期及天气",
+      "evidence": {
+        "manifest": ".validation/local/interaction-fixes-03/full-shots/manifest.json",
+        "attachments": [
+          {
+            "testIdentifier": "HomePadUITests/testBlackOverviewLayoutAndLiveWeatherDisclosure()",
+            "configurationName": "Test Scheme Action",
+            "deviceId": "0C68A7DD-B924-4636-9F30-A7B1CDF006B3",
+            "deviceName": "HomePad Acceptance",
+            "exportedFileName": "6D973EAA-1A68-44D3-B3CA-C5855DF90DDD.png",
+            "isAssociatedWithFailure": false,
+            "suggestedHumanReadableName": "Black overview landscape left_0_087DDA81-9E32-4FC9-A41F-AC5803426F6D.png",
+            "timestamp": 1792196991.305
+          }
+        ]
+      }
+    },
+    {
+      "asset": "sources/app-icon.png",
+      "source": "HomePad/Assets.xcassets/AppIcon.appiconset/AppIcon.png",
+      "sha256": "491690da02105802543230fbf8eb18645df98e12033b15e12f9b0eec25f57947",
+      "copySha256": "491690da02105802543230fbf8eb18645df98e12033b15e12f9b0eec25f57947",
+      "transform": "byte-for-byte original; browser reads EXIF orientation; CSS proportional scale only; no app UI repainting",
+      "note": "当前 App 原创家窗图标",
+      "evidence": null
+    },
+    {
+      "asset": "assets/lifestyle-background-ai.png",
+      "source": "assets/lifestyle-background-source.json",
+      "sha256": "4f44c856b88e125d88e118c4bf0b18e5883db9818f1d4bb4c3e6aa12c00a4842",
+      "note": "AI 原创氛围场景；不是用户的家或实拍设备；仅封面背景"
+    }
+  ],
+  "disclosures": [
+    "演示数值不能当成真实家庭结果",
+    "音乐合成曲目与空白封面按原样展示",
+    "照片墙仅用原创合成照片，未导出个人照片",
+    "相机、AirPlay 远端音频、感知功耗等不由这些截图证明",
+    "项目是基于 kuscholar/HomeViewPad MIT 开源项目的个人 fork"
+  ],
+  "exports": [
+    {
+      "file": "exports/01-cover.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 1999216,
+      "sha256": "ad520aee89e70f79b8f4c5e1ca835f4fcd12e3f279a2dc80368cf9a17cda81d3"
+    },
+    {
+      "file": "exports/02-home.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 707635,
+      "sha256": "15de37de27f3f5d83bb2dd586c0af5763ad4759589397e4b2008d7865aacdae8"
+    },
+    {
+      "file": "exports/03-music.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 232151,
+      "sha256": "3895efe0ceba9484ed541398cd3940350322dae3a0496ad289af4a02ecfa410d"
+    },
+    {
+      "file": "exports/04-photos.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 508678,
+      "sha256": "14306a5256ed3e183ddbaec89f58e99b0ffb8b4fdc2151ca77274a0b20691ad7"
+    },
+    {
+      "file": "exports/05-clock.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 868818,
+      "sha256": "656c1447fd9a730ffba9dd6fdb402b822a23a5bd9f7cb3d931c1f91ea56dad3e"
+    },
+    {
+      "file": "exports/06-overview.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 571483,
+      "sha256": "9c575dd73559e4cd638701d74984ea3f475110009e8a9322760462ddaa89c185"
+    }
+  ],
+  "featureReferences": [
+    {
+      "claim": "图标开关、名称详情、长按布局",
+      "source": "docs/ARCHITECTURE.md / Real-use revision 01 与 display revision"
+    },
+    {
+      "claim": "Apple Music / Cover Flow",
+      "source": "docs/ARCHITECTURE.md / MusicPage 与 MusicValidationClient"
+    },
+    {
+      "claim": "照片选择、相册、30秒轮播与照片待机",
+      "source": "docs/ARCHITECTURE.md / PhotoLibraryStore 与 Data lifecycle"
+    },
+    {
+      "claim": "时钟与屏幕模式",
+      "source": "docs/ARCHITECTURE.md / DisplayCoordinator 与 display revision"
+    },
+    {
+      "claim": "选城天气",
+      "source": "docs/ARCHITECTURE.md / Weather and location"
+    },
+    {
+      "claim": "授权后只读未来7天日程",
+      "source": "docs/ARCHITECTURE.md / AgendaStore 与 Data lifecycle"
+    }
+  ]
+}

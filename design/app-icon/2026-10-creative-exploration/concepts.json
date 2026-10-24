@@ -1,0 +1,50 @@
+[
+  {
+    "number": "01",
+    "name": "窗里",
+    "concept": "把家藏进一扇窗，外方内柔。",
+    "editable_svg": "symbols/01.svg"
+  },
+  {
+    "number": "02",
+    "name": "合院",
+    "concept": "四块日常模块，围出一片自己的空间。",
+    "editable_svg": "symbols/02.svg"
+  },
+  {
+    "number": "03",
+    "name": "开页",
+    "concept": "像翻开面板，把两个空间轻轻展开。",
+    "editable_svg": "symbols/03.svg"
+  },
+  {
+    "number": "04",
+    "name": "里外",
+    "concept": "窗中还有一扇窗，内外收在同一眼里。",
+    "editable_svg": "symbols/04.svg"
+  },
+  {
+    "number": "05",
+    "name": "互嵌",
+    "concept": "两片斜面错位咬合，留出一个共同的中心。",
+    "editable_svg": "symbols/05.svg"
+  },
+  {
+    "number": "06",
+    "name": "开间",
+    "concept": "从房屋立面转到平面，给生活留一个入口。",
+    "editable_svg": "symbols/06.svg"
+  },
+  {
+    "number": "07",
+    "name": "抱窗",
+    "concept": "让两侧的空间弯下来，抱住中间的一点灯光。",
+    "editable_svg": "symbols/07.svg"
+  },
+  {
+    "number": "08",
+    "name": "拼合",
+    "concept": "一个主空间和一块新模块，刚好接进彼此。",
+    "editable_svg": "symbols/08.svg"
+  }
+]

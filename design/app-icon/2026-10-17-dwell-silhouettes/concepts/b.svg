@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+<title id="title">HomePad silhouette study B</title>
+<desc id="desc">New HomePad concept, not a formal VILHIL mark. Three editable filled Bezier paths. Raster exploration interpreted and simplified by hand. Full opaque square master; rounded tile mask is for preview only.</desc>
+<defs>
+<linearGradient id="canvas" x1=".1" y1="0" x2=".8" y2="1"><stop stop-color="#FFFFFF"/><stop offset=".65" stop-color="#FAFBFA"/><stop offset="1" stop-color="#EFF2F1"/></linearGradient>
+<linearGradient id="body" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#7BD7BB"/><stop offset=".55" stop-color="#48BEA6"/><stop offset="1" stop-color="#2AA68F"/></linearGradient>
+<linearGradient id="roof" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#A5E5C4"/><stop offset="1" stop-color="#67CFA8"/></linearGradient>
+<linearGradient id="core" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#F7D79A"/><stop offset="1" stop-color="#ECC17A"/></linearGradient>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="145%" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="9" stdDeviation="10" flood-color="#32AA94" flood-opacity=".11"/></filter>
+</defs><rect width="1024" height="1024" fill="url(#canvas)"/>
+<g filter="url(#soft)"><g id="homepad-symbol" transform="translate(81.535 79.012) scale(.686)"><path data-part="body" fill="url(#body)" d="M617 258 C639 255 650 270 650 292 V657 C650 677 639 695 621 706 L407 827 Q381 840 367 864 C354 884 337 890 318 877 C301 864 292 845 292 824 V482 C292 451 306 423 332 407 L587 268 Q607 257 617 258 Z"/><path data-part="roof" fill="url(#roof)" d="M710 350 L917 469 C947 486 963 513 963 548 V766 C963 785 949 797 932 788 L708 691 Q681 681 681 658 V379 C681 352 693 343 710 350 Z"/><path data-part="core" fill="url(#core)" d="M710 726 L929 813 C957 824 962 847 947 868 Q941 879 927 886 L699 992 Q659 1011 620 991 L421 909 C393 897 393 865 411 848 L645 728 Q676 711 710 726 Z"/></g></g></svg>

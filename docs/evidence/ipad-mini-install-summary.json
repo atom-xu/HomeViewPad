@@ -1,0 +1,140 @@
+{
+  "scope": "Install unchanged HomePad wallpaper version on newly connected iPad mini",
+  "checkedUTC": "2026-10-23T06:43:57.755280+00:00",
+  "environment": {
+    "xcode": "27.0 (27A266a)",
+    "sdk": "27.0",
+    "device": "iPad mini (A17 Pro)",
+    "productType": "iPad16,1",
+    "runtime": "iPadOS 27.0 (24A437)",
+    "developerModeEnabled": true,
+    "lastObservedTransport": "wired"
+  },
+  "source": {
+    "gitHead": "63bf387bb27e8dd6d762669a75ce5cc1167ee05d",
+    "testedManifestSHA256": "be0dd245501cca41de582d4ca4633a9461c883cc70495d1ab7d12a210660f426",
+    "frozenInputsMatch": 50,
+    "behaviorChanged": false
+  },
+  "build": {
+    "configuration": "Release",
+    "exitCode": 0,
+    "strictSignaturePassed": true,
+    "profileUnexpired": true,
+    "profileIncludesTargetMini": true,
+    "signatureCertificateMatchesProfile": true,
+    "certificateOnlineValidationPassedOnMac": true,
+    "profileNativeValidationPassed": true,
+    "deviceReportsInstalledProfileValid": true,
+    "profileRequiresPPQCheck": true,
+    "version": "1.0 (1)",
+    "minimumOS": "17.0"
+  },
+  "installation": {
+    "installed": true,
+    "previousExactAppCount": 0,
+    "exactBundleAndInstallationURLMatched": true,
+    "signedPackageFilesUnchangedAfterInstall": 13,
+    "ordinaryLaunchSucceeded": true,
+    "runningProcessReadback": true,
+    "userReportedDeveloperAppEntryAbsent": true,
+    "userReportedAlert": "需要互联网链接以验证是否信任开发者",
+    "userReportedSameAlertAfterCellularHotspot": true
+  },
+  "diagnosis": {
+    "macPPQHTTPSStatus": 200,
+    "macStatusDoesNotVerifyIPadConnectivity": true,
+    "rootCauseEstablished": false,
+    "currentBlocker": null,
+    "offlineAlternative": "User declined seven-day offline version; no offline profile generated or installed.",
+    "appleReference": "https://developer.apple.com/help/account/provisioning-profiles/provisioning-profile-updates/",
+    "status": "Resolved: user confirms HomePad opens; matching running process PID760 independently read back on iPadOS27.0.1.",
+    "userRequestedDeferral": false,
+    "specificFailureObserved": "Earlier authorization attempt failed obtaining device identity attestation: Failed to copy system key (2). Why the key was unavailable and the precise recovery trigger are unconfirmed."
+  },
+  "validation": {
+    "newXCTestXCUITestRun": false,
+    "reason": "Application behavior and tested source unchanged; installation/signing task only. Previous incomplete wallpaper scheme result remains as documented.",
+    "physicalLayoutObserved": false,
+    "homeKitMusicCameraAirPlayWallpaperAcceptance": false
+  },
+  "boundaries": {
+    "existingBoomPadModified": false,
+    "appUninstalledOrDataReset": false,
+    "accountOnIPadChangedByAgent": false,
+    "permissionsGrantedByAgent": false,
+    "networkSettingsChangedByAgent": false,
+    "gitCommitOrPushInThisTask": false
+  },
+  "rawEvidenceDirectory": ".validation/local/ipad-mini-install-20261023T060404Z/",
+  "latestRecheck": {
+    "checkedUTC": "2026-10-23T07:25:40.481185+00:00",
+    "device": "iPad mini (A17 Pro)",
+    "runtime": "iPadOS 27.0 (24A437)",
+    "connected": true,
+    "transport": "localNetwork",
+    "paired": true,
+    "developerModeEnabled": true,
+    "passcodeRequired": false,
+    "unlockedSinceBoot": true,
+    "installedApp": {
+      "bundleIdentifier": "cn.vilhil.homeviewpad",
+      "version": "1.0",
+      "bundleVersion": "1"
+    },
+    "ordinaryLaunchSucceeded": false,
+    "runningProcessesAfterLaunch": 0,
+    "launchError": {
+      "domain": "com.apple.dt.CoreDeviceError",
+      "code": 10002,
+      "underlyingReason": "Security: invalid code signature, inadequate entitlements, or profile not explicitly trusted by user"
+    },
+    "conclusion": "Device connection restored over local network. Existing installed HomePad is still denied by the system security launch check. Error does not distinguish signature, entitlement, and developer trust causes.",
+    "reinstalled": false,
+    "settingsOrAccountsChanged": false,
+    "sevenDayProfileUsed": false,
+    "rawEvidenceDirectory": ".validation/local/ipad-mini-recheck-20261023T072435Z/"
+  },
+  "latestDiagnosis": {
+    "checkedUTC": "2026-10-23T07:37:14.400975+00:00",
+    "status": "resolved: user opened HomePad; matching process independently confirmed",
+    "device": "iPad mini (A17 Pro)",
+    "runtimeBefore": "27.0 (24A437)",
+    "runtimeNow": "27.0.1 (24A446)",
+    "earlierFailure": {
+      "observedLocalTime": "2026-10-23T14:25:25+08:00",
+      "process": "online-auth-agent",
+      "requestMatchedInstalledHomePad": true,
+      "errorDomain": "com.apple.MobileActivation.ErrorDomain",
+      "code": -1,
+      "errorChain": [
+        "Failed to create BAA info.",
+        "Failed to create reference key attestation.",
+        "Failed to copy attestation key.",
+        "Failed to copy system key (2).",
+        "Couldn't get device identity",
+        "Could not perform authorization attempt"
+      ],
+      "conclusion": "The observed authorization attempt stopped when the system could not obtain device identity attestation material.",
+      "whyKeyUnavailableEstablished": false
+    },
+    "current": {
+      "userConfirmedOpens": true,
+      "processPID": 760,
+      "installedExecutableMatched": true,
+      "connected": true,
+      "paired": true,
+      "transport": "localNetwork"
+    },
+    "recoveryTriggerEstablished": false,
+    "boundaries": {
+      "agentUpdatedOS": false,
+      "agentRebootedDevice": false,
+      "agentResignedOrReinstalled": false,
+      "usedSevenDayProfile": false,
+      "applicationBehaviorChanged": false
+    },
+    "rawEvidenceDirectory": ".validation/local/ipad-mini-trust-diagnosis-20261023T073044Z/"
+  },
+  "lastCheckedUTC": "2026-10-23T07:37:14.400975+00:00"
+}

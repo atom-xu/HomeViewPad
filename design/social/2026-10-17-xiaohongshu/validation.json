@@ -1,0 +1,326 @@
+{
+  "date": "2026-10-17",
+  "scope": "仅小红书展示图与文案。App任务并行开发，本素材任务不修改App源码、工程或测试。",
+  "renderer": {
+    "engine": "Playwright Chromium",
+    "browserVersion": "135.0.7049.17",
+    "platform": "darwin",
+    "node": "v22.22.3",
+    "font": "macOS PingFang SC",
+    "command": "node design/social/2026-10-17-xiaohongshu/render.cjs"
+  },
+  "outputs": [
+    {
+      "file": "exports/01-cover.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 1999216,
+      "sha256": "ad520aee89e70f79b8f4c5e1ca835f4fcd12e3f279a2dc80368cf9a17cda81d3"
+    },
+    {
+      "file": "exports/02-home.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 707635,
+      "sha256": "15de37de27f3f5d83bb2dd586c0af5763ad4759589397e4b2008d7865aacdae8"
+    },
+    {
+      "file": "exports/03-music.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 232151,
+      "sha256": "3895efe0ceba9484ed541398cd3940350322dae3a0496ad289af4a02ecfa410d"
+    },
+    {
+      "file": "exports/04-photos.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 508678,
+      "sha256": "14306a5256ed3e183ddbaec89f58e99b0ffb8b4fdc2151ca77274a0b20691ad7"
+    },
+    {
+      "file": "exports/05-clock.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 868818,
+      "sha256": "656c1447fd9a730ffba9dd6fdb402b822a23a5bd9f7cb3d931c1f91ea56dad3e"
+    },
+    {
+      "file": "exports/06-overview.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 571483,
+      "sha256": "9c575dd73559e4cd638701d74984ea3f475110009e8a9322760462ddaa89c185"
+    }
+  ],
+  "sourceChecks": [
+    {
+      "asset": "sources/home.png",
+      "unchanged": true,
+      "matchedNonFailureScreenshot": true
+    },
+    {
+      "asset": "sources/music-player.png",
+      "unchanged": true,
+      "matchedNonFailureScreenshot": true
+    },
+    {
+      "asset": "sources/music-library.png",
+      "unchanged": true,
+      "matchedNonFailureScreenshot": true
+    },
+    {
+      "asset": "sources/photos.png",
+      "unchanged": true,
+      "matchedNonFailureScreenshot": true
+    },
+    {
+      "asset": "sources/clock.png",
+      "unchanged": true,
+      "matchedNonFailureScreenshot": true
+    },
+    {
+      "asset": "sources/overview.png",
+      "unchanged": true,
+      "matchedNonFailureScreenshot": true
+    },
+    {
+      "asset": "sources/app-icon.png",
+      "unchanged": true,
+      "matchedNonFailureScreenshot": null
+    }
+  ],
+  "cards": [
+    {
+      "id": "01-cover",
+      "width": 1440,
+      "height": 1920,
+      "images": [
+        {
+          "src": "sources/home.png",
+          "natural": [
+            2420,
+            1668
+          ],
+          "rendered": [
+            1204,
+            830
+          ],
+          "loaded": true,
+          "ratioError": 0.00023691889861621185
+        }
+      ],
+      "textOverflows": []
+    },
+    {
+      "id": "02-home",
+      "width": 1440,
+      "height": 1920,
+      "images": [
+        {
+          "src": "sources/home.png",
+          "natural": [
+            2420,
+            1668
+          ],
+          "rendered": [
+            1240,
+            855
+          ],
+          "loaded": true,
+          "ratioError": 0.0005469308763517144
+        }
+      ],
+      "textOverflows": []
+    },
+    {
+      "id": "03-music",
+      "width": 1440,
+      "height": 1920,
+      "images": [
+        {
+          "src": "sources/music-player.png",
+          "natural": [
+            2420,
+            1668
+          ],
+          "rendered": [
+            970,
+            669
+          ],
+          "loaded": true,
+          "ratioError": 0.0009140669527158973
+        },
+        {
+          "src": "sources/music-library.png",
+          "natural": [
+            2420,
+            1668
+          ],
+          "rendered": [
+            870,
+            600
+          ],
+          "loaded": true,
+          "ratioError": 0.0008393285371703918
+        }
+      ],
+      "textOverflows": []
+    },
+    {
+      "id": "04-photos",
+      "width": 1440,
+      "height": 1920,
+      "images": [
+        {
+          "src": "sources/photos.png",
+          "natural": [
+            2420,
+            1668
+          ],
+          "rendered": [
+            1228,
+            846
+          ],
+          "loaded": true,
+          "ratioError": 0.0006973144888344773
+        }
+      ],
+      "textOverflows": []
+    },
+    {
+      "id": "05-clock",
+      "width": 1440,
+      "height": 1920,
+      "images": [
+        {
+          "src": "sources/clock.png",
+          "natural": [
+            2420,
+            1668
+          ],
+          "rendered": [
+            1228,
+            846
+          ],
+          "loaded": true,
+          "ratioError": 0.0006973144888344773
+        }
+      ],
+      "textOverflows": []
+    },
+    {
+      "id": "06-overview",
+      "width": 1440,
+      "height": 1920,
+      "images": [
+        {
+          "src": "sources/overview.png",
+          "natural": [
+            2420,
+            1668
+          ],
+          "rendered": [
+            716,
+            494
+          ],
+          "loaded": true,
+          "ratioError": 0.001446615986563149
+        }
+      ],
+      "textOverflows": []
+    }
+  ],
+  "pageErrors": [],
+  "visualReview": {
+    "images": [
+      "exports/01-cover.png",
+      "exports/02-home.png",
+      "exports/03-music.png",
+      "exports/04-photos.png",
+      "exports/05-clock.png",
+      "exports/06-overview.png"
+    ],
+    "method": "逐张 view_image 原图查看；父任务独立逐张复查",
+    "result": "6/6 可交付，截图完整且比例正确、演示与TEST DATA可见、无文字截断或遮挡",
+    "additionalViews": [
+      "overview.png",
+      ".validation/local/xiaohongshu-20261017/gallery-1440.png"
+    ],
+    "additionalResult": "整套预览与桌面浏览页已实际查看，六张齐全、说明和保存入口完整。",
+    "independentReviewer": "父任务于本轮独立逐张查看并确认6张可交付。"
+  },
+  "nativeTesting": "本轮未运行 XCTest/XCUITest。采用已有测试附件，不作为真实硬件和当前完整构建验收。",
+  "publication": "未提交、推送、上传或公开发布。",
+  "responsiveGallery": [
+    {
+      "viewport": 375,
+      "documentWidth": 375,
+      "allImagesLoaded": true,
+      "imageCount": 7
+    },
+    {
+      "viewport": 768,
+      "documentWidth": 768,
+      "allImagesLoaded": true,
+      "imageCount": 7
+    },
+    {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "allImagesLoaded": true,
+      "imageCount": 7
+    }
+  ],
+  "links": [
+    {
+      "href": "发布文案.md",
+      "exists": true
+    },
+    {
+      "href": "overview.png",
+      "exists": true
+    },
+    {
+      "href": "cards.html",
+      "exists": true
+    },
+    {
+      "href": "manifest.json",
+      "exists": true
+    },
+    {
+      "href": "validation.json",
+      "exists": true
+    },
+    {
+      "href": "exports/01-cover.png",
+      "exists": true
+    },
+    {
+      "href": "exports/02-home.png",
+      "exists": true
+    },
+    {
+      "href": "exports/03-music.png",
+      "exists": true
+    },
+    {
+      "href": "exports/04-photos.png",
+      "exists": true
+    },
+    {
+      "href": "exports/05-clock.png",
+      "exists": true
+    },
+    {
+      "href": "exports/06-overview.png",
+      "exists": true
+    },
+    {
+      "href": "README.md",
+      "exists": true
+    }
+  ],
+  "passed": true
+}

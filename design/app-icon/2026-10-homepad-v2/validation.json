@@ -1,0 +1,247 @@
+{
+  "status": "passed",
+  "environment": {
+    "macos": "27.0",
+    "machine": "arm64",
+    "python": "3.13.12",
+    "pillow": "12.1.0"
+  },
+  "original_source_preserved": true,
+  "distinct_monochrome_structures": 3,
+  "assets": [
+    {
+      "asset": "01-nook/icon-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "fully_opaque": true
+    },
+    {
+      "asset": "01-nook/icon-120.png",
+      "size": [
+        120,
+        120
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "colored_regions": [
+        {
+          "pixels": 1616,
+          "bounds": [
+            26,
+            25,
+            94,
+            92
+          ]
+        },
+        {
+          "pixels": 199,
+          "bounds": [
+            72,
+            77,
+            87,
+            92
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "01-nook/icon-60.png",
+      "size": [
+        60,
+        60
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "colored_regions": [
+        {
+          "pixels": 421,
+          "bounds": [
+            13,
+            13,
+            47,
+            46
+          ]
+        },
+        {
+          "pixels": 48,
+          "bounds": [
+            36,
+            39,
+            43,
+            46
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "02-gather/icon-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "fully_opaque": true
+    },
+    {
+      "asset": "02-gather/icon-120.png",
+      "size": [
+        120,
+        120
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "colored_regions": [
+        {
+          "pixels": 1383,
+          "bounds": [
+            29,
+            33,
+            91,
+            89
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "02-gather/icon-60.png",
+      "size": [
+        60,
+        60
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "colored_regions": [
+        {
+          "pixels": 346,
+          "bounds": [
+            15,
+            17,
+            45,
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "03-dwell/icon-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "fully_opaque": true
+    },
+    {
+      "asset": "03-dwell/icon-120.png",
+      "size": [
+        120,
+        120
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "colored_regions": [
+        {
+          "pixels": 1188,
+          "bounds": [
+            30,
+            33,
+            56,
+            88
+          ]
+        },
+        {
+          "pixels": 532,
+          "bounds": [
+            64,
+            67,
+            90,
+            88
+          ]
+        },
+        {
+          "pixels": 512,
+          "bounds": [
+            64,
+            33,
+            90,
+            62
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "03-dwell/icon-60.png",
+      "size": [
+        60,
+        60
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "colored_regions": [
+        {
+          "pixels": 299,
+          "bounds": [
+            15,
+            16,
+            28,
+            44
+          ]
+        },
+        {
+          "pixels": 139,
+          "bounds": [
+            32,
+            33,
+            45,
+            44
+          ]
+        },
+        {
+          "pixels": 127,
+          "bounds": [
+            32,
+            17,
+            45,
+            31
+          ]
+        }
+      ]
+    }
+  ],
+  "visual_review": {
+    "inspected": [
+      "previews/overview.png",
+      "previews/backgrounds-120-60.png",
+      "previews/evolution.png",
+      "01-nook/icon-1024.png",
+      "02-gather/icon-1024.png",
+      "03-dwell/icon-1024.png"
+    ],
+    "result": "Full-size originals and 120/60 px previews inspected: soft edges, unclipped shape bounds, negative space, separate A light, connected B branches and three separate C panes remain legible. New symbols are clearly labeled as HomePad derivatives, with the formal source kept separate."
+  },
+  "limitations": [
+    "Illustrative desktop mask only",
+    "System tinted/clear appearances not integrated or tested",
+    "No simulator or physical iPad installation",
+    "No app behavior change; XCTest/XCUITest not run"
+  ],
+  "references_reviewed": [
+    {
+      "name": "Apple Home official app listing",
+      "url": "https://apps.apple.com/us/app/home/id1110145103",
+      "observed": "Layered orange house with chimney. Borrow home/space semantics only."
+    },
+    {
+      "name": "Samsung SmartThings official app listing",
+      "url": "https://apps.apple.com/us/app/smartthings/id1222822904",
+      "observed": "Five outer hollow circles and a center ring. Borrow connectivity semantics only."
+    },
+    {
+      "name": "Apple HomeKit visual guidelines",
+      "url": "https://developer.apple.com/design/human-interface-guidelines/homekit"
+    }
+  ]
+}

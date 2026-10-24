@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+<title id="title">HomePad — VILHIL / Graphite</title>
+<desc id="desc">Formal VILHIL pictorial mark. Original paths and aspect ratio preserved. Opaque, square icon master; system mask is applied only in preview.</desc>
+<defs>
+<linearGradient id="base" x1="0" y1="0" x2="0.65" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#30343B"/><stop offset=".52" stop-color="#1C2027"/><stop offset="1" stop-color="#11151B"/></linearGradient>
+<radialGradient id="light" cx=".24" cy="-.08" r=".94"><stop stop-color="#9299A5" stop-opacity=".16"/><stop offset=".7" stop-color="#A0A5B0" stop-opacity="0"/></radialGradient>
+<radialGradient id="low" cx=".85" cy="1.14" r=".78"><stop stop-color="#03070D" stop-opacity=".4"/><stop offset="1" stop-color="#03070D" stop-opacity="0"/></radialGradient>
+<linearGradient id="ink" x1="0" y1="0" x2=".25" y2="1"><stop stop-color="#FFFFFF"/><stop offset=".6" stop-color="#F7F8FA"/><stop offset="1" stop-color="#E6E9EF"/></linearGradient>
+<g id="brand-mark"><path d="M98.953 0h40.246L39.848 208.801H0L98.953 0Z"/>
+<path d="M179.445 0 278.398 208.801h-39.843L139.199 0h40.246Z"/>
+<path d="M119.352 139.199h39.695v69.602h-39.695z"/></g>
+<filter id="relief" x="-20%" y="-20%" width="140%" height="150%" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="9" stdDeviation="10" flood-color="#000000" flood-opacity=".24"/></filter>
+</defs>
+<rect width="1024" height="1024" fill="url(#base)"/>
+<rect width="1024" height="1024" fill="url(#light)"/>
+<rect width="1024" height="1024" fill="url(#low)"/>
+<g filter="url(#relief)"><use xlink:href="#brand-mark" transform="translate(212 266) scale(2.155187896465)" fill="url(#ink)"/></g>
+</svg>

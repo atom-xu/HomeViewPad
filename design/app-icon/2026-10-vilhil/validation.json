@@ -1,0 +1,260 @@
+{
+  "status": "passed",
+  "environment": {
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "python": "3.13.12",
+    "pillow": "12.1.0"
+  },
+  "paths_preserved": true,
+  "uniform_scale": 2.1551878964647733,
+  "assets": [
+    {
+      "asset": "01-graphite/icon-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "fully_opaque": true
+    },
+    {
+      "asset": "01-graphite/icon-120.png",
+      "size": [
+        120,
+        120
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "mark_components": [
+        {
+          "pixels": 1003,
+          "bounds": [
+            25,
+            31,
+            95,
+            84
+          ]
+        },
+        {
+          "pixels": 170,
+          "bounds": [
+            55,
+            67,
+            65,
+            84
+          ]
+        }
+      ],
+      "center_node_independent_and_bounds_within_one_pixel": true
+    },
+    {
+      "asset": "01-graphite/icon-60.png",
+      "size": [
+        60,
+        60
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "mark_components": [
+        {
+          "pixels": 116,
+          "bounds": [
+            13,
+            16,
+            29,
+            42
+          ]
+        },
+        {
+          "pixels": 116,
+          "bounds": [
+            31,
+            16,
+            47,
+            42
+          ]
+        },
+        {
+          "pixels": 36,
+          "bounds": [
+            28,
+            33,
+            32,
+            42
+          ]
+        }
+      ],
+      "center_node_independent_and_bounds_within_one_pixel": true
+    },
+    {
+      "asset": "02-porcelain/icon-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "fully_opaque": true
+    },
+    {
+      "asset": "02-porcelain/icon-120.png",
+      "size": [
+        120,
+        120
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "mark_components": [
+        {
+          "pixels": 1028,
+          "bounds": [
+            25,
+            31,
+            95,
+            84
+          ]
+        },
+        {
+          "pixels": 170,
+          "bounds": [
+            55,
+            67,
+            65,
+            84
+          ]
+        }
+      ],
+      "center_node_independent_and_bounds_within_one_pixel": true
+    },
+    {
+      "asset": "02-porcelain/icon-60.png",
+      "size": [
+        60,
+        60
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "mark_components": [
+        {
+          "pixels": 121,
+          "bounds": [
+            13,
+            16,
+            29,
+            42
+          ]
+        },
+        {
+          "pixels": 120,
+          "bounds": [
+            31,
+            16,
+            47,
+            42
+          ]
+        },
+        {
+          "pixels": 36,
+          "bounds": [
+            28,
+            33,
+            32,
+            42
+          ]
+        }
+      ],
+      "center_node_independent_and_bounds_within_one_pixel": true
+    },
+    {
+      "asset": "03-daylight/icon-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "fully_opaque": true
+    },
+    {
+      "asset": "03-daylight/icon-120.png",
+      "size": [
+        120,
+        120
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "mark_components": [
+        {
+          "pixels": 1035,
+          "bounds": [
+            25,
+            31,
+            95,
+            84
+          ]
+        },
+        {
+          "pixels": 173,
+          "bounds": [
+            55,
+            66,
+            65,
+            84
+          ]
+        }
+      ],
+      "center_node_independent_and_bounds_within_one_pixel": true
+    },
+    {
+      "asset": "03-daylight/icon-60.png",
+      "size": [
+        60,
+        60
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "mark_components": [
+        {
+          "pixels": 123,
+          "bounds": [
+            13,
+            16,
+            29,
+            42
+          ]
+        },
+        {
+          "pixels": 123,
+          "bounds": [
+            31,
+            16,
+            47,
+            42
+          ]
+        },
+        {
+          "pixels": 36,
+          "bounds": [
+            28,
+            33,
+            32,
+            42
+          ]
+        }
+      ],
+      "center_node_independent_and_bounds_within_one_pixel": true
+    }
+  ],
+  "visual_review": {
+    "inspected": [
+      "previews/overview.png",
+      "previews/backgrounds-120-60.png",
+      "previews/source-and-recommended.png",
+      "01-graphite/icon-1024.png",
+      "02-porcelain/icon-1024.png",
+      "03-daylight/icon-1024.png"
+    ],
+    "result": "Mark proportions, clear space, gradients, edges and separated center node inspected. No clipping or unexpected transparency.",
+    "limitations": "Desktop masking is an illustration. No actual system icon rendering, tinted/clear appearance, simulator install or physical iPad validation."
+  },
+  "xctest_xcuitest": "Not run: independent design assets only, no app behavior, view layout or AppIcon integration changed.",
+  "check_correction": "The first custom check incorrectly assumed the two sloped source paths always form a connected raster region. They touch at a zero-area apex point in the official vector. The final check preserves all paths, checks the three geometric sample points, verifies the independent center-node bounds within one target pixel, and accepts the mathematically expected two or three thresholded regions. No icon geometry was changed for the check."
+}

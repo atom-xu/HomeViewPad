@@ -1,0 +1,25 @@
+{
+  "renderer": "Playwright Chromium, headless, deviceScaleFactor=1",
+  "browserVersion": "135.0.7049.17",
+  "nodeVersion": "v22.22.3",
+  "previewDimensions": {
+    "overview": {
+      "x": 0,
+      "y": 0,
+      "width": 1600,
+      "height": 932.484375
+    },
+    "backgrounds-120-60": {
+      "x": 0,
+      "y": 934.484375,
+      "width": 1600,
+      "height": 957
+    },
+    "source-and-recommended": {
+      "x": 0,
+      "y": 1000.484375,
+      "width": 1600,
+      "height": 1060.6875
+    }
+  }
+}

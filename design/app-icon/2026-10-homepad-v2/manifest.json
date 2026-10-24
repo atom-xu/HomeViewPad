@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-16",
+  "round": 2,
+  "identity": "HomePad original app symbol studies; derived work, not formal VILHIL marks",
+  "source_svg": "source/vilhil-original.svg",
+  "source_sha256": "ebd6b2d0fe40ff81a4b18fa421fec0f5fb1be24484de33e2056112944a03ece9",
+  "references": [
+    {
+      "name": "Apple Home official app listing",
+      "url": "https://apps.apple.com/us/app/home/id1110145103",
+      "observed": "Layered orange house with chimney. Borrow home/space semantics only."
+    },
+    {
+      "name": "Samsung SmartThings official app listing",
+      "url": "https://apps.apple.com/us/app/smartthings/id1222822904",
+      "observed": "Five outer hollow circles and a center ring. Borrow connectivity semantics only."
+    },
+    {
+      "name": "Apple HomeKit visual guidelines",
+      "url": "https://developer.apple.com/design/human-interface-guidelines/homekit"
+    }
+  ],
+  "variants": [
+    {
+      "id": "01-nook",
+      "letter": "A",
+      "name": "小憩",
+      "en": "Nook",
+      "tag": "开放的家",
+      "recommended": false,
+      "description": "把硬朗的屋脊打开，留一盏圆润的小灯。",
+      "evolution": "斜面 → 连续弯折的空间边界；中心节点 → 移到入口的小灯。",
+      "change": "原标的对称尖角变成有开口的柔和围合。节点离开中轴，让“家”更有生活感。",
+      "expected_components": 2
+    },
+    {
+      "id": "02-gather",
+      "letter": "B",
+      "name": "相连",
+      "en": "Gather",
+      "tag": "柔和的聚合",
+      "recommended": false,
+      "description": "两条弧线，把设备与日常轻轻连在一起。",
+      "evolution": "两条斜面 → 两条弧形连接；独立节点 → 接住它们的共同核心。",
+      "change": "从“屋顶”转成三个不等角色的圆润节点。没有五向放射，也不使用空心圆组。",
+      "expected_components": 1
+    },
+    {
+      "id": "03-dwell",
+      "letter": "C",
+      "name": "家窗",
+      "en": "Dwell",
+      "tag": "拼合的空间",
+      "recommended": true,
+      "description": "三块柔软的小窗，拼出 HomePad 的家。",
+      "evolution": "两条斜面 → 屋脊的斜切边；中心矩形 → 一块亮起的小面板。",
+      "change": "把原标拆开、扩展成三个不等尺寸的窗格。留白成为连接缝，外缘才显出房屋。",
+      "expected_components": 3
+    }
+  ],
+  "recommended": "03-dwell",
+  "master_sizes": [
+    1024,
+    120,
+    60
+  ],
+  "integration": "Design assets only; no AppIcon, project, app behavior, install, commit, push or publish.",
+  "preview_mask": "Superellipse 4.6, illustrative; final system treatment untested."
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "asset": "wallpaper.jpg",
+    "page": "https://unsplash.com/photos/a-lake-surrounded-by-trees-with-a-mountain-in-the-background-6icCeDATooM",
+    "author": "Filip Zrnzević",
+    "download": "https://images.unsplash.com/photo-1698349239564-f82472deaf1f?auto=format&fit=max&w=2560&q=90",
+    "license": "Unsplash License",
+    "licenseURL": "https://unsplash.com/license",
+    "sha256": "0b0d5897657d647d06f1bfa73277e70ba157d5af717784567b04f02ee56e1477",
+    "usage": "Licensed supporting photographic input for a concept render, not actual HomeKit video or user photos"
+  },
+  {
+    "asset": "camera-room.jpg",
+    "page": "https://unsplash.com/photos/cozy-living-room-with-sunlight-streaming-through-sheer-curtains-5T_XETRABHs",
+    "author": "Kevin Lieder",
+    "download": "https://images.unsplash.com/photo-1783110688413-77aadea9e511?auto=format&fit=max&w=2560&q=90",
+    "license": "Unsplash License",
+    "licenseURL": "https://unsplash.com/license",
+    "sha256": "b9129ce7053a6a6e161dca1730d2c106e7e0dbdab98bccd84bac04d3e5bba140",
+    "usage": "Licensed supporting photographic input for a concept render, not actual HomeKit video or user photos"
+  }
+]

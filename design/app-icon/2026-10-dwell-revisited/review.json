@@ -1,0 +1,26 @@
+{
+  "status": "visual review completed",
+  "comparison_size": [
+    1800,
+    970
+  ],
+  "new_forms": 4,
+  "reference": "original round-2 Dwell, copied byte-identically",
+  "inspected": [
+    "comparison.png",
+    "review/01-warm-window.png",
+    "review/02-light-corner.png",
+    "review/03-one-roof.png",
+    "review/04-layered-home.png"
+  ],
+  "small_size": "Five actual 60 px thumbnails inspected in comparison board. House silhouette and warm accent remain readable.",
+  "reworked_before_delivery": [
+    "sharp diagonal cut",
+    "detached triangular roof",
+    "flat color division posing as depth"
+  ],
+  "self_evaluation": "03 offers a central-window spatial alternative while retaining the three-plane family; 01 is immediate. The desired graphic vs literal balance in 02/04 remains an aesthetic uncertainty. No final selection implied.",
+  "appicon": "original PNG and Contents hashes unchanged",
+  "scope": "Only new design/app-icon/2026-10-dwell-revisited directory written by this task. No application changes, install, commit or push.",
+  "limitations": "Creative comparison only, no final pixel/system/physical appearance validation."
+}

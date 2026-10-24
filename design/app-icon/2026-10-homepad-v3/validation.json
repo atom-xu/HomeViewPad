@@ -1,0 +1,384 @@
+{
+  "status": "passed",
+  "environment": {
+    "macos": "27.0",
+    "machine": "arm64",
+    "python": "3.13.12",
+    "pillow": "12.1.0"
+  },
+  "original_c_svg_and_png_unchanged": true,
+  "c1_c2_same_refined_contours": true,
+  "c3_distinct_geometry": true,
+  "equal_horizontal_vertical_gaps": true,
+  "assets": [
+    {
+      "asset": "01-clear/icon-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "fully_opaque": true
+    },
+    {
+      "asset": "01-clear/icon-120.png",
+      "size": [
+        120,
+        120
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "pane_regions": [
+        {
+          "pixels": 1497,
+          "bounds": [
+            28,
+            29,
+            58,
+            89
+          ]
+        },
+        {
+          "pixels": 646,
+          "bounds": [
+            64,
+            29,
+            94,
+            61
+          ]
+        },
+        {
+          "pixels": 632,
+          "bounds": [
+            64,
+            67,
+            94,
+            89
+          ]
+        }
+      ],
+      "minimum_clear_pixel_gap": 2
+    },
+    {
+      "asset": "01-clear/icon-60.png",
+      "size": [
+        60,
+        60
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "pane_regions": [
+        {
+          "pixels": 370,
+          "bounds": [
+            14,
+            15,
+            29,
+            44
+          ]
+        },
+        {
+          "pixels": 156,
+          "bounds": [
+            32,
+            15,
+            47,
+            30
+          ]
+        },
+        {
+          "pixels": 146,
+          "bounds": [
+            32,
+            34,
+            47,
+            44
+          ]
+        }
+      ],
+      "minimum_clear_pixel_gap": 2
+    },
+    {
+      "asset": "02-soft/icon-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "fully_opaque": true
+    },
+    {
+      "asset": "02-soft/icon-120.png",
+      "size": [
+        120,
+        120
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "pane_regions": [
+        {
+          "pixels": 1498,
+          "bounds": [
+            28,
+            29,
+            58,
+            89
+          ]
+        },
+        {
+          "pixels": 647,
+          "bounds": [
+            64,
+            29,
+            94,
+            61
+          ]
+        },
+        {
+          "pixels": 632,
+          "bounds": [
+            64,
+            67,
+            94,
+            89
+          ]
+        }
+      ],
+      "minimum_clear_pixel_gap": 2
+    },
+    {
+      "asset": "02-soft/icon-60.png",
+      "size": [
+        60,
+        60
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "pane_regions": [
+        {
+          "pixels": 381,
+          "bounds": [
+            14,
+            15,
+            29,
+            45
+          ]
+        },
+        {
+          "pixels": 155,
+          "bounds": [
+            32,
+            15,
+            47,
+            30
+          ]
+        },
+        {
+          "pixels": 154,
+          "bounds": [
+            32,
+            34,
+            47,
+            45
+          ]
+        }
+      ],
+      "minimum_clear_pixel_gap": 2
+    },
+    {
+      "asset": "03-balanced/icon-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "fully_opaque": true
+    },
+    {
+      "asset": "03-balanced/icon-120.png",
+      "size": [
+        120,
+        120
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "pane_regions": [
+        {
+          "pixels": 1448,
+          "bounds": [
+            27,
+            31,
+            58,
+            87
+          ]
+        },
+        {
+          "pixels": 687,
+          "bounds": [
+            64,
+            65,
+            95,
+            88
+          ]
+        },
+        {
+          "pixels": 567,
+          "bounds": [
+            64,
+            31,
+            95,
+            59
+          ]
+        }
+      ],
+      "minimum_clear_pixel_gap": 2
+    },
+    {
+      "asset": "03-balanced/icon-60.png",
+      "size": [
+        60,
+        60
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "pane_regions": [
+        {
+          "pixels": 377,
+          "bounds": [
+            13,
+            16,
+            29,
+            44
+          ]
+        },
+        {
+          "pixels": 144,
+          "bounds": [
+            32,
+            16,
+            47,
+            30
+          ]
+        },
+        {
+          "pixels": 183,
+          "bounds": [
+            32,
+            32,
+            48,
+            44
+          ]
+        }
+      ],
+      "minimum_clear_pixel_gap": 2
+    },
+    {
+      "asset": "source/original-c-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "fully_opaque": true
+    },
+    {
+      "asset": "source/original-c-120.png",
+      "size": [
+        120,
+        120
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "pane_regions": [
+        {
+          "pixels": 1188,
+          "bounds": [
+            30,
+            33,
+            56,
+            88
+          ]
+        },
+        {
+          "pixels": 512,
+          "bounds": [
+            64,
+            33,
+            90,
+            62
+          ]
+        },
+        {
+          "pixels": 532,
+          "bounds": [
+            64,
+            67,
+            90,
+            88
+          ]
+        }
+      ],
+      "minimum_clear_pixel_gap": 2
+    },
+    {
+      "asset": "source/original-c-60.png",
+      "size": [
+        60,
+        60
+      ],
+      "mode": "RGB",
+      "fully_opaque": true,
+      "pane_regions": [
+        {
+          "pixels": 299,
+          "bounds": [
+            15,
+            16,
+            28,
+            44
+          ]
+        },
+        {
+          "pixels": 127,
+          "bounds": [
+            32,
+            17,
+            45,
+            31
+          ]
+        },
+        {
+          "pixels": 139,
+          "bounds": [
+            32,
+            33,
+            45,
+            44
+          ]
+        }
+      ],
+      "minimum_clear_pixel_gap": 2
+    }
+  ],
+  "new_png_count": 9,
+  "comparison_png_count": 3,
+  "small_size_pane_checks": 8,
+  "visual_review": {
+    "inspected": [
+      "previews/overview.png",
+      "previews/backgrounds-120-60.png",
+      "previews/geometry.png",
+      "01-clear/icon-1024.png",
+      "02-soft/icon-1024.png",
+      "03-balanced/icon-1024.png"
+    ],
+    "result": "Original C and three family refinements reviewed at master and actual thumbnail sizes. Rounded joins are smooth, no clipped edges or unexpected transparency, and all three panes remain separated. Soft finish has restrained depth, without a bevel/rim highlight."
+  },
+  "palette_status": "Exploratory consistent teal/warm-yellow baseline; not approved final colors",
+  "limitations": [
+    "Illustrative desktop mask only",
+    "No system tinted/clear appearance integration",
+    "No simulator or physical installation",
+    "No application behavior/layout change; XCTest and XCUITest not run"
+  ]
+}

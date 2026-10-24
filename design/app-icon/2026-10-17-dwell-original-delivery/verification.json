@@ -1,0 +1,33 @@
+{
+  "selected": "Second round 03-dwell original",
+  "assets": {
+    "HomePad-Dwell-original.svg": {
+      "source": "design/app-icon/2026-10-homepad-v2/03-dwell/icon.svg",
+      "sha256": "4914e3f8958de647c4b76e422e1f9a562c2a6839f3b3f85516720d48578197bf",
+      "byte_identical": true
+    },
+    "HomePad-Dwell-original-1024.png": {
+      "source": "design/app-icon/2026-10-homepad-v2/03-dwell/icon-1024.png",
+      "sha256": "491690da02105802543230fbf8eb18645df98e12033b15e12f9b0eec25f57947",
+      "byte_identical": true
+    },
+    "HomePad-Dwell-original-preview.png": {
+      "source": "design/app-icon/2026-10-homepad-v2/03-dwell/icon-1024.png",
+      "sha256": "491690da02105802543230fbf8eb18645df98e12033b15e12f9b0eec25f57947",
+      "byte_identical": true
+    }
+  },
+  "png_dimensions": [
+    1024,
+    1024
+  ],
+  "png_fully_opaque": true,
+  "preview_equals_original_png": true,
+  "all_shape_color_background_unchanged": true,
+  "app_icon_matches_pre_design_baseline": {
+    "HomePad/Assets.xcassets/AppIcon.appiconset/AppIcon.png": true,
+    "HomePad/Assets.xcassets/AppIcon.appiconset/Contents.json": true
+  },
+  "app_code_changes_by_this_delivery": false,
+  "commit_push_install": false
+}

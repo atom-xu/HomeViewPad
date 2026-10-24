@@ -1,0 +1,28 @@
+{
+  "status": "visual review completed",
+  "reference": "Only original round-2 three-part Dwell; displayed as 原版家窗 without numeric identifier",
+  "withdrawn_assumption": "Numbered warm-window shell is not treated as user preference; previous assets retained",
+  "new_labels": [
+    "A",
+    "B",
+    "C"
+  ],
+  "new_shapes": 3,
+  "parts_per_shape": 3,
+  "comparison_size": [
+    1680,
+    1011
+  ],
+  "inspected": [
+    "comparison.png",
+    "review/A-diagonal.png",
+    "review/B-canopy.png",
+    "review/C-wide-window.png"
+  ],
+  "small_size": "Actual 60 px previews inspected; each retains a readable house family and three colored blocks",
+  "self_evaluation": "A changes negative-space flow most clearly; B folds the roof into a right-side space; C broadens the warm window and increases warm visual weight. User preference among these remains open.",
+  "original_source_and_appicon": "byte-identical",
+  "scope": "New design directory only. No code/AppIcon changes, commit, push or installation.",
+  "environment": "Node22.22.3 / Chromium135.0.7049.17 / deviceScaleFactor1",
+  "limitations": "Static concept previews; no system appearance or physical icon validation"
+}

@@ -1,0 +1,29 @@
+{
+  "status": "large and actual 60 px previews visually reviewed",
+  "reference": "Fifth-round numbered 01 Warm window, provisional interpretation; source SVG and PNG preserved byte-identically",
+  "forms": [
+    "Translucent glass",
+    "Restrained matte relief with recessed window",
+    "Thin layered sheets with foreground warm insert"
+  ],
+  "comparison_size": [
+    1680,
+    960
+  ],
+  "inspected": [
+    "review/01-glass.png",
+    "review/02-relief.png",
+    "review/03-sheets.png",
+    "comparison.png"
+  ],
+  "self_evaluation": "Thin sheets gives the clearest construction change and strongest small-size reading. Glass is lighter/frosted; relief is deliberately low contrast and its suitability remains uncertain. No final choice or color approval implied.",
+  "revisions": [
+    "Removed separate decorative glass highlight",
+    "Reduced glass cast shadow",
+    "Removed relief edge highlight"
+  ],
+  "appicon_png_and_contents": "unchanged",
+  "scope": "Only new design directory written by icon task; no old artwork, code, install, commit or push",
+  "limits": "Static SVG material study; no native icon-mode, dynamic refraction or physical display validation",
+  "environment": "macOS27 / Node22.22.3 / Chromium135.0.7049.17 / deviceScaleFactor1"
+}
